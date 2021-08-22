@@ -12,4 +12,5 @@
 
 # Python
 **/__pycache__/
+
 *.xyz
