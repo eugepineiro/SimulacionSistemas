@@ -5,10 +5,10 @@ public class Config {
 
     private Long seed;
     private Integer m_grid_dimension;
-    private Integer n_number_of_particles;
     private Double r_interaction_radius;
     private Integer l_grid_side;
     private Integer frames;
+    private Double density;
     private Double speed;
     private Double noise_amplitude;
 
@@ -24,29 +24,20 @@ public class Config {
         return m_grid_dimension;
     }
 
-    public Integer getN_number_of_particles() {
-        return n_number_of_particles;
+    public void setM_grid_dimension(Integer m_grid_dimension) {
+        this.m_grid_dimension = m_grid_dimension;
     }
 
     public Double getR_interaction_radius() {
         return r_interaction_radius;
     }
 
-    public Integer getL_grid_side() {
-        return l_grid_side;
-    }
-
-
-    public void setM_grid_dimension(Integer m_grid_dimension) {
-        this.m_grid_dimension = m_grid_dimension;
-    }
-
-    public void setN_number_of_particles(Integer n_number_of_particles) {
-        this.n_number_of_particles = n_number_of_particles;
-    }
-
     public void setR_interaction_radius(Double r_interaction_radius) {
         this.r_interaction_radius = r_interaction_radius;
+    }
+
+    public Integer getL_grid_side() {
+        return l_grid_side;
     }
 
     public void setL_grid_side(Integer l_grid_side) {
@@ -59,6 +50,14 @@ public class Config {
 
     public void setFrames(Integer frames) {
         this.frames = frames;
+    }
+
+    public Double getDensity() {
+        return density;
+    }
+
+    public void setDensity(Double density) {
+        this.density = density;
     }
 
     public Double getSpeed() {
@@ -82,10 +81,10 @@ public class Config {
         return "Config{" +
                 "seed=" + seed +
                 ", m_grid_dimension=" + m_grid_dimension +
-                ", n_number_of_particles=" + n_number_of_particles +
                 ", r_interaction_radius=" + r_interaction_radius +
                 ", l_grid_side=" + l_grid_side +
                 ", frames=" + frames +
+                ", density=" + density +
                 ", speed=" + speed +
                 ", noise_amplitude=" + noise_amplitude +
                 '}';

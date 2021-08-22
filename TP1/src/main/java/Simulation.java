@@ -14,7 +14,7 @@ public class Simulation {
         // carga config
         try {
             // JSON file to Java object
-            Config config = mapper.readValue(new File("src/main/resources/config/config.json"), Config.class);
+            Config config = mapper.readValue(new File("TP1/src/main/resources/config/config.json"), Config.class);
 
 //            // pretty print
 //            String prettyConfig = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(config);

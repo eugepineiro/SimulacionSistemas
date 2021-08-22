@@ -13,4 +13,5 @@
 # Python
 **/__pycache__/
 
-*.xyz
+# Ovito
+**/ovito/
