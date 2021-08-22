@@ -1,0 +1,12 @@
+{
+  "seed": 0,
+  "m_grid_dimension": 10,
+  "r_interaction_radius": 1,
+  "l_grid_side": 20,
+  "n_number_of_particles": 500,
+  "random_generator": true,
+  "periodic_return": false,
+  "frames": 60,
+  "speed": 0.03,
+  "noise_amplitude": 2
+}

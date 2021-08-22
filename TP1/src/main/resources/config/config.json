@@ -1,0 +1,19 @@
+{
+  "m_grid_dimension": 10,
+  "r_interaction_radius": 1,
+  "l_grid_side": 20,
+  "n_number_of_particles": 500,
+  "random_generator": true,
+  "brute_force": false,
+  "compare_with_brute_force": {
+    "compare": false,
+    "max_N": 100,
+    "max_M": 20,
+    "iterations_to_average": 100
+  },
+  "periodic_return": false,
+  "particles": [
+    {"x":19.5,"y":0.5,"radius":0.36454758414975763},
+    {"x":18.5, "y":0.5,"radius":0.3665238982265391}
+  ]
+}
