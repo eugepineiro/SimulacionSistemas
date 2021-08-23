@@ -1,15 +1,16 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class OffLatticeSimulation {
 
     private static final String FILENAME = "SdS_TP2_2021Q2G01_output";
+    private static final String POSTPROCESSING_FILENAME = "postprocessing_results";
+    private static final Integer LOADING_BAR_SIZE = 20;
 
     public static void main(String[] args) {
         ObjectMapper mapper = new ObjectMapper();
@@ -18,8 +19,13 @@ public class OffLatticeSimulation {
             // JSON file to Java object
             Config config = mapper.readValue(new File("TP2/src/main/resources/config/config.json"), Config.class);
 
-            if (1.0 * config.getL_grid_side() / config.getM_grid_dimension() <= (config.getR_interaction_radius() + 2.0 * config.getL_grid_side() / 50) ) {
-                throw new IllegalArgumentException("L/M > rc");
+//            // pretty print
+//            String prettyConfig = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(config);
+//            System.out.println(prettyConfig);
+
+            if(config.getPolarization().getActivated()){
+                comparePolarizations(config);
+                return;
             }
 
             // Configure random
@@ -32,6 +38,10 @@ public class OffLatticeSimulation {
             }
             else
                 r = new Random(seed);
+
+            if (1.0 * config.getL_grid_side() / config.getM_grid_dimension() <= (config.getR_interaction_radius() + 2.0 * config.getL_grid_side() / 50) ) {
+                throw new IllegalArgumentException("L/M > rc");
+            }
 
             int numberOfParticles = (int) (config.getDensity() * Math.pow(config.getL_grid_side(), 2));
 
@@ -54,6 +64,127 @@ public class OffLatticeSimulation {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static void comparePolarizations(Config config) throws IOException {
+
+        // Configure random
+        Random r;
+        Long seed = config.getSeed();
+        if (seed == 0) {
+            seed = System.currentTimeMillis();
+        }
+
+        int min_n, max_n, n_increase;
+        double min_density, max_density, density_increase, min_noise, max_noise, noise_increase;
+
+        min_n = config.getPolarization().getNumber_of_particles_range()[0];
+        max_n = config.getPolarization().getNumber_of_particles_range()[1];
+        n_increase = config.getPolarization().getNumber_of_particles_increase();
+
+        min_density = config.getPolarization().getDensity_range()[0];
+        max_density = config.getPolarization().getDensity_range()[1];
+        density_increase = config.getPolarization().getDensity_increase();
+
+        min_noise = config.getPolarization().getNoise_range()[0];
+        max_noise = config.getPolarization().getNoise_range()[1];
+        noise_increase = config.getPolarization().getNoise_increase();
+
+        int numberOfSimulations = config.getPolarization().getNumber_of_simulations();
+        List<List<Double>> simulationsPolarizationsList = new ArrayList<>();
+
+        List<VelocityParticle> particles;
+        List<List<VelocityParticle>> frames;
+        List<Double> framedPolarizations;
+        List<PostProcessing> postProcessingList = new ArrayList<>();
+        int L;
+
+        int it = 0, totalIterations = ((int) ((max_n - min_n)/n_increase)) * ((int) ((max_density - min_density)/density_increase)) * ((int) ((max_noise - min_noise)/noise_increase)) * numberOfSimulations;
+
+        System.out.println("Running simulations");
+
+        long startTime = System.nanoTime();
+
+        for(int n = min_n; n < max_n; n += n_increase) {
+            for(double density = min_density; density < max_density; density += density_increase) {
+                for(double noise = min_noise; noise < max_noise; noise += noise_increase) {
+
+                    simulationsPolarizationsList = new ArrayList<>();
+
+                    L = (int) Math.sqrt(n/density);
+
+                    for(int simulations = 0; simulations < numberOfSimulations; simulations++) {
+                        if (1.0 * L / config.getM_grid_dimension() <= config.getR_interaction_radius() ) {
+                            continue;
+                        }
+
+                        // Sets seed
+                        r = new Random(seed);
+
+                        particles = VelocityParticlesGenerator.generateRandom(n, L, 0., config.getSpeed(), r);
+                        frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), L, config.getNoise_amplitude(),  config.getFrames(), r);
+
+                        // Calculate polarization
+                        framedPolarizations = calculatePolarization(frames, config.getSpeed());
+
+                        simulationsPolarizationsList.add(framedPolarizations);
+
+
+                        // Count iterations
+                        it++;
+
+                        printLoadingBar(1.0 * it / totalIterations);
+                    }
+
+                    postProcessingList.add(new PostProcessing(simulationsPolarizationsList, density, n, noise));
+                }
+            }
+        }
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0 );
+
+        // Save results
+        new JsonWriter(POSTPROCESSING_FILENAME)
+                .withObj(postProcessingList)
+                .write();
+    }
+
+    public static void printLoadingBar(double percentage) {
+        StringBuilder loadingBar = new StringBuilder("[");
+        for (int h = 0; h < LOADING_BAR_SIZE; h++) {
+            if (h < percentage * LOADING_BAR_SIZE)
+                loadingBar.append("#");
+            else
+                loadingBar.append(" ");
+        }
+        loadingBar.append("]");
+        System.out.printf("%s %.2g%% Completed\r", loadingBar, percentage * 100);
+    }
+
+    public static List<Double> calculatePolarization(List<List<VelocityParticle>> frames, double speed) {
+
+        List<Double> framedPolarizations = new ArrayList<>();
+        double vx = 0, vy = 0, polarization;
+
+        if (frames.size() == 0) {
+            return new ArrayList<>();
+        }
+
+        for(List<VelocityParticle> frame: frames) {
+            // | sum(vx), sum(vy) | / n*getSpeed
+            for(VelocityParticle p: frame) {
+                vx += p.getSpeed() * Math.cos(p.getAngle());
+                vy += p.getSpeed() * Math.sin(p.getAngle());
+            }
+
+            polarization = Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2)) / (frame.size() * speed);
+            framedPolarizations.add(polarization);
+        }
+
+        return framedPolarizations;
     }
 
 }

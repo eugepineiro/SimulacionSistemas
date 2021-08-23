@@ -9,7 +9,6 @@ public class XYZ_Writer {
     private static class PCoords {
         private final long id;
         private final double x, y, z, angle;
-        private Integer[] rgb;
 
         public PCoords(long id, double x, double y, double z, double angle) {
             this.id = id;
@@ -49,7 +48,9 @@ public class XYZ_Writer {
     }
 
     public XYZ_Writer addFrame(List<? extends Particle> particleList) {
-        List<PCoords> frame = particleList.stream().map(p -> new PCoords(p.getId(), p.getX(), p.getY(), 0, ((VelocityParticle) p).getAngle())).collect(Collectors.toList());
+        List<PCoords> frame = particleList.stream()
+                .map(p -> new PCoords(p.getId(), p.getX(), p.getY(), 0, ((VelocityParticle) p).getAngle()))
+                .collect(Collectors.toList());
         frames.add(frame);
 
         return this;
@@ -77,20 +78,6 @@ public class XYZ_Writer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private Integer[] angleToColor(Double angle){
-        Integer[] rgb = new Integer[3];
-
-        rgb[0] = (int) ((angle * 255/(2*Math.PI))) % (1<<8);
-        rgb[1] = (int) ((angle * 255/(2*Math.PI)) - 128) % (1<<8);
-        rgb[2] = (int) ((angle * 255/(2*Math.PI)) - 32) % (1<<8);
-
-        if (rgb[0] < 0) rgb[0] += (1<<8);
-        if (rgb[1] < 0) rgb[1] += (1<<8);
-        if (rgb[2] < 0) rgb[2] += (1<<8);
-
-        return rgb;
     }
 
 }

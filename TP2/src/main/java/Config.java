@@ -11,6 +11,7 @@ public class Config {
     private Double density;
     private Double speed;
     private Double noise_amplitude;
+    private Polarization polarization;
 
     public Long getSeed() {
         return seed;
@@ -76,6 +77,14 @@ public class Config {
         this.noise_amplitude = noise_amplitude;
     }
 
+    public Polarization getPolarization() {
+        return polarization;
+    }
+
+    public void setPolarization(Polarization polarization) {
+        this.polarization = polarization;
+    }
+
     @Override
     public String toString() {
         return "Config{" +
@@ -87,6 +96,7 @@ public class Config {
                 ", density=" + density +
                 ", speed=" + speed +
                 ", noise_amplitude=" + noise_amplitude +
+                ", polarization=" + polarization +
                 '}';
     }
 }
