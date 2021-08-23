@@ -1,3 +1,5 @@
+from plotter import plot_polarization_by_frame
+from plotter import plot_polarization_by_density
 import json 
 
 with open("../src/main/resources/config/config.json") as f:
@@ -10,16 +12,20 @@ density = config["density"]
 speed = config["speed"]
 noise = config["noise_amplitude"]
 
-with open("../src/main/resources/results.json") as f:
+with open("../src/main/resources/postprocessing/test.json") as f:
     results = json.load(f) 
-
-number_of_simulations = len(results)
+ 
 density_array = []
-polarization_array = []
+noise_array = []
+number_of_particles_array = []
+polarization_array = [] # polarizations by frame
 
-for simulation in range(number_of_simulations):
-    density_array.append(results[simulation]["density"])
-    polarization_array.append(results[simulation]["polarization"])
+for i in range(len(results)):
+    density_array.append(results[i]["density"])
+    noise_array.append(results[i]["noise"])
+    number_of_particles_array.append(results[i]["n"])
+    polarization_array.append(results[i]["polarization"])
 
-
-# TP2/src/main/resources/ovito
+plot_polarization_by_frame(results, 0.1, 10)
+#plot_polarization_by_density(results,3.0 , 10)
+ 

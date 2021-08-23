@@ -9,7 +9,7 @@ import java.util.Random;
 public class OffLatticeSimulation {
 
     private static final String FILENAME = "SdS_TP2_2021Q2G01_output";
-    private static final String POSTPROCESSING_FILENAME = "postprocessing_results";
+    private static final String POSTPROCESSING_FILENAME = "SdS_TP2_2021Q2G01_results";
     private static final Integer LOADING_BAR_SIZE = 20;
 
     public static void main(String[] args) {
