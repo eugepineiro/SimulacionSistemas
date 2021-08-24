@@ -54,14 +54,6 @@ def get_avg_polarization(polarizations):
 def get_polarization_by_frame_figure(results, density, n):
     polarization_array, noise_array = get_polarization_by('density', density, 'n', n, results, 'noise')
     frames = np.arange(len(polarization_array[0]))
-
-    # print(polarization_array)
-    # print(noise_array) 
-
-    df = pd.DataFrame(dict(
-        Polarization =  polarization_array[0],   
-        Frame = frames
-    ))
     
     fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
     for i in range(len(polarization_array)): 
@@ -90,19 +82,26 @@ def get_polarization_by_frame_figure(results, density, n):
 
 def plot_polarization_by_density_figure(results, noise, n, density_range, density_increase):
 
-    polarization_array, d_array = get_polarization_by('noise', noise, 'n', n, results, 'density') # d_array: densities with that noise and n 
-    density_array = list(np.arange(density_range[0],density_range[1], density_increase, dtype=float))  #plot x_axis 
+    #polarization_array, d_array = get_polarization_by('noise', noise, 'n', n, results, 'density') # d_array: densities with that noise and n 
+    #density_array = list(np.arange(density_range[0],density_range[1], density_increase, dtype=float))  #plot x_axis 
 
-    avg_polarizations_by_density = []
-    for i in range(len(polarization_array)): 
-        avg = sum(polarization_array[i][1200:]) / float(len(polarization_array[0][1200:]))
-        avg_polarizations_by_density.append(avg)
+    # avg_polarizations_by_density = []
 
-    print(len(polarization_array))
-    print(d_array) 
+    polarizations_by_simulation = list(filter(lambda p: p['noise'] == noise and p['n'] == n, results))
+    avg_polarizations_by_simulation = []
+    densities = []
+
+    for i in range(len(polarizations_by_simulation)):
+        # print(len(polarizations_by_simulation[i]['polarization']))
+        for j in range(len(polarizations_by_simulation[i]['polarization'])):
+            avg = sum(polarizations_by_simulation[i]['polarization'][j][1200:]) / float(len(polarizations_by_simulation[i]['polarization'][j][1200:]))
+            avg_polarizations_by_simulation.append(avg)
+            densities.append(polarizations_by_simulation[i]['density'])
+
+ 
     df = pd.DataFrame(dict(
-        Polarization =  avg_polarizations_by_density,   
-        Density = d_array
+        Polarization =  avg_polarizations_by_simulation,   
+        Density = densities
     ))
     fig = px.box(df, x="Density", y="Polarization", title="Polarization By Density")
     
@@ -112,6 +111,9 @@ def plot_results(results):
 
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
     app.title = "Off-Lattice"
+
+    polarization_by_frame_fig = get_polarization_by_frame_figure(results, 0.4, 200)
+    polarization_by_density_fig = plot_polarization_by_density_figure(results, 0.6, 200, [0.1, 1], 0.1)
 
     def serve_layout():
         return html.Div(
@@ -139,14 +141,14 @@ def plot_results(results):
                 html.Div(
                     children=[
                         html.P(
-                            children='Polarization by frame',
+                            children='',
                             className="figure-title"
                         ),
                         html.Div(
                             children=[
                                 dcc.Graph(
                                     id='polarization-by-frame',
-                                    figure=get_polarization_by_frame_figure(results, 0.4, 50)
+                                    figure=polarization_by_frame_fig
                                 )
                             ],
                             className='card'
@@ -159,14 +161,14 @@ def plot_results(results):
                 html.Div(
                     children=[
                         html.P(
-                            children='Polarization by density',
+                            children='',
                             className="figure-title"
                         ),
                         html.Div(
                             children=[
                                 dcc.Graph(
                                     id='polarization-by-density',
-                                    figure=plot_polarization_by_density_figure(results, 1.5, 50, [0.1, 1], 0.1)
+                                    figure=polarization_by_density_fig
                                 )
                             ],
                             className='card'

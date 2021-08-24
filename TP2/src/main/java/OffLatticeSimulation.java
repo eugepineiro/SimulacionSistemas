@@ -99,7 +99,7 @@ public class OffLatticeSimulation {
         List<PostProcessing> postProcessingList = new ArrayList<>();
         int L;
 
-        int it = 0, totalIterations = ((int) ((max_n - min_n)/n_increase)) * ((int) ((max_density - min_density)/density_increase)) * ((int) ((max_noise - min_noise)/noise_increase)) * numberOfSimulations;
+        int it = 0, totalIterations = ((int) Math.ceil(1.0 * (max_n - min_n)/n_increase) - 1) * ((int) Math.ceil((max_density - min_density)/density_increase) - 1) * ((int) Math.ceil((max_noise - min_noise)/noise_increase) - 1) * numberOfSimulations;
         int allIt = 0;
 
         System.out.println("Running simulations");
