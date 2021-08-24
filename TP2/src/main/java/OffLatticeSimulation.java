@@ -10,7 +10,7 @@ public class OffLatticeSimulation {
 
     private static final String FILENAME = "SdS_TP2_2021Q2G01_output";
     private static final String POSTPROCESSING_FILENAME = "SdS_TP2_2021Q2G01_results";
-    private static final Integer LOADING_BAR_SIZE = 10;
+    private static final Integer LOADING_BAR_SIZE = 20;
 
     public static void main(String[] args) {
         ObjectMapper mapper = new ObjectMapper();
@@ -99,8 +99,7 @@ public class OffLatticeSimulation {
         List<PostProcessing> postProcessingList = new ArrayList<>();
         int L;
 
-        int it = 0, totalIterations = ((int) Math.ceil(1.0 * (max_n - min_n)/n_increase) - 1) * ((int) Math.ceil((max_density - min_density)/density_increase) - 1) * ((int) Math.ceil((max_noise - min_noise)/noise_increase) - 1) * numberOfSimulations;
-        int allIt = 0;
+        int it = 0, totalIterations = ((int) Math.ceil(1.0 * (max_n - min_n)/n_increase)) * ((int) Math.ceil((max_density - min_density)/density_increase)) * ((int) Math.ceil((max_noise - min_noise)/noise_increase)) * numberOfSimulations;
 
         System.out.println("Running simulations");
 
@@ -115,8 +114,11 @@ public class OffLatticeSimulation {
                     L = (int) Math.sqrt(n/density);
 
                     for(int simulations = 0; simulations < numberOfSimulations; simulations++) {
-                        allIt++;
-                        System.out.println(1.0 * allIt / totalIterations);
+
+                        // Count iterations
+                        it++;
+                        printLoadingBar(1.0 * it / totalIterations);
+
                         if (1.0 * L / config.getM_grid_dimension() <= config.getR_interaction_radius() ) {
                             continue;
                         }
@@ -132,11 +134,6 @@ public class OffLatticeSimulation {
 
                         simulationsPolarizationsList.add(framedPolarizations);
 
-
-                        // Count iterations
-                        it++;
-
-                        printLoadingBar(1.0 * it / totalIterations);
                     }
 
                     if (simulationsPolarizationsList.size() > 0)
@@ -159,13 +156,15 @@ public class OffLatticeSimulation {
     public static void printLoadingBar(double percentage) {
         StringBuilder loadingBar = new StringBuilder("[");
         for (int h = 0; h < LOADING_BAR_SIZE; h++) {
-            if (h < percentage * LOADING_BAR_SIZE)
-                loadingBar.append("#");
+            if (h < Math.ceil(percentage * LOADING_BAR_SIZE) - 1)
+                loadingBar.append("=");
+            else if (h < Math.ceil(percentage * LOADING_BAR_SIZE))
+                loadingBar.append(">");
             else
                 loadingBar.append(" ");
         }
         loadingBar.append("]");
-        System.out.printf("%s %.2g%% Completed\r", loadingBar, percentage * 100);
+        System.out.printf("%s %d%% Completed\r", loadingBar, (int) (percentage * 100));
     }
 
     public static List<Double> calculatePolarization(List<List<VelocityParticle>> frames, double speed) {
