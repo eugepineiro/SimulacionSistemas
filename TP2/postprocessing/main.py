@@ -12,6 +12,8 @@ L_grid_side = config["l_grid_side"]
 density = config["density"]
 speed = config["speed"]
 noise = config["noise_amplitude"]
+density_range = config["polarization"]["density_range"]
+density_increase = config["polarization"]["density_increase"]
 
 with open("../src/main/resources/postprocessing/SdS_TP2_2021Q2G01_results.json") as f:
     results = json.load(f) 

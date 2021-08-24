@@ -43,19 +43,23 @@ def plot_polarization_by_frame(results, density, n):
 
     fig.show()
 
-def plot_polarization_by_density(results, noise, n):
+def plot_polarization_by_density(results, noise, n, density_range, density_increase):
 
-    polarization_array, d_array = get_polarization_by('noise', noise, 'n', n, results, 'density')
-    density_array = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    polarization_array, d_array = get_polarization_by('noise', noise, 'n', n, results, 'density') # d_array: densities with that noise and n 
+    density_array = list(np.arange(density_range[0],density_range[1], density_increase, dtype=float))  #plot x_axis 
 
-    print(polarization_array)
-    print(d_array)
-    frame = 0
+    avg_polarizations_by_density = []
+    for i in range(len(polarization_array)): 
+        avg = sum(polarization_array[i][1200:]) / float(len(polarization_array[0][1200:]))
+        avg_polarizations_by_density.append(avg)
+
+    print(len(polarization_array))
+    print(d_array) 
     df = pd.DataFrame(dict(
-        polarization =  polarization_array[frame],   
-        density = d_array
+        Polarization =  avg_polarizations_by_density,   
+        Density = d_array
     ))
-    fig = px.line(df, x="density", y="polarization", title="Polarization By Density", markers=True)
+    fig = px.box(df, x="Density", y="Polarization", title="Polarization By Density")
     fig.show()
 
 def get_polarization_by(param1, value1, param2, value2, results, other_param): 

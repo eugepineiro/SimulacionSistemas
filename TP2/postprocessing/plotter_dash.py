@@ -88,6 +88,26 @@ def get_polarization_by_frame_figure(results, density, n):
 
     return fig
 
+def plot_polarization_by_density_figure(results, noise, n, density_range, density_increase):
+
+    polarization_array, d_array = get_polarization_by('noise', noise, 'n', n, results, 'density') # d_array: densities with that noise and n 
+    density_array = list(np.arange(density_range[0],density_range[1], density_increase, dtype=float))  #plot x_axis 
+
+    avg_polarizations_by_density = []
+    for i in range(len(polarization_array)): 
+        avg = sum(polarization_array[i][1200:]) / float(len(polarization_array[0][1200:]))
+        avg_polarizations_by_density.append(avg)
+
+    print(len(polarization_array))
+    print(d_array) 
+    df = pd.DataFrame(dict(
+        Polarization =  avg_polarizations_by_density,   
+        Density = d_array
+    ))
+    fig = px.box(df, x="Density", y="Polarization", title="Polarization By Density")
+    
+    return fig
+
 def plot_results(results):
 
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -115,7 +135,7 @@ def plot_results(results):
 
                 # Graphs
 
-                ## table
+                ## Polarization By Frame
                 html.Div(
                     children=[
                         html.P(
@@ -135,6 +155,25 @@ def plot_results(results):
                     className='wrapper',
                 ),
 
+                ## Polarization by density
+                html.Div(
+                    children=[
+                        html.P(
+                            children='Polarization by density',
+                            className="figure-title"
+                        ),
+                        html.Div(
+                            children=[
+                                dcc.Graph(
+                                    id='polarization-by-density',
+                                    figure=plot_polarization_by_density_figure(results, 1.5, 50, [0.1, 1], 0.1)
+                                )
+                            ],
+                            className='card'
+                        ),
+                    ],
+                    className='wrapper',
+                ),
             ],
             style={
                 "text-align": "center",
