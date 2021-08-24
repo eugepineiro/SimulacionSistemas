@@ -1,28 +1,33 @@
-[   {"polarization":[ [1,2,3], [4,5,6] ],
+[   {
+        "polarization":[ 
+            [1,2,3], 
+            [4,5,6]  
+        ],
         "density":0.1,
         "noise":0.0,
-        "n":10},
+        "n":10
+    },
 
-    {"polarization":[ [1,2,3], [4,5,6] ],
+    {"polarization":[ [7,8,9], [14,15,16] ],
         "density":0.1,
         "noise":1.0,
         "n":10},
 
-    {"polarization":[ [1,2,3], [4,5,6] ],
+    {"polarization":[ [11,21,31], [14,15,16] ],
         "density":0.1,
         "noise":3.0,
         "n":10},
-    {"polarization":[ [1,2,3], [4,5,6] ],
+    {"polarization":[ [16,26,13], [14,35,26] ],
     "density":0.2,
     "noise":3.0,
     "n":10},
 
-    {"polarization":[ [1,2,3], [4,5,6] ],
+    {"polarization":[ [11,21,13], [41,15,61] ],
         "density":0.1,
         "noise":4.0,
         "n":10},
 
-    {"polarization":[ [1,2,3], [4,5,6] ],
+    {"polarization":[ [11,12,31], [42,25,26] ],
         "density":0.2,
         "noise":0.0,
         "n":10}

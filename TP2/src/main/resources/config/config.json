@@ -14,7 +14,7 @@
     "number_of_particles_increase": 20,
     "density_range": [0.1, 1],
     "density_increase": 0.1,
-    "noise_range": [0, 5],
-    "noise_increase": 1
+    "noise_range": [0, 1.6],
+    "noise_increase": 0.3
   }
 }

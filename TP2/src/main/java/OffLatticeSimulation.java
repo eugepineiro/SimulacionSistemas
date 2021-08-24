@@ -10,7 +10,7 @@ public class OffLatticeSimulation {
 
     private static final String FILENAME = "SdS_TP2_2021Q2G01_output";
     private static final String POSTPROCESSING_FILENAME = "SdS_TP2_2021Q2G01_results";
-    private static final Integer LOADING_BAR_SIZE = 20;
+    private static final Integer LOADING_BAR_SIZE = 10;
 
     public static void main(String[] args) {
         ObjectMapper mapper = new ObjectMapper();
@@ -122,7 +122,7 @@ public class OffLatticeSimulation {
                         r = new Random(seed);
 
                         particles = VelocityParticlesGenerator.generateRandom(n, L, 0., config.getSpeed(), r);
-                        frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), L, config.getNoise_amplitude(),  config.getFrames(), r);
+                        frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), L, noise, config.getFrames(), r);
 
                         // Calculate polarization
                         framedPolarizations = calculatePolarization(frames, config.getSpeed());
@@ -136,7 +136,8 @@ public class OffLatticeSimulation {
                         printLoadingBar(1.0 * it / totalIterations);
                     }
 
-                    postProcessingList.add(new PostProcessing(simulationsPolarizationsList, density, n, noise));
+                    if (simulationsPolarizationsList.size() > 0)
+                        postProcessingList.add(new PostProcessing(simulationsPolarizationsList, density, n, noise));
                 }
             }
         }
@@ -175,6 +176,9 @@ public class OffLatticeSimulation {
 
         for(List<VelocityParticle> frame: frames) {
             // | sum(vx), sum(vy) | / n*getSpeed
+            vx = 0;
+            vy = 0;
+
             for(VelocityParticle p: frame) {
                 vx += p.getSpeed() * Math.cos(p.getAngle());
                 vy += p.getSpeed() * Math.sin(p.getAngle());

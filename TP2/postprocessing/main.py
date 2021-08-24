@@ -12,9 +12,10 @@ density = config["density"]
 speed = config["speed"]
 noise = config["noise_amplitude"]
 
-with open("../src/main/resources/postprocessing/test.json") as f:
+with open("../src/main/resources/postprocessing/SdS_TP2_2021Q2G01_results.json") as f:
     results = json.load(f) 
  
+
 density_array = []
 noise_array = []
 number_of_particles_array = []
@@ -26,6 +27,6 @@ for i in range(len(results)):
     number_of_particles_array.append(results[i]["n"])
     polarization_array.append(results[i]["polarization"])
 
-plot_polarization_by_frame(results, 0.1, 10)
+plot_polarization_by_frame(results, 0.4, 50)
 #plot_polarization_by_density(results,3.0 , 10)
  

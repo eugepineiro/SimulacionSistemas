@@ -1,4 +1,6 @@
 import plotly.express as px
+import plotly.graph_objects as go
+
 import pandas as pd
 import numpy as np
 
@@ -12,12 +14,34 @@ def plot_polarization_by_frame(results, density, n):
     print(noise_array) 
 
     df = pd.DataFrame(dict(
-        polarization =  polarization_array[0],   
-        frame = frames
+        Polarization =  polarization_array[0],   
+        Frame = frames
     ))
-    fig = px.line(df, x="frame", y="polarization", title="Polarization By Frame", markers=True)
-    fig.show()
+    
+    fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
+    for i in range(len(polarization_array)): 
+        #fig.add_scatter(x=polarization_array[i], y=frames, mode='lines+markers', name='noise = '+str(noise_array[i]))
+        fig.add_trace(go.Scatter(
+            x=frames, 
+            y=polarization_array[i], 
+            mode='lines+markers', 
+            name=f'noise = {noise_array[i]:.2f}'
+            )
+        )
 
+    fig.update_layout(
+    title="Polarization By Frame",
+    xaxis_title="Frame",
+    yaxis_title="Polarization",
+    legend_title=f"References\nDensity: {density}\nNumber of Particles: {n}\n",
+    font=dict(
+        #family="Courier New, monospace",
+        #size=18,
+        #color="RebeccaPurple"
+        )
+    )
+
+    fig.show()
 
 def plot_polarization_by_density(results, noise, n):
 
