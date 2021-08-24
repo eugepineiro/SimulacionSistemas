@@ -100,6 +100,7 @@ public class OffLatticeSimulation {
         int L;
 
         int it = 0, totalIterations = ((int) ((max_n - min_n)/n_increase)) * ((int) ((max_density - min_density)/density_increase)) * ((int) ((max_noise - min_noise)/noise_increase)) * numberOfSimulations;
+        int allIt = 0;
 
         System.out.println("Running simulations");
 
@@ -114,6 +115,8 @@ public class OffLatticeSimulation {
                     L = (int) Math.sqrt(n/density);
 
                     for(int simulations = 0; simulations < numberOfSimulations; simulations++) {
+                        allIt++;
+                        System.out.println(1.0 * allIt / totalIterations);
                         if (1.0 * L / config.getM_grid_dimension() <= config.getR_interaction_radius() ) {
                             continue;
                         }
