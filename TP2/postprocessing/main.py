@@ -1,5 +1,6 @@
 from plotter import plot_polarization_by_frame
 from plotter import plot_polarization_by_density
+from plotter_dash import plot_results
 import json 
 
 with open("../src/main/resources/config/config.json") as f:
@@ -27,6 +28,7 @@ for i in range(len(results)):
     number_of_particles_array.append(results[i]["n"])
     polarization_array.append(results[i]["polarization"])
 
-plot_polarization_by_frame(results, 0.4, 50)
+plot_results(results)
+#plot_polarization_by_frame(results, 0.4, 50)
 #plot_polarization_by_density(results,3.0 , 10)
  
