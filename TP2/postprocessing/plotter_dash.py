@@ -73,7 +73,7 @@ def get_polarization_by_frame_figure(results, density, n):
     title="Polarization By Frame",
     xaxis_title="Frame",
     yaxis_title="Polarization", 
-    legend_title=f"References\nDensity: {density}\nNumber of Particles: {n}\n",
+    legend_title={"text": f"References<br>Density: {density}<br>Number of Particles: {n}<br>"},
     font=dict(
         #family="Courier New, monospace",
         #size=18,
