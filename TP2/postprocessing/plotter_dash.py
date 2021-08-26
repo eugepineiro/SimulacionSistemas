@@ -53,7 +53,10 @@ def get_avg_polarization(polarizations):
 
 def get_polarization_by_frame_figure(results, density, n):
     polarization_array, noise_array = get_polarization_by('density', density, 'n', n, results, 'noise')
-    frames = np.arange(len(polarization_array[0]))
+    if len(polarization_array) > 0:
+        frames = np.arange(len(polarization_array[0]))
+    else: 
+        raise ValueError(f"There is no polarization with density {density} and number of particles {n}\n")
     
     fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
     for i in range(len(polarization_array)): 
@@ -69,7 +72,7 @@ def get_polarization_by_frame_figure(results, density, n):
     fig.update_layout(
     title="Polarization By Frame",
     xaxis_title="Frame",
-    yaxis_title="Polarization",
+    yaxis_title="Polarization", 
     legend_title=f"References\nDensity: {density}\nNumber of Particles: {n}\n",
     font=dict(
         #family="Courier New, monospace",
@@ -98,29 +101,45 @@ def plot_polarization_by_density_figure(results, noise, n, density_range, densit
             avg_polarizations_by_simulation.append(avg)
             densities.append(polarizations_by_simulation[i]['density'])
 
- 
-    df = pd.DataFrame(dict(
-        Polarization =  avg_polarizations_by_simulation,   
-        Density = densities
+    print(avg_polarizations_by_simulation)
+
+    fig = go.Figure()
+    fig.add_trace(go.Box(
+       x=densities, 
+       y=avg_polarizations_by_simulation #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
     ))
-    fig = px.box(df, x="Density", y="Polarization", title="Polarization By Density")
+    #fig = px.box(df, x="Density", y="Polarization", title="Polarization By Density")
+
+    fig.update_layout(
+    title="Polarization By Density",
+    xaxis_title="Density",
+    yaxis_title="Polarization", 
+    legend_title=f"References\nNoise: {noise}\nNumber of Particles: {n}\n",
+    font=dict(
+        #family="Courier New, monospace",
+        #size=18,
+        #color="RebeccaPurple"
+        )
+    )
     
     return fig
+
+
 
 def plot_results(results):
 
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
     app.title = "Off-Lattice"
 
-    polarization_by_frame_fig = get_polarization_by_frame_figure(results, 0.4, 200)
-    polarization_by_density_fig = plot_polarization_by_density_figure(results, 0.6, 200, [0.1, 1], 0.1)
+    polarization_by_frame_fig = get_polarization_by_frame_figure(results, 0.4, 50)
+    polarization_by_density_fig = plot_polarization_by_density_figure(results, 0.6, 50, [0.1, 1], 0.1)
 
     def serve_layout():
         return html.Div(
             children=[
 
                 # Header
-                html.Div(
+                html.Div( 
                     children=[
                         html.H1(
                             children='Off-Lattice',
@@ -157,25 +176,27 @@ def plot_results(results):
                     className='wrapper',
                 ),
 
-                ## Polarization by density
+                ## Polarization by Density
                 html.Div(
                     children=[
                         html.P(
                             children='',
                             className="figure-title"
                         ),
-                        html.Div(
+                        html.Span(
                             children=[
                                 dcc.Graph(
                                     id='polarization-by-density',
                                     figure=polarization_by_density_fig
-                                )
+                                ), 
+                                "Noise"
                             ],
                             className='card'
                         ),
                     ],
                     className='wrapper',
                 ),
+                
             ],
             style={
                 "text-align": "center",
