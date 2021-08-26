@@ -51,6 +51,11 @@ def get_avg_polarization(polarizations):
     
     return avg_polarization_array
 
+
+def get_polarization_by(param1, value1, param2, value2, results): 
+            
+    return list(filter(lambda p: p[param1] == value1 and p[param2] == value2, results))
+
 def get_polarization_by_frame_figure(results, density, n):
     polarization_array, noise_array = get_polarization_by_frame('density', density, 'n', n, results, 'noise')
     if len(polarization_array) > 0:
@@ -83,41 +88,39 @@ def get_polarization_by_frame_figure(results, density, n):
 
     return fig
 
-def get_polarization_by(param1, value1, param2, value2, other_param, results): 
-    
-    polarizations_array=[] 
-    other_param_array = []
-
-    for i in range(len(results)):          
-        if(results[i][param1] == value1 and results[i][param2] == value2): 
-            polarizations_array.append(results[i]["polarization"]) 
-            other_param_array.append(results[i][other_param]) 
-            
-    return polarizations_array, other_param_array
-
-
-def plot_polarization_by_density_figure(results, noise, n, density_range, density_increase):
- 
-    valid_polarizations = list(filter(lambda p: p['noise'] == noise and p['n'] == n, results)) # VALID POLARIZATIONS
+def get_polarization_with_steady_state(valid_polarizations, steady_state, other_param): 
     avg_polarizations_by_simulation = []
     polarizations = []
-    densities = []
+    other_param_array = [] 
 
-    for i in range(len(valid_polarizations)):
-        # print(len(polarizations_by_simulation[i]['polarization']))
+    for i in range(len(valid_polarizations)): 
+        
         for j in range(len(valid_polarizations[i]['polarization'])): #simulations
-            avg = sum(valid_polarizations[i]['polarization'][j][1200:]) / float(len(valid_polarizations[i]['polarization'][j][1200:]))
+            avg = sum(valid_polarizations[i]['polarization'][j][steady_state:]) / float(len(valid_polarizations[i]['polarization'][j][steady_state:]))
             avg_polarizations_by_simulation.append(avg)
         
         polarizations.append(avg_polarizations_by_simulation)
-        densities.append(valid_polarizations[i]['density'])
+        avg_polarizations_by_simulation = []
+        other_param_array.append(valid_polarizations[i][other_param])
  
+    
+    return polarizations, other_param_array
+    
+
+def plot_polarization_by_density_figure(results, noise, n, steady_state):
+ 
+    valid_polarizations = get_polarization_by('noise', noise, 'n', n, results) # VALID POLARIZATIONS
+    polarizations = []
+    densities = []
+    
+    polarizations, densities = get_polarization_with_steady_state(valid_polarizations, steady_state, 'density')
+
     fig = go.Figure()
 
     for i in range(len(densities)):
 
         fig.add_trace(go.Box(
-            name=densities[i], 
+            name=f'{densities[i]:.2f}', 
             y=polarizations[i] #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
         )) 
 
@@ -130,28 +133,19 @@ def plot_polarization_by_density_figure(results, noise, n, density_range, densit
     
     return fig
 
-def plot_polarization_by_noise_figure(results, density, n):
+def plot_polarization_by_noise_figure(results, density, n, steady_state):
 
-    valid_polarizations = list(filter(lambda p: p['density'] == density and p['n'] == n, results)) # VALID POLARIZATIONS
-    avg_polarizations_by_simulation = []
+    valid_polarizations = get_polarization_by('density', density, 'n', n, results)  
     polarizations = []
     noises = []
+    
+    polarizations, noises = get_polarization_with_steady_state(valid_polarizations, steady_state, 'noise')
 
-    for i in range(len(valid_polarizations)): 
-
-        for j in range(len(valid_polarizations[i]['polarization'])): #simulations
-            avg = sum(valid_polarizations[i]['polarization'][j][1200:]) / float(len(valid_polarizations[i]['polarization'][j][1200:]))
-            avg_polarizations_by_simulation.append(avg)
-        
-        polarizations.append(avg_polarizations_by_simulation)
-        noises.append(valid_polarizations[i]['noise'])
- 
-    fig = go.Figure()
-
+    fig = go.Figure() 
     for i in range(len(noises)):
 
         fig.add_trace(go.Box(
-            name=noises[i], 
+            name=f'{noises[i]:.2f}', 
             y=polarizations[i] #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
         )) 
 
@@ -164,17 +158,14 @@ def plot_polarization_by_noise_figure(results, density, n):
 
     return fig 
 
-
-
-
 def plot_results(results):
 
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
     app.title = "Off-Lattice"
 
-    polarization_by_frame_fig = get_polarization_by_frame_figure(results, 0.4, 50)
-    polarization_by_density_fig = plot_polarization_by_density_figure(results, 0.6, 50, [0.1, 1], 0.1)
-    polarization_by_noise_fig = plot_polarization_by_noise_figure(results, 0.1, 30  )
+    polarization_by_frame_fig = get_polarization_by_frame_figure(results,0.1, 30)             # DENSITY - NUMBER OF PARTICLES 
+    polarization_by_density_fig = plot_polarization_by_density_figure(results, 0.3, 30, 100) # NOISE - NUMBER OF PARTICLES - STEADY SATATE
+    polarization_by_noise_fig = plot_polarization_by_noise_figure(results,  0.1, 30, 100)    # DENSITY - NUMBER OF PARTCILES - STEADY SATATE
 
     def serve_layout():
         return html.Div(
