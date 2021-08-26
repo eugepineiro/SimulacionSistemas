@@ -69,11 +69,11 @@ public class OffLatticeSimulation {
     static void comparePolarizations(Config config) throws IOException {
 
         // Configure random
-        Random r;
         Long seed = config.getSeed();
         if (seed == 0) {
             seed = System.currentTimeMillis();
         }
+        Random r = new Random(seed);
 
         int min_n, max_n, n_increase;
         double min_density, max_density, density_increase, min_noise, max_noise, noise_increase;
@@ -91,7 +91,7 @@ public class OffLatticeSimulation {
         noise_increase = config.getPolarization().getNoise_increase();
 
         int numberOfSimulations = config.getPolarization().getNumber_of_simulations();
-        List<List<Double>> simulationsPolarizationsList = new ArrayList<>();
+        List<List<Double>> simulationsPolarizationsList;
 
         List<VelocityParticle> particles;
         List<List<VelocityParticle>> frames;
@@ -124,7 +124,7 @@ public class OffLatticeSimulation {
                         }
 
                         // Sets seed
-                        r = new Random(seed);
+//                        r = new Random(seed);
 
                         particles = VelocityParticlesGenerator.generateRandom(n, L, 0., config.getSpeed(), r);
                         frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), L, noise, config.getFrames(), r);
@@ -170,7 +170,7 @@ public class OffLatticeSimulation {
     public static List<Double> calculatePolarization(List<List<VelocityParticle>> frames, double speed) {
 
         List<Double> framedPolarizations = new ArrayList<>();
-        double vx = 0, vy = 0, polarization;
+        double vx, vy, polarization;
 
         if (frames.size() == 0) {
             return new ArrayList<>();

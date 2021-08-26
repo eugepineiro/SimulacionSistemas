@@ -11,6 +11,7 @@ public class Simulation {
     public static void main(String[] args) {
 
         ObjectMapper mapper = new ObjectMapper();
+        long curr;
         // carga config
         try {
             // JSON file to Java object
@@ -27,8 +28,11 @@ public class Simulation {
             // Configure random
             Random r;
             Long seed = config.getSeed();
-            if (seed == null)
-                r = new Random();
+            if (seed == 0) {
+                curr = System.currentTimeMillis();
+                System.out.printf("Current seed: %d\n", curr);
+                r = new Random(curr);
+            }
             else
                 r = new Random(seed);
 
