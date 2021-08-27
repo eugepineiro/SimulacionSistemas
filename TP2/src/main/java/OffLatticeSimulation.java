@@ -73,7 +73,7 @@ public class OffLatticeSimulation {
         if (seed == 0) {
             seed = System.currentTimeMillis();
         }
-        Random r = new Random(seed);
+        Random r; // = new Random(seed);
 
         int min_n, max_n, n_increase;
         double min_density, max_density, density_increase, min_noise, max_noise, noise_increase;
@@ -112,7 +112,7 @@ public class OffLatticeSimulation {
                     simulationsPolarizationsList = new ArrayList<>();
 
                     L = (int) Math.sqrt(n/density);
-
+                    r = new Random(seed);
                     for(int simulations = 0; simulations < numberOfSimulations; simulations++) {
 
                         // Count iterations
@@ -124,7 +124,7 @@ public class OffLatticeSimulation {
                         }
 
                         // Sets seed
-//                        r = new Random(seed);
+//
 
                         particles = VelocityParticlesGenerator.generateRandom(n, L, 0., config.getSpeed(), r);
                         frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), L, noise, config.getFrames(), r);

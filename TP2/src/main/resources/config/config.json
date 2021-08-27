@@ -9,9 +9,9 @@
   "noise_amplitude": 0.2,
   "polarization": {
     "activated": true,
-    "number_of_simulations": 2,
-    "number_of_particles_range": [10, 60],
-    "number_of_particles_increase": 20,
+    "number_of_simulations": 4,
+    "number_of_particles_range": [100, 500],
+    "number_of_particles_increase": 100,
     "density_range": [0.1, 1],
     "density_increase": 0.1,
     "noise_range": [0, 1.5],

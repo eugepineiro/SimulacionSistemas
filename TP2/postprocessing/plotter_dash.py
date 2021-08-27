@@ -162,6 +162,53 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
 
     return fig 
 
+def get_polarization_by_noise_with_multiple_n_figure(results, n_array, density, steady_state):
+
+    figure_data = []
+
+    for n in n_array: 
+        
+        valid_polarizations = get_polarization_by('density', density, 'n', n, results)  
+        polarizations = []
+        noises = []
+        
+        polarizations, noises = get_polarization_with_steady_state(valid_polarizations, steady_state, 'noise')
+
+        figure_data.append((polarizations, noises))
+    
+    fig = go.Figure() 
+
+    colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
+
+    for fig_idx in range(len(figure_data)): 
+        
+        polarizations, noises = figure_data[fig_idx]
+        #for i in range(len(noises)):
+
+            #fig.add_trace(go.Box(
+            #    name=f'{noises[i]:.2f}', 
+            #    y=polarizations[i],
+            #    fillcolor=colors[fig_idx % len(colors)]
+            #)) 
+
+        fig.add_trace(go.Scatter(
+            x=noises, 
+            y=polarizations,
+            fillcolor=colors[fig_idx % len(colors)]
+        )) 
+
+    fig.update_layout(
+        title="Polarization By Noise With Multiple N",
+        xaxis_title="Noise",
+        yaxis_title="Polarization", 
+        legend_title=f"<b>References</b><br>Density: {density:.2f}",
+    )
+
+    return fig
+
+
+
+
 def get_all_combinations(results, attrs):
     attributes = set(attrs)
     combinations = set()
@@ -225,6 +272,7 @@ def plot_results(results):
     # polarization_by_frame_fig = get_polarization_by_frame_figure(results, 0.1, 30)              # DENSITY - NUMBER OF PARTICLES 
     # polarization_by_density_fig = get_polarization_by_density_figure(results, 0.3, 30, 100)     # NOISE - NUMBER OF PARTICLES - STEADY STATE
     # polarization_by_noise_fig = get_polarization_by_noise_figure(results,  0.1, 30, 100)        # DENSITY - NUMBER OF PARTCILES - STEADY STATE
+    polarization_by_noise_with_multiple_n_fig = get_polarization_by_noise_with_multiple_n_figure(results, [100, 200, 300, 400], 0.5, 1200)
 
     density_n_combinations_options = get_all_combinations(results, ['density', 'n'])
     noise_n_combinations_options = get_all_combinations(results, ['noise', 'n'])
@@ -390,7 +438,32 @@ def plot_results(results):
                         ),
 
                     ]
-                )
+                ), 
+                html.Div(
+                    children=[
+
+                        ### Graph
+
+                        html.Div(
+                            children=[
+                                html.P(
+                                    children='',
+                                    className="figure-title"
+                                ),
+                                html.Span(
+                                    children=[
+                                        dcc.Graph(
+                                            id='polarization_by_noise_with_multiple_n',
+                                            figure=polarization_by_noise_with_multiple_n_fig
+                                        ),  
+                                    ],
+                                    className='card'
+                                ),
+                            ],
+                            className='wrapper',
+                        )
+                    ]
+                ),
                 
             ],
             style={
@@ -416,7 +489,7 @@ def plot_results(results):
     def update_polarization_by_density_graph(selected_value):
         (noise, n) = make_tuple(selected_value)
 
-        return get_polarization_by_density_figure(results, noise, n, 100)
+        return get_polarization_by_density_figure(results, noise, n, 1000)
 
     @app.callback(
         Output('polarization_by_noise', 'figure'), 
@@ -425,7 +498,7 @@ def plot_results(results):
     def update_polarization_by_noise_graph(selected_value):
         (density, n) = make_tuple(selected_value)
 
-        return get_polarization_by_noise_figure(results, density, n, 100)
+        return get_polarization_by_noise_figure(results, density, n, 1000)
 
     app.layout = serve_layout
 

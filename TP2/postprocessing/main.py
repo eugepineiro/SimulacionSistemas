@@ -42,10 +42,10 @@ for noise, n in zip(noise_array, number_of_particles_array):
     pairs_noise_n.add((noise,n))
     
 print("Plotting Polarization by Frame, by Density and by Noise:\n")
-print("Posible pairs Density-Number Of Particles")
+print("Possible pairs Density-Number Of Particles")
 print(pairs_d_n)
 
-print("\nPosible pairs Noise-Number Of Particles")
+print("\nPossible pairs Noise-Number Of Particles")
 print(pairs_noise_n)
 
 print("... Plotting ...")
