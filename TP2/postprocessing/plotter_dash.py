@@ -121,18 +121,34 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
 
     fig = go.Figure()
 
-    for i in range(len(densities)):
+    pnp = np.array(polarizations)
+    mean = np.mean(pnp, axis=1)
+    std = np.std(pnp, axis=1)
 
-        fig.add_trace(go.Box(
-            name=f'{densities[i]:.2f}', 
-            y=polarizations[i] #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
-        )) 
+    fig.add_trace(go.Scatter(
+        x=densities, 
+        y=mean,
+        mode='lines+markers',
+        # name=f'Noise = {noise:.2f}, N = {n}',
+        error_y=dict(
+            type='data',
+            symmetric=True,
+            array=std
+        )
+    )) 
+
+    # for i in range(len(densities)):
+
+    #     fig.add_trace(go.Box(
+    #         name=f'{densities[i]:.2f}', 
+    #         y=polarizations[i] #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
+    #     )) 
 
     fig.update_layout(
-    title="Polarization By Density",
-    xaxis_title="Density",
-    yaxis_title="Polarization", 
-    legend_title=f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>",
+        title="Polarization By Density",
+        xaxis_title="Density",
+        yaxis_title="Polarization", 
+        legend_title=f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>",
     )
     
     return fig
@@ -146,12 +162,29 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
     polarizations, noises = get_polarization_with_steady_state(valid_polarizations, steady_state, 'noise')
 
     fig = go.Figure() 
-    for i in range(len(noises)):
 
-        fig.add_trace(go.Box(
-            name=f'{noises[i]:.2f}', 
-            y=polarizations[i] #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
-        )) 
+    pnp = np.array(polarizations)
+    mean = np.mean(pnp, axis=1)
+    std = np.std(pnp, axis=1)
+
+    fig.add_trace(go.Scatter(
+        x=noises, 
+        y=mean,
+        mode='lines+markers',
+        # name=f'Noise = {noise:.2f}, N = {n}',
+        error_y=dict(
+            type='data',
+            symmetric=True,
+            array=std
+        )
+    )) 
+
+    # for i in range(len(noises)):
+
+    #     fig.add_trace(go.Box(
+    #         name=f'{noises[i]:.2f}', 
+    #         y=polarizations[i] #[[1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8]]
+    #     )) 
 
     fig.update_layout(
     title="Polarization By Noise",
@@ -183,18 +216,28 @@ def get_polarization_by_noise_with_multiple_n_figure(results, n_array, density, 
     for fig_idx in range(len(figure_data)): 
         
         polarizations, noises = figure_data[fig_idx]
-        #for i in range(len(noises)):
+        # for i in range(len(noises)):
 
-            #fig.add_trace(go.Box(
-            #    name=f'{noises[i]:.2f}', 
-            #    y=polarizations[i],
-            #    fillcolor=colors[fig_idx % len(colors)]
-            #)) 
+        #     fig.add_trace(go.Box(
+        #        name=f'{noises[i]:.2f}', 
+        #        y=polarizations[i],
+        #        fillcolor=colors[fig_idx % len(colors)]
+        #     )) 
+
+        pnp = np.array(polarizations)
+        mean = np.mean(pnp, axis=1)
+        std = np.std(pnp, axis=1)
 
         fig.add_trace(go.Scatter(
             x=noises, 
-            y=polarizations,
-            fillcolor=colors[fig_idx % len(colors)]
+            y=mean,
+            name=f'N = {n_array[fig_idx]}',
+            fillcolor=colors[fig_idx % len(colors)],
+            error_y=dict(
+                type='data',
+                symmetric=True,
+                array=std
+            )
         )) 
 
     fig.update_layout(
