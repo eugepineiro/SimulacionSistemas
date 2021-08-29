@@ -13,6 +13,9 @@
 # Python
 **/__pycache__/
 
+# vscode
+.vscode/
+
 # Ovito
 **/ovito/
 
