@@ -85,10 +85,42 @@ def get_polarization_by_frame_figure(results, density, n):
         )
 
     fig.update_layout(
-    title="Polarization By Frame",
+    title="Polarization By Frame (Noise)",
     xaxis_title="Frame",
     yaxis_title="Polarization", 
     legend_title={"text": f"<b>References</b><br>Density: {density:.2f}<br>Number of Particles: {n}<br>"},
+    font=dict(
+        #family="Courier New, monospace",
+        #size=18,
+        #color="RebeccaPurple"
+        )
+    )
+
+    return fig
+
+def get_polarization_by_frame_density_figure(results, noise, n):
+    polarization_array, noise_array = get_polarization_by_frame('noise', noise, 'n', n, results, 'noise')
+    if len(polarization_array) > 0:
+        frames = np.arange(len(polarization_array[0]))
+    else: 
+        raise ValueError(f"There is no polarization with noise {noise:.2f} and number of particles {n}\n")
+    
+    fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
+    for i in range(len(polarization_array)): 
+        
+        fig.add_trace(go.Scatter(
+            x=frames, 
+            y=polarization_array[i], 
+            mode='lines+markers', 
+            name=f'density = {noise_array[i]:.2f}'
+            )
+        )
+
+    fig.update_layout(
+    title="Polarization By Frame (Density)",
+    xaxis_title="Frame",
+    yaxis_title="Polarization", 
+    legend_title={"text": f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>"},
     font=dict(
         #family="Courier New, monospace",
         #size=18,
@@ -154,7 +186,7 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
         title="Polarization By Density",
         xaxis_title="Density",
         yaxis_title="Polarization", 
-        legend_title=f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>",
+        legend_title=f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>Steady state since: {steady_state}<br>",
     )
 
     fig['data'][0]['showlegend']=True
@@ -198,7 +230,7 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
     title="Polarization By Noise",
     xaxis_title="Noise",
     yaxis_title="Polarization", 
-    legend_title=f"<b>References</b><br>Density: {density:.2f}<br>Number of Particles: {n}<br>",
+    legend_title=f"<b>References</b><br>Density: {density:.2f}<br>Number of Particles: {n}<br>Steady state since: {steady_state}<br>",
     )
 
     fig['data'][0]['showlegend']=True
@@ -254,7 +286,7 @@ def get_polarization_by_noise_with_multiple_n_figure(results, n_array, density, 
         title="Polarization By Noise With Multiple N",
         xaxis_title="Noise",
         yaxis_title="Polarization", 
-        legend_title=f"<b>References</b><br>Density: {density:.2f}",
+        legend_title=f"<b>References</b><br>Density: {density:.2f}<br>Steady state since: {steady_state}<br>",
     )
 
     return fig
@@ -354,7 +386,7 @@ def plot_results(results):
 
                 # Graphs
 
-                ## Polarization By Frame
+                ## Polarization By Frame (Noise)
 
                 html.Div(
                     children=[
@@ -390,6 +422,52 @@ def plot_results(results):
                                         dcc.Graph(
                                             id='polarization_by_frame',
                                             # figure=polarization_by_frame_fig
+                                        )
+                                    ],
+                                    className='card'
+                                ),
+                            ],
+                            className='wrapper',
+                        ),
+                    ]
+                ),
+
+                ## Polarization By Density
+
+                html.Div(
+                    children=[
+
+                        ### Dropdown
+
+                        html.Div(
+                            children=[
+                                dcc.Dropdown(
+                                    id='polarization_by_frame_density_dropdown', 
+                                    options=noise_n_combinations_options,
+                                    value = noise_n_combinations_options[0]['value']
+                                ),
+                            ],
+                            style={
+                                "width": "300px",
+                                "text-align": "center",
+                                "margin-left": "auto",
+                                "margin-right": "100px"
+                            }
+                        ),
+
+                        ### Graph
+
+                        html.Div(
+                            children=[
+                                html.P(
+                                    children='',
+                                    className="figure-title"
+                                ),
+                                html.Div(
+                                    children=[
+                                        dcc.Graph(
+                                            id='polarization_by_frame_density',
+                                            # figure=polarization_by_frame_density_fig
                                         )
                                     ],
                                     className='card'
@@ -600,6 +678,15 @@ def plot_results(results):
         (density, n) = make_tuple(selected_value)
 
         return get_polarization_by_frame_figure(results, density, n)
+
+    @app.callback(
+        Output('polarization_by_frame_density', 'figure'), 
+        [Input('polarization_by_frame_density_dropdown', 'value')]
+    )
+    def update_polarization_by_frame_graph(selected_value):
+        (noise, n) = make_tuple(selected_value)
+
+        return get_polarization_by_frame_density_figure(results, noise, n)
 
     @app.callback(
         Output('polarization_by_density', 'figure'), 
