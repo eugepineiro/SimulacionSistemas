@@ -2,15 +2,21 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from dash_html_components.P import P
 from numpy.core.fromnumeric import sort
 import plotly.express as px
 import plotly.graph_objects as go
+import dash_daq as daq
 
 import pandas as pd
 import numpy as np
 
 from functools import cmp_to_key
 from ast import literal_eval as make_tuple
+
+# Constants
+
+STARTING_AVERAGING_SINCE = 1200
 
 # source: https://dash.plotly.com/layout
 
@@ -315,12 +321,12 @@ def plot_results(results):
     # polarization_by_frame_fig = get_polarization_by_frame_figure(results, 0.1, 30)              # DENSITY - NUMBER OF PARTICLES 
     # polarization_by_density_fig = get_polarization_by_density_figure(results, 0.3, 30, 100)     # NOISE - NUMBER OF PARTICLES - STEADY STATE
     # polarization_by_noise_fig = get_polarization_by_noise_figure(results,  0.1, 30, 100)        # DENSITY - NUMBER OF PARTCILES - STEADY STATE
-    polarization_by_noise_with_multiple_n_fig = get_polarization_by_noise_with_multiple_n_figure(results, [100, 200, 300, 400], 0.5, 1200)
+    # polarization_by_noise_with_multiple_n_fig = get_polarization_by_noise_with_multiple_n_figure(results, [100, 200, 300, 400], 0.5, 1200)
 
     density_n_combinations_options = get_all_combinations(results, ['density', 'n'])
     noise_n_combinations_options = get_all_combinations(results, ['noise', 'n'])
-
-    print(density_n_combinations_options)
+    density_options = get_all_combinations(results, ['density'])
+    frames_per_simulation = len(results[0]['polarization'][0])
 
     def serve_layout():
         return html.Div(
@@ -395,10 +401,26 @@ def plot_results(results):
                 html.Div(
                     children=[
 
-                        ### Dropdown
+                        ### Options
 
                         html.Div(
                             children=[
+                                html.Div(
+                                    children=[
+                                        html.P(
+                                            children='Averaging since Frame Nº'
+                                        ),
+                                        daq.NumericInput(
+                                            id='polarization_by_density_averaging_since',
+                                            min=0,
+                                            max=frames_per_simulation,
+                                            value=STARTING_AVERAGING_SINCE
+                                        )
+                                    ],
+                                    style={
+                                        "margin-bottom": "20px"
+                                    }
+                                ),
                                 dcc.Dropdown(
                                     id='polarization_by_density_dropdown', 
                                     options=noise_n_combinations_options,
@@ -441,10 +463,26 @@ def plot_results(results):
                 html.Div(
                     children=[
 
-                        ### Dropdown
+                        ### Options
 
                         html.Div(
                             children=[
+                                html.Div(
+                                    children=[
+                                        html.P(
+                                            children='Averaging since Frame Nº'
+                                        ),
+                                        daq.NumericInput(
+                                            id='polarization_by_noise_averaging_since',
+                                            min=0,
+                                            max=frames_per_simulation,
+                                            value=STARTING_AVERAGING_SINCE
+                                        )
+                                    ],
+                                    style={
+                                        "margin-bottom": "20px"
+                                    }
+                                ),
                                 dcc.Dropdown(
                                     id='polarization_by_noise_dropdown', 
                                     options=density_n_combinations_options,
@@ -485,6 +523,40 @@ def plot_results(results):
                 html.Div(
                     children=[
 
+                        ### Options
+
+                        html.Div(
+                            children=[
+                                html.Div(
+                                    children=[
+                                        html.P(
+                                            children='Averaging since Frame Nº'
+                                        ),
+                                        daq.NumericInput(
+                                            id='polarization_by_noise_with_multiple_n_averaging_since',
+                                            min=0,
+                                            max=frames_per_simulation,
+                                            value=STARTING_AVERAGING_SINCE
+                                        ),
+                                    ],
+                                    style={
+                                        "margin-bottom": "20px"
+                                    }
+                                ),
+                                dcc.Dropdown(
+                                    id='polarization_by_noise_with_multiple_n_dropdown', 
+                                    options=density_options,
+                                    value = density_options[0]['value']
+                                ),
+                            ],
+                            style={
+                                "width": "300px",
+                                "text-align": "center",
+                                "margin-left": "auto",
+                                "margin-right": "100px"
+                            }
+                        ),
+
                         ### Graph
 
                         html.Div(
@@ -497,7 +569,7 @@ def plot_results(results):
                                     children=[
                                         dcc.Graph(
                                             id='polarization_by_noise_with_multiple_n',
-                                            figure=polarization_by_noise_with_multiple_n_fig
+                                            # figure=polarization_by_noise_with_multiple_n_fig
                                         ),  
                                     ],
                                     className='card'
@@ -527,21 +599,42 @@ def plot_results(results):
 
     @app.callback(
         Output('polarization_by_density', 'figure'), 
-        [Input('polarization_by_density_dropdown', 'value')]
+        [
+            Input('polarization_by_density_dropdown', 'value'),
+            Input('polarization_by_density_averaging_since', 'value')
+        ]
     )
-    def update_polarization_by_density_graph(selected_value):
+    def update_polarization_by_density_graph(selected_value, averaging_since_value):
         (noise, n) = make_tuple(selected_value)
 
-        return get_polarization_by_density_figure(results, noise, n, 1000)
+        return get_polarization_by_density_figure(results, noise, n, averaging_since_value)
 
     @app.callback(
         Output('polarization_by_noise', 'figure'), 
-        [Input('polarization_by_noise_dropdown', 'value')]
+        [
+            Input('polarization_by_noise_dropdown', 'value'),
+            Input('polarization_by_noise_averaging_since', 'value')
+        ]
     )
-    def update_polarization_by_noise_graph(selected_value):
+    def update_polarization_by_noise_graph(selected_value, averaging_since_value):
         (density, n) = make_tuple(selected_value)
 
-        return get_polarization_by_noise_figure(results, density, n, 1000)
+        return get_polarization_by_noise_figure(results, density, n, averaging_since_value)
+
+    @app.callback(
+        Output('polarization_by_noise_with_multiple_n', 'figure'), 
+        [
+            Input('polarization_by_noise_with_multiple_n_dropdown', 'value'),
+            Input('polarization_by_noise_with_multiple_n_averaging_since', 'value')
+        ]
+    )
+    def update_polarization_by_noise_with_multiple_n_graph(selected_value, averaging_since_value):
+        (density, ) = make_tuple(selected_value)
+        print(averaging_since_value)
+        Ns = list(filter(lambda a: make_tuple(a['value'])[0] == density, density_n_combinations_options))
+        Ns = list(map(lambda a: make_tuple(a['value'])[1], Ns))
+
+        return get_polarization_by_noise_with_multiple_n_figure(results, Ns, density, averaging_since_value)
 
     app.layout = serve_layout
 
