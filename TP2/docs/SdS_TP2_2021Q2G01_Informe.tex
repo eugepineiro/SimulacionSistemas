@@ -13,9 +13,9 @@
 \graphicspath{ {images/} }
 
 \title{%
-Simulación de Sistemas\\
+\textbf{Simulación de Sistemas}\\
 Trabajo Práctico 2: Autómata Celular Off-Lattice \\
-\large Bandadas de Agentes Autopropulsados
+\large \emph{Bandadas de Agentes Autopropulsados}
 }
 
 \author{Piñeiro, Eugenia Sol - 59449\\
@@ -63,7 +63,7 @@ donde $\Delta \theta  \epsilon  [-\frac{\eta}{2}; \frac{\eta}{2}]$ es el ruido a
 \section{Implementación}
 La implementación del algoritmo \emph{Off-Lattice} se desarrolló en el lenguaje de programación \emph{Java}\\
 
-El flujo principal del programa consiste en diversos pasos. En primer lugar, se obtienen los parámetros de configuración para iniciar la Simulación.\\
+El flujo principal del programa (ver Figura 1) consiste en diversos pasos. En primer lugar, se obtienen los parámetros de configuración para iniciar la Simulación.\\
 
 Luego, se generan partículas de forma aleatoria y se van actualizando tanto sus posiciones como sus ángulos con el algoritmo del autómata. \\
 
@@ -75,7 +75,7 @@ Por último, se guardan los resultados en distintos archivos que serán utilizad
 \caption{Diagrama de Flujo}
 \end{figure}
 
-En cuanto a la implementación de la Simulación, se cuenta con distintas clases en Java. La clase que implementa el flujo principal (main) es \emph{OffLatticeSimulation}. Las partículas se modelaron con la clase \emph{VelocityPaticle}, que extiende de una clase \emph{Particle} y cuenta con su posición, ángulo y rapidez. Las mismas se generan a partir de la clase \emph{VelocityPartcileGenerator}.\\
+En cuanto a la implementación de la Simulación, se cuenta con distintas clases en Java (ver Figura 2). La clase que implementa el flujo principal (main) es \emph{OffLatticeSimulation}. Las partículas se modelaron con la clase \emph{VelocityPaticle}, que extiende de una clase \emph{Particle} y cuenta con su posición, ángulo y rapidez. Las mismas se generan a partir de la clase \emph{VelocityPartcileGenerator}.\\
 
 Para calcular la polarización de las mismas se cuenta con la clase \emph{Polarization}. El algoritmo del autómata se implementó en la clase \emph{OffLattice} que hace uso de las mencionadas anteriormente.\\  
 

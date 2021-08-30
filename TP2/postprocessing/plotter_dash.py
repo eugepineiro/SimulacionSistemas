@@ -85,10 +85,10 @@ def get_polarization_by_frame_figure(results, density, n):
         )
 
     fig.update_layout(
-    title="Polarization By Frame (Noise)",
-    xaxis_title="Frame",
-    yaxis_title="Polarization", 
-    legend_title={"text": f"<b>References</b><br>Density: {density:.2f}<br>Number of Particles: {n}<br>"},
+    title="Polarización en función del Tiempo para múltiples Ruidos",
+    xaxis_title="Tiempo",
+    yaxis_title="Polarización", 
+    legend_title={"text": f"<b>Referencias</b><br>Densidad: {density:.2f}<br>Número de Partículas: {n}<br>"},
     font=dict(
         #family="Courier New, monospace",
         #size=18,
@@ -117,10 +117,10 @@ def get_polarization_by_frame_density_figure(results, noise, n):
         )
 
     fig.update_layout(
-    title="Polarization By Frame (Density)",
-    xaxis_title="Frame",
-    yaxis_title="Polarization", 
-    legend_title={"text": f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>"},
+    title="Polarización en función del Tiempo para múltiples Densidades)",
+    xaxis_title="Tiempo",
+    yaxis_title="Polarización", 
+    legend_title={"text": f"<b>Referencias</b><br>Ruido: {noise:.2f}<br>Número de Partículas: {n}<br>"},
     font=dict(
         #family="Courier New, monospace",
         #size=18,
@@ -183,10 +183,10 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
     #     )) 
 
     fig.update_layout(
-        title="Polarization By Density",
-        xaxis_title="Density",
-        yaxis_title="Polarization", 
-        legend_title=f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>Steady state since: {steady_state}<br>",
+        title="Polarización en función de la Densidad",
+        xaxis_title="Densidad",
+        yaxis_title="Polarización", 
+        legend_title=f"<b>References</b><br>Ruido: {noise:.2f}<br>Número de Partículas: {n}<br>Reǵimen Estacionario: {steady_state}<br>",
     )
 
     fig['data'][0]['showlegend']=True
@@ -227,10 +227,10 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
     #     )) 
 
     fig.update_layout(
-    title="Polarization By Noise",
-    xaxis_title="Noise",
-    yaxis_title="Polarization", 
-    legend_title=f"<b>References</b><br>Density: {density:.2f}<br>Number of Particles: {n}<br>Steady state since: {steady_state}<br>",
+    title="Polarización en función del Ruido",
+    xaxis_title="Ruido",
+    yaxis_title="Polarización", 
+    legend_title=f"<b>Referencias</b><br>Densidad: {density:.2f}<br>Número de Partículas: {n}<br>Reǵimen Estacionario: {steady_state}<br>",
     )
 
     fig['data'][0]['showlegend']=True
@@ -283,10 +283,10 @@ def get_polarization_by_noise_with_multiple_n_figure(results, n_array, density, 
         )) 
 
     fig.update_layout(
-        title="Polarization By Noise With Multiple N",
-        xaxis_title="Noise",
-        yaxis_title="Polarization", 
-        legend_title=f"<b>References</b><br>Density: {density:.2f}<br>Steady state since: {steady_state}<br>",
+        title="Polarización en función del Ruido para múltiples N",
+        xaxis_title="Ruido",
+        yaxis_title="Polarización", 
+        legend_title=f"<b>Referencias</b><br>Densidad: {density:.2f}<br>Régimen Estacionario: {steady_state}<br>",
     )
 
     return fig

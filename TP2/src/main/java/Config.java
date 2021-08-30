@@ -6,6 +6,7 @@ public class Config {
     private Long seed;
     private Integer m_grid_dimension;
     private Double r_interaction_radius;
+    private Integer n_number_of_particles;
     private Integer l_grid_side;
     private Integer frames;
     private Double density;
@@ -35,6 +36,14 @@ public class Config {
 
     public void setR_interaction_radius(Double r_interaction_radius) {
         this.r_interaction_radius = r_interaction_radius;
+    }
+
+    public Integer getN_number_of_particles() {
+        return n_number_of_particles;
+    }
+
+    public void setN_number_of_particles(Integer n_number_of_particles) {
+        this.n_number_of_particles = n_number_of_particles;
     }
 
     public Integer getL_grid_side() {
