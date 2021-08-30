@@ -8,7 +8,7 @@ with open("../src/main/resources/config/config.json") as f:
 
 interaction_radius = config["r_interaction_radius"] 
 M_grid_size = config["m_grid_dimension"]
-L_grid_side = config["l_grid_side"]
+# L_grid_side = config["l_grid_side"]
 density = config["density"]
 speed = config["speed"]
 noise = config["noise_amplitude"]

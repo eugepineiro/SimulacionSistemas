@@ -80,7 +80,7 @@ def get_polarization_by_frame_figure(results, density, n):
             x=frames, 
             y=polarization_array[i], 
             mode='lines+markers', 
-            name=f'noise = {noise_array[i]:.2f}'
+            name=f'Ruido = {noise_array[i]:.2f}'
             )
         )
 
@@ -112,7 +112,7 @@ def get_polarization_by_frame_density_figure(results, noise, n):
             x=frames, 
             y=polarization_array[i], 
             mode='lines+markers', 
-            name=f'density = {noise_array[i]:.2f}'
+            name=f'Densidad = {noise_array[i]:.2f}'
             )
         )
 
@@ -167,7 +167,7 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
         x=densities, 
         y=mean,
         mode='lines+markers',
-        name=f'Density',
+        name=f'Densidad',
         error_y=dict(
             type='data',
             symmetric=True,
@@ -186,7 +186,7 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
         title="Polarización en función de la Densidad",
         xaxis_title="Densidad",
         yaxis_title="Polarización", 
-        legend_title=f"<b>References</b><br>Ruido: {noise:.2f}<br>Número de Partículas: {n}<br>Reǵimen Estacionario: {steady_state}<br>",
+        legend_title=f"<b>Referencias</b><br>Ruido: {noise:.2f}<br>Número de Partículas: {n}<br>Reǵimen Estacionario: {steady_state}<br>",
     )
 
     fig['data'][0]['showlegend']=True
@@ -211,7 +211,7 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
         x=noises, 
         y=mean,
         mode='lines+markers',
-        name='Noise',
+        name='Ruido',
         error_y=dict(
             type='data',
             symmetric=True,
