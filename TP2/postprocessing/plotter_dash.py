@@ -135,7 +135,7 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
         x=densities, 
         y=mean,
         mode='lines+markers',
-        # name=f'Noise = {noise:.2f}, N = {n}',
+        name=f'Density',
         error_y=dict(
             type='data',
             symmetric=True,
@@ -156,6 +156,8 @@ def get_polarization_by_density_figure(results, noise, n, steady_state):
         yaxis_title="Polarization", 
         legend_title=f"<b>References</b><br>Noise: {noise:.2f}<br>Number of Particles: {n}<br>",
     )
+
+    fig['data'][0]['showlegend']=True
     
     return fig
 
@@ -177,7 +179,7 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
         x=noises, 
         y=mean,
         mode='lines+markers',
-        # name=f'Noise = {noise:.2f}, N = {n}',
+        name='Noise',
         error_y=dict(
             type='data',
             symmetric=True,
@@ -198,6 +200,8 @@ def get_polarization_by_noise_figure(results, density, n, steady_state):
     yaxis_title="Polarization", 
     legend_title=f"<b>References</b><br>Density: {density:.2f}<br>Number of Particles: {n}<br>",
     )
+
+    fig['data'][0]['showlegend']=True
 
     return fig 
 
