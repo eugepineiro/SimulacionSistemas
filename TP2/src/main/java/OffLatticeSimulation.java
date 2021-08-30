@@ -57,6 +57,8 @@ public class OffLatticeSimulation {
                 throw new IllegalArgumentException("L/M > rc");
             }
 
+            System.out.println(" l " + l_grid_side);
+
             List<VelocityParticle> particles = VelocityParticlesGenerator.generateRandom(numberOfParticles, l_grid_side, 0., config.getSpeed(), r);
 
             List<List<VelocityParticle>> frames;
