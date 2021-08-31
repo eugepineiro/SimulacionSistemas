@@ -1,12 +1,12 @@
 {
-  "seed": 0,
-  "m_grid_dimension": 4,
+  "seed": 400,
+  "m_grid_dimension": 9,
   "r_interaction_radius": 1,
   "n_number_of_particles": 300,
   "frames": 2000,
-  "l_grid_side": 5,
+  "density": 3,
   "speed": 0.03,
-  "noise_amplitude": 0.1,
+  "noise_amplitude": 0.8,
   "polarization": {
     "activated": false,
     "number_of_simulations": 4,
