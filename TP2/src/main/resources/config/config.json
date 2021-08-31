@@ -1,20 +1,20 @@
 {
-  "seed": 0,
-  "m_grid_dimension": 4,
+  "seed": 400,
+  "m_grid_dimension": 10,
   "r_interaction_radius": 1,
   "n_number_of_particles": 300,
   "frames": 2000,
-  "l_grid_side": 5,
+  "l_grid_side": 10,
   "speed": 0.03,
   "noise_amplitude": 0.1,
   "polarization": {
-    "activated": false,
-    "number_of_simulations": 4,
-    "number_of_particles_range": [100, 500],
-    "number_of_particles_increase": 100,
-    "density_range": [0.1, 1],
-    "density_increase": 0.1,
-    "noise_range": [0, 1.5],
+    "activated": true,
+    "number_of_simulations": 10,
+    "number_of_particles_range": [300, 301],
+    "number_of_particles_increase": 10,
+    "density_range": [0.25, 6.1],
+    "density_increase": 0.25,
+    "noise_range": [0.8, 0.9],
     "noise_increase": 0.3
   }
 }

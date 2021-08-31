@@ -99,7 +99,7 @@ def get_polarization_by_frame_figure(results, density, n):
     return fig
 
 def get_polarization_by_frame_density_figure(results, noise, n):
-    polarization_array, noise_array = get_polarization_by_frame('noise', noise, 'n', n, results, 'noise')
+    polarization_array, density_array = get_polarization_by_frame('noise', noise, 'n', n, results, 'density')
     if len(polarization_array) > 0:
         frames = np.arange(len(polarization_array[0]))
     else: 
@@ -112,12 +112,12 @@ def get_polarization_by_frame_density_figure(results, noise, n):
             x=frames, 
             y=polarization_array[i], 
             mode='lines+markers', 
-            name=f'Densidad = {noise_array[i]:.2f}'
+            name=f'Densidad = {density_array[i]:.2f}'
             )
         )
 
     fig.update_layout(
-    title="Polarización en función del Tiempo para múltiples Densidades)",
+    title="Polarización en función del Tiempo para múltiples Densidades",
     xaxis_title="Tiempo",
     yaxis_title="Polarización", 
     legend_title={"text": f"<b>Referencias</b><br>Ruido: {noise:.2f}<br>Número de Partículas: {n}<br>"},
@@ -721,7 +721,6 @@ def plot_results(results):
     )
     def update_polarization_by_noise_with_multiple_n_graph(selected_value, averaging_since_value):
         (density, ) = make_tuple(selected_value)
-        print(averaging_since_value)
         Ns = list(filter(lambda a: make_tuple(a['value'])[0] == density, density_n_combinations_options))
         Ns = list(map(lambda a: make_tuple(a['value'])[1], Ns))
 

@@ -112,6 +112,7 @@ public class OffLatticeSimulation {
         List<Double> framedPolarizations;
         List<PostProcessing> postProcessingList = new ArrayList<>();
         int L;
+        int M = config.getM_grid_dimension();
 
         int it = 0, totalIterations = ((int) Math.ceil(1.0 * (max_n - min_n)/n_increase)) * ((int) Math.ceil((max_density - min_density)/density_increase)) * ((int) Math.ceil((max_noise - min_noise)/noise_increase)) * numberOfSimulations;
 
@@ -133,15 +134,15 @@ public class OffLatticeSimulation {
                         it++;
                         printLoadingBar(1.0 * it / totalIterations);
 
-                        if (1.0 * L / config.getM_grid_dimension() <= config.getR_interaction_radius() ) {
-                            continue;
+                        if (1.0 * L / M <= config.getR_interaction_radius() ) {
+                            M = (int) ((1.0 * L / config.getR_interaction_radius()) - 0.1);
                         }
 
                         // Sets seed
 //
 
                         particles = VelocityParticlesGenerator.generateRandom(n, L, 0., config.getSpeed(), r);
-                        frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), L, noise, config.getFrames(), r);
+                        frames = OffLattice.simulate(particles, config.getR_interaction_radius(), M, L, noise, config.getFrames(), r);
 
                         // Calculate polarization
                         framedPolarizations = calculatePolarization(frames, config.getSpeed());
