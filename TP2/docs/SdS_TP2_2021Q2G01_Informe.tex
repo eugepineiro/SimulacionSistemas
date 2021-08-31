@@ -89,11 +89,13 @@ A su vez, se cuenta con las clases para obtener los parámetros de configuració
 \caption{Diagrama UML}
 \end{figure}
 
-A continuación se presentan los pseudocódigos correspondientes al flujo principal del programa y al algoritmo \emph{Off-Lattice}:
+En el pseudocódigo correspondiente al flujo principal del programa (ver Algoritmo 1) se puede notar que se sigue el flujo mencionado previamente, en el cual se llama a la función \emph{readValues()} para obtener la configuración del sistema, luego se generan partículas de forma aleatoria invocando la función \emph{generateRandom()}, se llama al autómata Off-Lattice y por último se guardan los resultados en los archivos correspondientes.\\
+
+En cuanto a la implementación del autómata (ver Algoritmo 2) cabe destacar que por cada pasa de tiempo (frame), en la línea 3 del pseudocódigo, se buscan los vecinos de las partículas a través del \emph{Cell Index Method} [1]. Luego, se actualizan el ángulo y la posición de cada partícula utilizando las ecuaciones de Evolución Temporal (1) (2) y (3). 
 
 \pagebreak
 \begin{algorithm}
-    \caption{OffLattice Simulation Main}\label{main}
+    \caption{Off-Lattice Simulation Main}\label{main}
     \begin{algorithmic}[1]
     \Procedure{main}{}
     \State $\textit{config} \gets \text{mapper.readValues()}$
@@ -103,9 +105,12 @@ A continuación se presentan los pseudocódigos correspondientes al flujo princi
     \EndProcedure
     \end{algorithmic}
 \end{algorithm}
+\begin{center}
+Algoritmo 1. Flujo Principal del Programa
+\end{center}
 
 \begin{algorithm}
-    \caption{OffLattice Algorithm}\label{offLattice}
+    \caption{Off-Lattice Algorithm}\label{offLattice}
     \begin{algorithmic}[1]
     \Procedure{simulate}{}
     \BState \emph{\textbf{for} frame in frames}:
@@ -117,15 +122,45 @@ A continuación se presentan los pseudocódigos correspondientes al flujo princi
     \EndProcedure
     \end{algorithmic}
 \end{algorithm}
+\begin{center}
+Algoritmo 2. Algoritmo del Autómata Off-Lattice
+\end{center}
 
 \section{Simulaciones}
 
-\subsection{Parámetros}
+El esquema del sistema (ver Figura 3) consta de una grilla cuyo lado tiene longitud \emph{L}, en la cual interactúan partículas con velocidad constante \emph{v} e interactúan dentro un radio \emph{r}.
+
+\begin{figure}[h]
+\includegraphics[scale=0.42]{esquema.png}
+\centering 
+\caption{Esquema del Sistema}
+\end{figure}
+
+Para realizar las simulaciones se utilizaron los siguientes parámentros: 
+\begin{itemize}
+    \item radio de interacción entre partículas \emph{r = 1}
+    \item velocidad absoluta de las partículas \emph{v = 0.03}
+    \item amplitud del ruido \emph{$\eta$ $\epsilon$ [0; 2$\pi$]} 
+    \item lado de la grila L (Variable) 
+    \item cantidad de partículas N (Variable)
+    \item densidad $\rho = \frac{N}{L^2}$
+    \item cantidad de pasos \emph{frames} = 2000  
+    \item dimensión de la grilla MxM (Variable). En particular, este parámetro se utiliza en el \emph{Cell Index Method} para calcular los vecinos teniendo en cuenta condiciones de de contorno periódicas [1]
+\end{itemize}
+
+En cada simulación se observó la polarización del sistema, la cual se define con la siguiente ecuación: 
+\begin{equation}
+    \label{eq:polarization}
+     v_a = \frac{1}{Nv} \left\lvert \sum_{i = 1}^{N} v_i \right\rvert
+\end{equation}\\
+
+Si la polarización tiende a cero, las partículas se encuentran en total desorden, mientras que si la polarización tiende a uno se dice que las partículas están polarizadas.    
 
 \section{Resultados}
 
 \subsection{Análisis del Ruido}
 
+\pagebreak
 \begin{figure}[h]
 \includegraphics[scale=0.3]{noise_N300d06n02.png}
 \centering 
@@ -138,6 +173,7 @@ A continuación se presentan los pseudocódigos correspondientes al flujo princi
 \caption{Capturas de los frames 0, 600 y 1200 de una Animación con N=300; densidad=0.6 y ruido=1.5}
 \end{figure}
 
+\pagebreak
 \begin{figure}[h]
 \includegraphics[scale=0.3]{noise_N300D06N5.png}
 \centering 

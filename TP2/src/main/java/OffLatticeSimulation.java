@@ -53,7 +53,7 @@ public class OffLatticeSimulation {
                 l_grid_side = config.getL_grid_side();
             }
 
-            if (1.0 * l_grid_side / config.getM_grid_dimension() <= (config.getR_interaction_radius() + 2.0 * l_grid_side / 50) ) {
+            if (1.0 * l_grid_side / config.getM_grid_dimension() <= (config.getR_interaction_radius() /*+ 2.0 * l_grid_side / 50)*/) ) {
                 throw new IllegalArgumentException("L/M > rc");
             }
 

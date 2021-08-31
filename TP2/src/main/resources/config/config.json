@@ -4,9 +4,9 @@
   "r_interaction_radius": 1,
   "n_number_of_particles": 300,
   "frames": 2000,
-  "l_grid_side": 7,
+  "l_grid_side": 5,
   "speed": 0.03,
-  "noise_amplitude": 0.8,
+  "noise_amplitude": 0.1,
   "polarization": {
     "activated": false,
     "number_of_simulations": 4,
