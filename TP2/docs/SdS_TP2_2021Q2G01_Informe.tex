@@ -4,6 +4,8 @@
 \usepackage{graphicx} 
 \usepackage{amsmath}
 \usepackage{algorithm}
+\usepackage{hyperref}
+\usepackage{xcolor}
 \usepackage[noend]{algpseudocode}
 
 \makeatletter
@@ -11,6 +13,12 @@
 \makeatother
 
 \graphicspath{ {images/} }
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+}
 
 \title{%
 \textbf{Simulación de Sistemas}\\
@@ -189,14 +197,14 @@ Finalmente para $\eta = 5$ (ver Figura \ref{fig:noise_N300_d06_n5}), se obtuvo u
 \begin{figure}[h]
 \includegraphics[scale=0.4]{noise_N300_d06_n05.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=0.5}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=0.5 \href{https://www.youtube.com/watch?v=hD-HLrDGDrI}{\underline{Ver Animación}}} 
 \label{fig:noise_N300_d06_n05}
 \end{figure}
 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{noise_N300_d06_n1_5.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=1.5}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=1.5 \href{https://www.youtube.com/watch?v=pNaZWqdfaxg}{\underline{Ver Animación}}} 
 \label{fig:noise_N300_d06_n1_5}
 \end{figure}
 
@@ -204,7 +212,7 @@ Finalmente para $\eta = 5$ (ver Figura \ref{fig:noise_N300_d06_n5}), se obtuvo u
 \begin{figure}[h]
 \includegraphics[scale=0.4]{noise_N300_d06_n5.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=5}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=5 \href{https://www.youtube.com/watch?v=KpLdzP7WLP8}{\underline{Ver Animación}}}
 \label{fig:noise_N300_d06_n5}
 \end{figure}
 
@@ -247,14 +255,14 @@ Por último, tomando un valor de densidad grande (ver Figura \ref{fig:density_N3
 \begin{figure}[h]
 \includegraphics[scale=0.54]{density_N300_n08_d025.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.25 y $\eta$=0.8}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.25 y $\eta$=0.8 \href{https://www.youtube.com/watch?v=j0crtCYmx9E}{\underline{Ver Animación}}}
 \label{fig:density_N300_n08_d025}
 \end{figure}
 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{density_N300_n08_d3.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=3 y $\eta$=0.8}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=3 y $\eta$=0.8 \href{https://www.youtube.com/watch?v=Ez3LWEwRvmk}{\underline{Ver Animación}}}
 \label{fig:density_N300_n08_d3}
 \end{figure}
 
@@ -262,7 +270,7 @@ Por último, tomando un valor de densidad grande (ver Figura \ref{fig:density_N3
 \begin{figure}[h]
 \includegraphics[scale=0.4]{density_N300_n08_d6.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=6 y $\eta$=0.8}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=6 y $\eta$=0.8 \href{https://www.youtube.com/watch?v=t88TD__ushc}{\underline{Ver Animación}}} % TODO CAMBIAR LINK 
 \label{fig:density_N300_n08_d6}
 \end{figure}
 
@@ -299,7 +307,7 @@ Por último, con una densidad grande y un ruido pequeño (ver Figura \ref{fig:d_
 \begin{figure}[h]
 \includegraphics[scale=0.4]{d_n_small.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con  N = 300; L = 25;	($\rho$ = 0.48); $\eta$ = 0.1}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con  N = 300; L = 25;	($\rho$ = 0.48); $\eta$ = 0.1 \href{https://www.youtube.com/watch?v=V2oRjjUPpmY}{\underline{Ver Animación}}} 
 \label{fig:d_n_small}
 \end{figure}
 
@@ -307,7 +315,7 @@ Por último, con una densidad grande y un ruido pequeño (ver Figura \ref{fig:d_
 \begin{figure}[h]
 \includegraphics[scale=0.4]{d_n_big.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N = 300; L = 7; ($\rho$ = 6.12); $\eta$ = 2.0}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N = 300; L = 7; ($\rho$ = 6.12); $\eta$ = 2.0 \href{https://www.youtube.com/watch?v=t88TD__ushc}{\underline{Ver Animación}}} 
 \label{fig:d_n_big}
 \end{figure}
 
@@ -315,7 +323,7 @@ Por último, con una densidad grande y un ruido pequeño (ver Figura \ref{fig:d_
 \begin{figure}[h]
 \includegraphics[scale=0.4]{d_big_n_small.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N = 300; L = 5; ($\rho$ = 12); $\eta$ = 0.1}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N = 300; L = 5; ($\rho$ = 12); $\eta$ = 0.1  \href{https://www.youtube.com/watch?v=CnaNaZNd1MY}{\underline{Ver Animación}}} 
 \label{fig:d_big_n_small}
 \end{figure}
 
