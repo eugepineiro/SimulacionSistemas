@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.8.29)  31 AUG 2021 23:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.8.29)  1 SEP 2021 22:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -286,12 +286,12 @@ Overfull \hbox (10.50224pt too wide) in paragraph at lines 73--75
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 78--79
+Underfull \hbox (badness 10000) in paragraph at lines 79--80
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 80--81
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
 
  []
 
@@ -299,15 +299,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--81
 <images/UML.png, id=26, 1371.1225pt x 1069.9975pt>
 File: images/UML.png Graphic file (type png)
 <use images/UML.png>
-Package pdftex.def Info: images/UML.png  used on input line 87.
+Package pdftex.def Info: images/UML.png  used on input line 88.
 (pdftex.def)             Requested size: 411.33992pt x 321.00172pt.
 
-Overfull \hbox (21.33992pt too wide) in paragraph at lines 87--89
+Overfull \hbox (21.33992pt too wide) in paragraph at lines 88--90
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--93
+Underfull \hbox (badness 10000) in paragraph at lines 94--95
 
  []
 
@@ -315,98 +315,222 @@ Underfull \hbox (badness 10000) in paragraph at lines 92--93
 <images/esquema.png, id=30, 299.1175pt x 278.03876pt>
 File: images/esquema.png Graphic file (type png)
 <use images/esquema.png>
-Package pdftex.def Info: images/esquema.png  used on input line 135.
+Package pdftex.def Info: images/esquema.png  used on input line 137.
 (pdftex.def)             Requested size: 125.62848pt x 116.77547pt.
  [5 <./images/esquema.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 155--156
+Underfull \hbox (badness 10000) in paragraph at lines 159--160
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 175--176
+Underfull \hbox (badness 10000) in paragraph at lines 179--180
 
  []
 
-[6] [7]
-<images/noise_N300_d06_n05.png, id=47, 982.67125pt x 356.33125pt>
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 181--182
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 183--184
+
+ []
+
+<images/noise_N300_d06_n05.png, id=44, 982.67125pt x 356.33125pt>
 File: images/noise_N300_d06_n05.png Graphic file (type png)
 <use images/noise_N300_d06_n05.png>
-Package pdftex.def Info: images/noise_N300_d06_n05.png  used on input line 181.
-(pdftex.def)             Requested size: 294.80365pt x 106.90019pt.
-<images/noise_N300_d06_n1_5.png, id=48, 983.675pt x 350.30875pt>
+Package pdftex.def Info: images/noise_N300_d06_n05.png  used on input line 188.
+(pdftex.def)             Requested size: 393.06154pt x 142.52997pt.
+
+Overfull \hbox (3.06154pt too wide) in paragraph at lines 188--190
+ [][] 
+ []
+
+<images/noise_N300_d06_n1_5.png, id=45, 983.675pt x 350.30875pt>
 File: images/noise_N300_d06_n1_5.png Graphic file (type png)
 <use images/noise_N300_d06_n1_5.png>
-Package pdftex.def Info: images/noise_N300_d06_n1_5.png  used on input line 187.
-(pdftex.def)             Requested size: 295.10478pt x 105.09343pt.
- [8 <./images/noise_N300_d06_n05.png> <./images/noise_N300_d06_n1_5.png>]
-<images/noise_N300_d06_n5.png, id=54, 981.6675pt x 352.31625pt>
+Package pdftex.def Info: images/noise_N300_d06_n1_5.png  used on input line 195.
+(pdftex.def)             Requested size: 393.46303pt x 140.12102pt.
+
+Overfull \hbox (3.46303pt too wide) in paragraph at lines 195--197
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[7 <./images/noise_N300_d06_n05.png>]
+<images/noise_N300_d06_n5.png, id=50, 981.6675pt x 352.31625pt>
 File: images/noise_N300_d06_n5.png Graphic file (type png)
 <use images/noise_N300_d06_n5.png>
-Package pdftex.def Info: images/noise_N300_d06_n5.png  used on input line 194.
-(pdftex.def)             Requested size: 294.50252pt x 105.69568pt.
- [9 <./images/noise_N300_d06_n5.png>]
-<images/density_N300_n08_d025.png, id=59, 726.715pt x 266.9975pt>
+Package pdftex.def Info: images/noise_N300_d06_n5.png  used on input line 203.
+(pdftex.def)             Requested size: 392.66003pt x 140.924pt.
+
+Overfull \hbox (2.66003pt too wide) in paragraph at lines 203--205
+ [][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 209--210
+
+ []
+
+[8 <./images/noise_N300_d06_n1_5.png> <./images/noise_N300_d06_n5.png>]
+<images/noise_pola_vs_time_multiple_n.png, id=56, 862.22125pt x 282.05376pt>
+File: images/noise_pola_vs_time_multiple_n.png Graphic file (type png)
+<use images/noise_pola_vs_time_multiple_n.png>
+Package pdftex.def Info: images/noise_pola_vs_time_multiple_n.png  used on input line 215.
+(pdftex.def)             Requested size: 387.99597pt x 126.923pt.
+<images/pola_vs_noise.png, id=57, 758.835pt x 272.01625pt>
+File: images/pola_vs_noise.png Graphic file (type png)
+<use images/pola_vs_noise.png>
+Package pdftex.def Info: images/pola_vs_noise.png  used on input line 222.
+(pdftex.def)             Requested size: 379.41658pt x 136.00778pt.
+<images/pola_vs_noise_multiple_n.png, id=58, 751.80875pt x 235.88126pt>
+File: images/pola_vs_noise_multiple_n.png Graphic file (type png)
+<use images/pola_vs_noise_multiple_n.png>
+Package pdftex.def Info: images/pola_vs_noise_multiple_n.png  used on input line 229.
+(pdftex.def)             Requested size: 375.90344pt x 117.94034pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 237--238
+
+ []
+
+[9 <./images/noise_pola_vs_time_multiple_n.png> <./images/pola_vs_noise.png> <./images/pola_vs_noise_multiple_n.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 239--240
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 241--242
+
+ []
+
+<images/density_N300_n08_d025.png, id=65, 726.715pt x 266.9975pt>
 File: images/density_N300_n08_d025.png Graphic file (type png)
 <use images/density_N300_n08_d025.png>
-Package pdftex.def Info: images/density_N300_n08_d025.png  used on input line 203.
-(pdftex.def)             Requested size: 218.01617pt x 80.09985pt.
-<images/density_N300_n08_d3.png, id=60, 981.6675pt x 348.30125pt>
+Package pdftex.def Info: images/density_N300_n08_d025.png  used on input line 246.
+(pdftex.def)             Requested size: 392.42024pt x 144.17648pt.
+
+Overfull \hbox (2.42024pt too wide) in paragraph at lines 246--248
+ [][] 
+ []
+
+<images/density_N300_n08_d3.png, id=66, 981.6675pt x 348.30125pt>
 File: images/density_N300_n08_d3.png Graphic file (type png)
 <use images/density_N300_n08_d3.png>
-Package pdftex.def Info: images/density_N300_n08_d3.png  used on input line 209.
-(pdftex.def)             Requested size: 294.50252pt x 104.49118pt.
- [10 <./images/density_N300_n08_d025.png> <./images/density_N300_n08_d3.png>]
-<images/density_N300_n08_d6.png, id=66, 982.67125pt x 353.32pt>
+Package pdftex.def Info: images/density_N300_n08_d3.png  used on input line 253.
+(pdftex.def)             Requested size: 392.66003pt x 139.31802pt.
+
+Overfull \hbox (2.66003pt too wide) in paragraph at lines 253--255
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[10 <./images/density_N300_n08_d025.png>]
+<images/density_N300_n08_d6.png, id=71, 982.67125pt x 353.32pt>
 File: images/density_N300_n08_d6.png Graphic file (type png)
 <use images/density_N300_n08_d6.png>
-Package pdftex.def Info: images/density_N300_n08_d6.png  used on input line 216.
-(pdftex.def)             Requested size: 294.80365pt x 105.99681pt.
+Package pdftex.def Info: images/density_N300_n08_d6.png  used on input line 261.
+(pdftex.def)             Requested size: 393.06154pt x 141.32549pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 223--224
+Overfull \hbox (3.06154pt too wide) in paragraph at lines 261--263
+ [][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 267--268
 
  []
 
-<images/d_n_small.png, id=67, 982.67125pt x 359.3425pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 269--270
+
+ []
+
+<images/density_pola_vs_time.png, id=72, 756.8275pt x 259.97125pt>
+File: images/density_pola_vs_time.png Graphic file (type png)
+<use images/density_pola_vs_time.png>
+Package pdftex.def Info: images/density_pola_vs_time.png  used on input line 273.
+(pdftex.def)             Requested size: 378.41283pt x 129.9853pt.
+[11 <./images/density_N300_n08_d3.png> <./images/density_N300_n08_d6.png>] [12 <./images/density_pola_vs_time.png>]
+<images/pola_vs_density.png, id=83, 750.805pt x 243.91125pt>
+File: images/pola_vs_density.png Graphic file (type png)
+<use images/pola_vs_density.png>
+Package pdftex.def Info: images/pola_vs_density.png  used on input line 281.
+(pdftex.def)             Requested size: 375.40158pt x 121.95532pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 289--290
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 291--292
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 293--294
+
+ []
+
+<images/d_n_small.png, id=84, 982.67125pt x 359.3425pt>
 File: images/d_n_small.png Graphic file (type png)
 <use images/d_n_small.png>
-Package pdftex.def Info: images/d_n_small.png  used on input line 228.
-(pdftex.def)             Requested size: 294.80365pt x 107.80357pt.
-[11 <./images/density_N300_n08_d6.png>]
-<images/d_n_big.png, id=72, 980.66376pt x 358.33875pt>
-File: images/d_n_big.png Graphic file (type png)
-<use images/d_n_big.png>
-Package pdftex.def Info: images/d_n_big.png  used on input line 236.
-(pdftex.def)             Requested size: 294.2014pt x 107.50244pt.
- [12 <./images/d_n_small.png>]
-<images/d_big_n_small.png, id=78, 1068.99374pt x 391.4625pt>
-File: images/d_big_n_small.png Graphic file (type png)
-<use images/d_big_n_small.png>
-Package pdftex.def Info: images/d_big_n_small.png  used on input line 244.
-(pdftex.def)             Requested size: 320.70059pt x 117.43965pt.
- [13 <./images/d_n_big.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 250--253
+Package pdftex.def Info: images/d_n_small.png  used on input line 298.
+(pdftex.def)             Requested size: 393.06154pt x 143.73445pt.
 
+Overfull \hbox (3.06154pt too wide) in paragraph at lines 298--300
+ [][] 
  []
 
-(./SdS_TP2_2021Q2G01_Informe.bbl [14 <./images/d_big_n_small.png>]) [15
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[13 <./images/pola_vs_density.png>]
+<images/d_n_big.png, id=89, 980.66376pt x 358.33875pt>
+File: images/d_n_big.png Graphic file (type png)
+<use images/d_n_big.png>
+Package pdftex.def Info: images/d_n_big.png  used on input line 306.
+(pdftex.def)             Requested size: 392.25854pt x 143.33296pt.
+
+Overfull \hbox (2.25854pt too wide) in paragraph at lines 306--308
+ [][] 
+ []
+
+[14 <./images/d_n_small.png> <./images/d_n_big.png>]
+<images/d_big_n_small.png, id=95, 1068.99374pt x 391.4625pt>
+File: images/d_big_n_small.png Graphic file (type png)
+<use images/d_big_n_small.png>
+Package pdftex.def Info: images/d_big_n_small.png  used on input line 315.
+(pdftex.def)             Requested size: 427.58992pt x 156.58221pt.
+
+Overfull \hbox (37.58992pt too wide) in paragraph at lines 315--317
+ [][] 
+ []
+
+(./SdS_TP2_2021Q2G01_Informe.bbl [15 <./images/d_big_n_small.png>]) [16
 
 ] (./SdS_TP2_2021Q2G01_Informe.aux
 LaTeX Info: Redefining \. on input line 7.
 LaTeX Info: Redefining \% on input line 7.
 ) ) 
 Here is how much of TeX's memory you used:
- 4017 strings out of 481239
- 57697 string characters out of 5920377
- 309765 words of memory out of 5000000
- 19208 multiletter control sequences out of 15000+600000
+ 4065 strings out of 481239
+ 59038 string characters out of 5920377
+ 309921 words of memory out of 5000000
+ 19251 multiletter control sequences out of 15000+600000
  541599 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,7n,35p,538b,361s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,7n,35p,556b,361s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on SdS_TP2_2021Q2G01_Informe.pdf (16 pages, 2924516 bytes).
+Output written on SdS_TP2_2021Q2G01_Informe.pdf (17 pages, 3170175 bytes).
 PDF statistics:
- 132 PDF objects out of 1000 (max. 8388607)
- 77 compressed objects within 1 object stream
+ 145 PDF objects out of 1000 (max. 8388607)
+ 79 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 61 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 86 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -35,7 +35,7 @@ Comerci Wolcanyik, Nicolás - 59520
 El objetivo del siguiente trabajo práctico es implementar un Autómata Celular \emph{Off-Latice}, 
 a fin de analizar el comportamiento de partículas puntuales en base a distintos parámetros.\\
 
-El autómata \emph{Off-Latice} se basa en un modelo matemático inspirado en el comportamiento colectivo de algunos Sistemas Naturales. Estos sujetos biológicos tienden a moverse con sus vecinos. Por ejemplo, bandadas, cardúmenes, manadas de cuadrúpedos o una colonia de bacterias.\\
+El autómata \emph{Off-Latice} se basa en un modelo matemático inspirado en el comportamiento colectivo de algunos Sistemas Naturales. Estos sujetos biológicos tienden a moverse con sus vecinos. Por ejemplo, bandadas, cardúmenes, manadas de cuadrúpedos o una colonia de bacterias.\cite{vicsek1995novel}\\
 
 En cuanto al sistema, las partículas se desplazan con velocidad absoluta constante. Las mismas, en cada paso de tiempo, asumen el promedio de las direcciones de las partículas vecinas que se encuentran dentro de un radio \emph{r} con un ruido añadido de forma aleatoria.\\
 
@@ -47,13 +47,13 @@ La evolución temporal de las partículas viene dada por las siguientes ecuacion
 x_i(t+1) = x_i(t) + v_i(t) \Delta t 
 \end{equation}
 
-donde \emph{x} es la posición de la partícula, \emph{v} la velocidad, y $\Delta$ \emph{t} el paso de tiempo  
+donde \emph{x} es la posición de la partícula, \emph{v} la velocidad, y $\Delta$\emph{t} el paso de tiempo.  
 
 \begin{equation}
 \label{eq:angle}
 \theta _i(t+1) = \left\langle \theta _i(t)\right\rangle _r + \Delta \theta 
 \end{equation}
-donde $\Delta \theta  \epsilon  [-\frac{\eta}{2}; \frac{\eta}{2}]$ es el ruido añadido, siendo $\eta$ la amplitud del ruido, y \emph{$\left\langle \theta _i(t)\right\rangle _r$} es el promedio de los ángulos de todas las partículas en un radio \emph{r}
+donde $\Delta \theta  \epsilon  [-\frac{\eta}{2}; \frac{\eta}{2}]$ es el ruido añadido, siendo $\eta$ la amplitud del ruido, y \emph{$\left\langle \theta _i(t)\right\rangle _r$} es el promedio de los ángulos de todas las partículas en un radio \emph{r}.
 
 \begin{equation}
 \label{eq:avgangle}
@@ -61,7 +61,7 @@ donde $\Delta \theta  \epsilon  [-\frac{\eta}{2}; \frac{\eta}{2}]$ es el ruido a
 \end{equation}
 
 \section{Implementación}
-La implementación del algoritmo \emph{Off-Lattice} se desarrolló en el lenguaje de programación \emph{Java}\\
+La implementación del algoritmo \emph{Off-Lattice} se desarrolló en el lenguaje de programación \emph{Java}.\\
 
 El flujo principal del programa (ver Figura \ref{fig:diagrama_flujo}) consiste en diversos pasos. En primer lugar, se obtienen los parámetros de configuración para iniciar la Simulación.\\
 
@@ -76,6 +76,7 @@ Por último, se guardan los resultados en distintos archivos que serán utilizad
 \label{fig:diagrama_flujo}
 \end{figure}
 
+ 
 En cuanto a la implementación de la Simulación, se cuenta con distintas clases en Java (ver Figura \ref{fig:uml}). La clase que implementa el flujo principal (main) es \emph{OffLatticeSimulation}. Las partículas se modelaron con la clase \emph{VelocityPaticle}, que extiende de una clase \emph{Particle} y cuenta con su posición, ángulo y rapidez. Las mismas se generan a partir de la clase \emph{VelocityParticleGenerator}.\\
 
 Para calcular la polarización de las mismas se cuenta con la clase \emph{Polarization}. El algoritmo del autómata se implementó en la clase \emph{OffLattice} que hace uso de las mencionadas anteriormente.\\  
@@ -93,7 +94,7 @@ A su vez, se cuenta con las clases para obtener los parámetros de configuració
 
 En el pseudocódigo correspondiente al flujo principal del programa (ver Algoritmo 1) se puede notar que se sigue el flujo mencionado previamente, en el cual se llama a la función \emph{readValues()} para obtener la configuración del sistema, luego se generan partículas de forma aleatoria invocando la función \emph{generateRandom()}, se llama al autómata Off-Lattice y por último se guardan los resultados en los archivos correspondientes.\\
 
-En cuanto a la implementación del autómata (ver Algoritmo 2) cabe destacar que por cada pasa de tiempo (frame), en la línea 3 del pseudocódigo, se buscan los vecinos de las partículas a través del \emph{Cell Index Method}. Este método define una grilla de dimensión MxM y se utilizan condiciones de contorno periódicas \cite{cellIndex}
+En cuanto a la implementación del autómata (ver Algoritmo 2) cabe destacar que por cada pasa de tiempo (frame), en la línea 3 del pseudocódigo, se buscan los vecinos de las partículas a través del \emph{Cell Index Method}. Este método define una grilla de dimensión MxM y se utilizan condiciones de contorno periódicas \cite{cellIndex}.
 Luego, se actualizan el ángulo y la posición de cada partícula utilizando las ecuaciones de Evolución Temporal (1) (2) y (3). 
 
 \pagebreak
@@ -121,7 +122,8 @@ Algoritmo 1. Flujo Principal del Programa
     \BState \emph{\textbf{for} particle in neighbours + itself}:
     \State $\textit{newAngle} \gets \text{atan2(sinAvg, cosAvg) + noise}$
     \State $particle.setAngle(newAngle)$
-    \State $particle.setCoords((x + speed * cos(newAngle)) \% L,(y + speed * sin(newAngle)) \% L)$
+    \State $particle.setX((x + speed * cos(newAngle)) \ mod \  L)$
+    \State $particle.setY((y + speed * sin(newAngle)) \ mod \ L)$
     \EndProcedure
     \end{algorithmic}
 \end{algorithm}
@@ -131,7 +133,7 @@ Algoritmo 2. Algoritmo del Autómata Off-Lattice
 
 \section{Simulaciones}
 
-El esquema del sistema (ver Figura \ref{fig:esquema}) consta de una grilla cuyo lado tiene longitud \emph{L}, en la cual interactúan partículas con velocidad constante \emph{v} e interactúan dentro un radio \emph{r}.
+El esquema del sistema (ver Figura \ref{fig:esquema}) consta de una grilla cuyos lados son de longitud \emph{L}, en la cual interactúan partículas con velocidad constante \emph{v} y radio de interacción \emph{r}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.42]{esquema.png}
@@ -140,15 +142,16 @@ El esquema del sistema (ver Figura \ref{fig:esquema}) consta de una grilla cuyo 
 \label{fig:esquema}
 \end{figure}
 
+\pagebreak
 Para realizar las simulaciones se utilizaron los siguientes parámentros: 
 \begin{itemize}
-    \item radio de interacción entre partículas \emph{r = 1}
-    \item velocidad absoluta de las partículas \emph{v = 0.03}
-    \item amplitud del ruido \emph{$\eta$ $\epsilon$ [0; 2$\pi$]} 
-    \item lado de la grila L (Variable) 
-    \item cantidad de partículas N (Variable)
-    \item densidad $\rho = \frac{N}{L^2}$
-    \item cantidad de pasos \emph{frames} = 2000  
+    \item Radio de interacción entre partículas \emph{r = 1}
+    \item Velocidad absoluta de las partículas \emph{v = 0.03}
+    \item Amplitud del ruido \emph{$\eta$ $\epsilon$ [0; 2$\pi$]} 
+    \item Lado de la grila L (Variable) 
+    \item Cantidad de partículas N (Variable)
+    \item Densidad $\rho = \frac{N}{L^2}$
+    \item Cantidad de pasos \emph{frames} = 2000  
 \end{itemize}
 
 En cada simulación se observó la polarización del sistema, la cual se define con la siguiente ecuación: 
@@ -157,7 +160,7 @@ En cada simulación se observó la polarización del sistema, la cual se define 
      v_a = \frac{1}{Nv} \left\lvert \sum_{i = 1}^{N} v_i \right\rvert
 \end{equation}\\
 
-Si la polarización tiende a cero, las partículas se encuentran en total desorden, mientras que si la polarización tiende a uno se dice que las partículas están polarizadas.
+Si la polarización tiende a cero, las partículas se encuentran en total desorden, mientras que si la polarización tiende a uno se dice que las partículas están polarizadas.\\
 
 Para correr las simulaciones se utilizarán las siguientes configuraciones: 
 \begin{enumerate}
@@ -171,25 +174,29 @@ Para correr las simulaciones se utilizarán las siguientes configuraciones:
 
 \section{Resultados}
 
-A partir de las configuraciones mencionadas previamente, se obtuvieron los siguientes resultados tras analizar el efecto del ruido y la densidad.
+% A partir de las configuraciones mencionadas previamente, se obtuvieron los siguientes resultados tras analizar el efecto del ruido y la densidad.
 
 \subsection{Análisis del Ruido}
 
-Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras \ref{fig:noise_N300_d06_n05}, \ref{fig:noise_N300_d06_n1_5} y \ref{fig:noise_N300_d06_n5}), se observó que a medida que el ruido aumentaba, las particulas tendían a dispersarse, dirigiendose hacia distintas direcciones. Es decir, manteniendo la cantidad de partículas y el ruido constante, \emph{al aumentar el ruido, la polarización disminuye}.\\
+Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras \ref{fig:noise_N300_d06_n05}, \ref{fig:noise_N300_d06_n1_5} y \ref{fig:noise_N300_d06_n5}), se observó que a medida que el ruido aumentaba, las particulas tendían a dispersarse, dirigiendose hacia distintas direcciones, es decir, manteniendo la cantidad de partículas y el ruido constante, \emph{al aumentar el ruido, la polarización disminuye}.\\
 
 En caso de poco ruido (ver Figura \ref{fig:noise_N300_d06_n05}), se pudo observar como las partículas al cabo de un par de pasos (\emph{frames}) se movían en la misma dirección (\emph{partículas altamente polarizadas}).\\
+
+Al aumentar el ruido (ver Figura \ref{fig:noise_N300_d06_n1_5}), se observó que no se llegaba a una polarización tan clara como en el caso anterior, formándose grupos representados a través de los distintos colores.\\
+
+Finalmente para $\eta = 5$ (ver Figura \ref{fig:noise_N300_d06_n5}), se obtuvo una imágen invariable de múltiples colores y desorden a través de toda la simulación.
 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{noise_N300_d06_n05.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; densidad=0.6 y ruido=0.5}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=0.5}
 \label{fig:noise_N300_d06_n05}
 \end{figure}
 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{noise_N300_d06_n1_5.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; densidad=0.6 y ruido=1.5}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=1.5}
 \label{fig:noise_N300_d06_n1_5}
 \end{figure}
 
@@ -197,12 +204,15 @@ En caso de poco ruido (ver Figura \ref{fig:noise_N300_d06_n05}), se pudo observa
 \begin{figure}[h]
 \includegraphics[scale=0.4]{noise_N300_d06_n5.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; densidad=0.6 y ruido=5}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.6 y $\eta$=5}
 \label{fig:noise_N300_d06_n5}
 \end{figure}
 
-También se observó este mismo fenómeno al comparar la evolución de la polarización en función del tiempo para distintos valores de ruidos (ver Figura \ref{fig:noise_pola_vs_time_multiple_n}). Además, se observó esta situación para distintos valores de ruido (ver Figura \ref{fig:pola_vs_noise}), y para distintas cantidades de partículas (ver Figura \ref{fig:pola_vs_noise_multiple_n}), donde vimos que mientras menos partículas, mayor era la polarización manteniendo el ruido constante.
+También se observó este mismo fenómeno al comparar la evolución de la polarización en función del tiempo para distintos valores de ruidos (ver Figura \ref{fig:noise_pola_vs_time_multiple_n}). \\
 
+Además, se pudo ver esta situación para distintos valores de ruido (ver Figura \ref{fig:pola_vs_noise}), y para distintas cantidades de partículas (ver Figura \ref{fig:pola_vs_noise_multiple_n}), donde vimos que mientras menos partículas, mayor era la polarización manteniendo el ruido constante.
+
+\pagebreak
 \begin{figure}[h]
 \includegraphics[scale=0.45]{noise_pola_vs_time_multiple_n.png}
 \centering 
@@ -210,15 +220,14 @@ También se observó este mismo fenómeno al comparar la evolución de la polari
 \label{fig:noise_pola_vs_time_multiple_n}
 \end{figure}
 
-\pagebreak
-\begin{figure}[h]
+\begin{figure}[h!]
 \includegraphics[scale=0.5]{pola_vs_noise.png}
 \centering 
 \caption{Polarización en función del ruido para $\rho$=0.6, N=300 y considerando el frame 1200 como comienzo del régimen estacionario.}
 \label{fig:pola_vs_noise}
 \end{figure}
-
-\begin{figure}[h]
+ 
+\begin{figure}[h!]
 \includegraphics[scale=0.5]{pola_vs_noise_multiple_n.png}
 \centering 
 \caption{Polarización en función del ruido para múltiples valores de N con $\rho$=0.6 y considerando el frame 1200 como comienzo del régimen estacionario.}
@@ -227,20 +236,25 @@ También se observó este mismo fenómeno al comparar la evolución de la polari
 
 \subsection{Análisis de la Densidad}
 
-Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras \ref{fig:density_N300_n08_d025}, \ref{fig:density_N300_n08_d3} y \ref{fig:density_N300_n08_d6}), se observó que a medida que se aumentaba la densidad de partículas, las partículas tienden a moverse de manera más ordenada. Es decir, manteniendo la cantidad de partículas y el ruido constantes, \emph{al aumentar la densidad de partículas, la polarización aumenta}.
+Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras \ref{fig:density_N300_n08_d025}, \ref{fig:density_N300_n08_d3} y \ref{fig:density_N300_n08_d6}), se observó que a medida que se aumentaba la densidad de partículas, las partículas tienden a moverse de manera más ordenada, es decir, manteniendo la cantidad de partículas y el ruido constantes, \emph{al aumentar la densidad de partículas, la polarización aumenta}.\\
 
-\pagebreak
+En particular, para un densidad muy pequeña (ver Figura \ref{fig:density_N300_n08_d025}) se notó que las partículas comenzaban dispersas y luego de un tiempo se dividían en grupos. Dentro de cada uno de los grupos todas las partículas se desplazaban en la misma dirección. \\
+
+En cambio, tomando un valor de densidad intermedio (ver Figura \ref{fig:density_N300_n08_d3}) se observó que las partículas al principio generaban pequeños grupos pero luego comenzaban a desplazarse todas en las mismas dirección.\\
+
+Por último, tomando un valor de densidad grande (ver Figura \ref{fig:density_N300_n08_d6}) se pudo notar que rápidamente las partículas se acomodaban en la misma dirección. 
+
 \begin{figure}[h]
 \includegraphics[scale=0.54]{density_N300_n08_d025.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; densidad=0.25 y ruido=0.8}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=0.25 y $\eta$=0.8}
 \label{fig:density_N300_n08_d025}
 \end{figure}
 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{density_N300_n08_d3.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; densidad=3 y ruido=0.8}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=3 y $\eta$=0.8}
 \label{fig:density_N300_n08_d3}
 \end{figure}
 
@@ -248,13 +262,15 @@ Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{density_N300_n08_d6.png}
 \centering 
-\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; densidad=6 y ruido=0.8}
+\caption{Capturas de los frames inicial, intermedio y final de una Animación con N=300; $\rho$=6 y $\eta$=0.8}
 \label{fig:density_N300_n08_d6}
 \end{figure}
 
-% TODO: Agregar descripción sobre los gráficos de abajo
+Analizando la polarización en función del tiempo para múltiples valores de densidad, dejando el resto de los parámetros constantes (ver Figura \ref{fig:density_pola_vs_time}), se puede apreciar que a medida que se aumentan los valores de densidad, aumenta la polarización a lo largo del tiempo. Esto se corresponde con lo mencionado previamente sobre las partículas alineandose (aumenta la polarización) a medida que aumenta la densidad.\\
 
-\pagebreak
+Cabe destacar que mientras más bajo es el valor de la densidad, se notó que se necesitaban más frames para alcanzar un régimen estacionario. En este caso se decidió promediar los valores de polarización a partir del frame 1200 para graficar la polarización en función de la densidad para un ruido determinado (ver Figura \ref{fig:pola_vs_density}) debido a que aproximadamente a partir de allí los valores de polarización son similares.\\
+
+
 \begin{figure}[h]
 \includegraphics[scale=0.5]{density_pola_vs_time.png}
 \centering 
@@ -262,7 +278,7 @@ Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras 
 \label{fig:density_pola_vs_time}
 \end{figure}
 
-\pagebreak
+% \pagebreak
 \begin{figure}[h]
 \includegraphics[scale=0.5]{pola_vs_density.png}
 \centering 
@@ -274,8 +290,12 @@ Luego de realizar simulaciones bajo las configuraciones propuestas (ver Figuras 
 
 Se utilizaron distintas configuraciones propuestas en el paper \cite{vicsek1995novel} con el objetivo de evaluar distintos comportamientos destacados del sistema.\\
 
-En primer lugar, se utilizaron valores de densidad y ruido pequeños y se pudo notar que las partículas tienden a formar grupos moviendose de forma coherente en direcciones aleatorias (ver Figura \ref{fig:d_n_small})  
-\pagebreak
+En primer lugar, se utilizaron valores de densidad y ruido pequeños y se pudo notar que las partículas tienden a formar grupos moviendose de forma coherente en direcciones aleatorias (ver Figura \ref{fig:d_n_small})\\  
+
+Luego, para valores de densidad y ruido grandes (ver Figura \ref{fig:d_n_big}) se notó que las partículas se desplazan de forma aleatoria pero con cierta correlación.\\
+
+Por último, con una densidad grande y un ruido pequeño (ver Figura \ref{fig:d_big_n_small}) se notó que el movimiento se vuelve ordenado para todas las partículas.
+ 
 \begin{figure}[h]
 \includegraphics[scale=0.4]{d_n_small.png}
 \centering 
@@ -283,8 +303,7 @@ En primer lugar, se utilizaron valores de densidad y ruido pequeños y se pudo n
 \label{fig:d_n_small}
 \end{figure}
 
-Luego, para valores de densidad y ruido grandes se notó que las partículas se desplazan de forma aleatoria pero con cierta correlación.  
-\pagebreak
+
 \begin{figure}[h]
 \includegraphics[scale=0.4]{d_n_big.png}
 \centering 
@@ -292,7 +311,6 @@ Luego, para valores de densidad y ruido grandes se notó que las partículas se 
 \label{fig:d_n_big}
 \end{figure}
 
-Por último, con una densidad grande y un ruido pequeño se notó que el movimiento se vuelve ordenado para todas las partículas.
 \pagebreak
 \begin{figure}[h]
 \includegraphics[scale=0.4]{d_big_n_small.png}
@@ -302,11 +320,12 @@ Por último, con una densidad grande y un ruido pequeño se notó que el movimie
 \end{figure}
 
 \section{Conclusiones}
-Tomando como base los resultados obtenidos a partir de las simulaciones, se llegó a la 
-conclusión que, al aumentar el ruido disminuye la polarización y al aumentar la densidad de
-partículas aumenta la polarización.\\
-
-A su vez, se puede observar que el sistema presenta distintos comportamientos según los parámetros elegidos. 
+Teniendo en cuenta los resultados obtenidos a partir de las simulaciones, se llegó a las siguientes conclusiones:
+\begin{itemize}
+    \item Manteniendo la cantidad de partículas y la densidad constantes, al aumentar el ruido disminuye la polarización.
+    \item Manteniendo la cantidad de partículas y el ruido constantes, al aumentar la densidad de partículas aumenta la polarización.
+    \item El sistema presenta distintos comportamientos según los parámetros elegidos.
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{references}

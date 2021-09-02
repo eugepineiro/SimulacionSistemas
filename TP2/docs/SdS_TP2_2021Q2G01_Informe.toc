@@ -4,6 +4,6 @@
 \contentsline {section}{\numberline {0.3}Simulaciones}{5}%
 \contentsline {section}{\numberline {0.4}Resultados}{6}%
 \contentsline {subsection}{\numberline {0.4.1}Análisis del Ruido}{7}%
-\contentsline {subsection}{\numberline {0.4.2}Análisis de la Densidad}{9}%
-\contentsline {subsection}{\numberline {0.4.3}Comportamientos Destacados}{11}%
-\contentsline {section}{\numberline {0.5}Conclusiones}{14}%
+\contentsline {subsection}{\numberline {0.4.2}Análisis de la Densidad}{10}%
+\contentsline {subsection}{\numberline {0.4.3}Comportamientos Destacados}{13}%
+\contentsline {section}{\numberline {0.5}Conclusiones}{15}%
