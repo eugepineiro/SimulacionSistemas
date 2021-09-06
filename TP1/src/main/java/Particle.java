@@ -1,10 +1,10 @@
 import java.util.Objects;
 
 public class Particle {
-    private long id;
-    private double x;
-    private double y;
-    private double radius;
+    protected long id;
+    protected double x;
+    protected double y;
+    protected double radius;
 
     public Particle() {}
 

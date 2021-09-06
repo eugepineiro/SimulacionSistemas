@@ -56,9 +56,14 @@ public class Simulation {
                 throw new IllegalArgumentException("L/M > rc");
             }
 
-            System.out.println(" l " + l_grid_side);
+            List<VelocityParticle> particles = new ArrayList<>();
+            // Generate big particle
+            particles.add(new VelocityParticle(0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0));
 
-            List<VelocityParticle> particles = VelocityParticlesGenerator.generateRandom(numberOfParticles, l_grid_side, null, config.getSpeed(), r);
+            // Generate small particles
+            particles = VelocityParticlesGenerator.generateRandom(particles, numberOfParticles, l_grid_side, 0.2, 2.0, r, 0.9);
+
+            particles.forEach(System.out::println);
 
             List<List<VelocityParticle>> frames;
 
