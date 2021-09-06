@@ -5,11 +5,15 @@ import java.io.IOException;
 
 public class JsonWriter {
 
-    private static final String PATH = "TP2/src/main/resources/postprocessing";
+    private static String PATH = "TP2/src/main/resources/postprocessing";
 
     private ObjectMapper mapper;
     private String filename;
     private Object object;
+
+    public static void setPath(String path) {
+        JsonWriter.PATH = path;
+    }
 
     public JsonWriter(String filename) {
         this.mapper = new ObjectMapper();

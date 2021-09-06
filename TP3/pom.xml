@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ar.edu.itba.ss</groupId>
-    <artifactId>TP2</artifactId>
+    <artifactId>TP3</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -17,6 +17,12 @@
         <dependency>
             <groupId>ar.edu.itba.ss</groupId>
             <artifactId>TP1</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ar.edu.itba.ss</groupId>
+            <artifactId>TP2</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
