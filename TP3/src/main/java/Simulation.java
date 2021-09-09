@@ -2,9 +2,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Simulation {
 
@@ -65,9 +63,9 @@ public class Simulation {
 
             particles.forEach(System.out::println);
 
-            List<List<VelocityParticle>> frames;
-
             long startTime = System.nanoTime();
+
+            Queue<Event> events = Brownian.simulate(particles, l_grid_side, r);
 
 //            frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), l_grid_side ,config.getNoise_amplitude(),  config.getFrames(), r);
 
