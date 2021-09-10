@@ -8,6 +8,9 @@ public class VelocityParticle extends Particle {
     private double mass;
     private long collisions;
 
+    public VelocityParticle() {
+    }
+
     public VelocityParticle(Particle particle, double speed, double angle, double mass) {
         this(particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), speed, angle, mass);
     }
@@ -25,7 +28,7 @@ public class VelocityParticle extends Particle {
     }
 
     public double getAngle() {
-        return (vx == 0)? ((vy >= 0)? Math.PI/2.0 : Math.PI*(3/2)): Math.tan(vy/vx);
+        return (vx == 0)? ((vy >= 0)? Math.PI/2.0 : Math.PI*(3/2.0)): Math.tan(vy/vx);
     }
 
     /* Duration of time until the invoking particle collides with a vertical wall */
@@ -51,22 +54,20 @@ public class VelocityParticle extends Particle {
     /* Duration of time until the invoking particle collides with particle p */
     public double collides(VelocityParticle p) {
 
-        Map<String, Double> deltas = getDeltasAndInners(p);
+        Map<String, Double> dt = getDeltasAndInners(p);
 
-        double inner_v_r = deltas.get("delta_vx") * deltas.get("delta_x") + deltas.get("delta_vy") * deltas.get("delta_y");
-        double inner_v_v = deltas.get("delta_vx") * deltas.get("delta_vx") + deltas.get("delta_vy") * deltas.get("delta_vy");
-        double inner_r_r = deltas.get("delta_x") * deltas.get("delta_x") + deltas.get("delta_y") * deltas.get("delta_y");
+        double sigma = radius + p.getRadius();
 
-        double R1, R2;
-        R1 = radius;
-        R2 = p.getRadius();
+        double distance = Math.pow(dt.get("inner_v_r"), 2) - dt.get("inner_v_v") * ( dt.get("inner_r_r") - Math.pow(sigma, 2));
 
-        double distance = Math.pow(inner_v_r, 2) - inner_v_v * ( inner_r_r - Math.pow(R1 + R2, 2));
+        //System.out.printf("Distance: %.5g\n", distance);
 
-        if ( inner_v_r >= 0 || distance < 0)
+        if ( dt.get("inner_v_r") >= 0 || distance < 0)
             return -1; // inf
 
-        return - ( inner_v_r + Math.sqrt(distance) ) / inner_v_v;
+        Double ans = - ( dt.get("inner_v_r") + Math.sqrt(distance) ) / dt.get("inner_v_v");
+        System.out.println(ans);
+        return - ( dt.get("inner_v_r") + Math.sqrt(distance) ) / dt.get("inner_v_v");
     }
 
     /* Update the invoking particle to simulate it bouncing off a vertical wall. */
@@ -86,21 +87,14 @@ public class VelocityParticle extends Particle {
         // collision
         double m_i = mass;
         double m_j = p.getMass();
+        Map<String, Double> dt = getDeltasAndInners(p);
 
         double sigma = radius + p.getRadius();
 
-        double delta_vx = vx - p.getVx();
-        double delta_vy = vy - p.getVy();
+        double J = (2 * m_i * m_j * dt.get("inner_v_r"))/(sigma * (m_i + m_j));
 
-        double delta_x = x - p.getX();
-        double delta_y = y - p.getY();
-
-        double inner_v_r = delta_vx * delta_x + delta_vy * delta_y;
-
-        double J = (2 * m_i * m_j * inner_v_r)/(sigma * (m_i + m_j));
-
-        double J_x = J * (x - p.getX()) / sigma;
-        double J_y = J * (y - p.getY()) / sigma;
+        double J_x = J * (dt.get("delta_x")) / sigma;
+        double J_y = J * (dt.get("delta_y")) / sigma;
 
         // Particle i update (me)
 
@@ -109,8 +103,8 @@ public class VelocityParticle extends Particle {
 
         // Particle j update
 
-        vx = vx + J_x/m_j;
-        vy = vy + J_y/m_j;
+        p.setVx(p.getVx() - J_x/m_j);
+        p.setVy(p.getVy() - J_y/m_j);
 
         collisions++;
     }
@@ -120,13 +114,18 @@ public class VelocityParticle extends Particle {
         return collisions;
     }
 
+    public void play(double deltaTime) {
+        x += vx * deltaTime;
+        y += vy * deltaTime;
+    }
+
     private Map<String, Double> getDeltasAndInners(VelocityParticle p) {
         Map<String, Double> deltas = new HashMap<>();
 
-        deltas.put("delta_x", x - p.getX());
-        deltas.put("delta_y", y - p.getY());
-        deltas.put("delta_vx", vx - p.getVx());
-        deltas.put("delta_vy", vy - p.getVy());
+        deltas.put("delta_x",   p.getX()    -   x);
+        deltas.put("delta_y",   p.getY()    -   y);
+        deltas.put("delta_vx",  p.getVx()   -   vx);
+        deltas.put("delta_vy",  p.getVy()   -   vy);
         deltas.put("inner_v_r", deltas.get("delta_vx") * deltas.get("delta_x") + deltas.get("delta_vy") * deltas.get("delta_y"));
         deltas.put("inner_v_v", deltas.get("delta_vx") * deltas.get("delta_vx") + deltas.get("delta_vy") * deltas.get("delta_vy"));
         deltas.put("inner_r_r", deltas.get("delta_x") * deltas.get("delta_x") + deltas.get("delta_y") * deltas.get("delta_y"));
@@ -134,6 +133,23 @@ public class VelocityParticle extends Particle {
         return deltas;
     }
 
+    public VelocityParticle clone() {
+        VelocityParticle vp = new VelocityParticle();
+        vp.setId(id);
+        vp.setX(x);
+        vp.setY(y);
+        vp.setRadius(radius);
+        vp.setVx(vx);
+        vp.setVy(vy);
+        vp.setMass(mass);
+        vp.setCollisions(collisions);
+
+        return vp;
+    }
+
+    public void setCollisions(long collisions) {
+        this.collisions = collisions;
+    }
 
     ////////////////////////////// Bureaucracy //////////////////////////////
 
@@ -164,13 +180,13 @@ public class VelocityParticle extends Particle {
     @Override
     public String toString() {
         return "VelocityParticle{" +
-                "id=" + id +
-                ", x=" + x +
-                ", y=" + y +
-                ", radius=" + radius +
-                ", vx=" + vx +
-                ", vy=" + vy +
-                ", mass=" + mass +
-                '}';
+            "id=" + id +
+            ", x=" + x +
+            ", y=" + y +
+            ", radius=" + radius +
+            ", vx=" + vx +
+            ", vy=" + vy +
+            ", mass=" + mass +
+            '}';
     }
 }
