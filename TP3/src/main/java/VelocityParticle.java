@@ -3,6 +3,7 @@ import java.util.Map;
 
 public class VelocityParticle extends Particle {
 
+    private ParticleType type;
     private double vx;
     private double vy;
     private double mass;
@@ -11,12 +12,13 @@ public class VelocityParticle extends Particle {
     public VelocityParticle() {
     }
 
-    public VelocityParticle(Particle particle, double speed, double angle, double mass) {
-        this(particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), speed, angle, mass);
+    public VelocityParticle(ParticleType type, Particle particle, double speed, double angle, double mass) {
+        this(type, particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), speed, angle, mass);
     }
 
-    public VelocityParticle(long id, double x, double y, double radius, double speed, double angle, double mass) {
+    public VelocityParticle(ParticleType type, long id, double x, double y, double radius, double speed, double angle, double mass) {
         super(id, x, y, radius);
+        this.type = type;
         this.vx = speed * Math.cos(angle);
         this.vy = speed * Math.sin(angle);
         this.mass = mass;
@@ -133,6 +135,7 @@ public class VelocityParticle extends Particle {
 
     public VelocityParticle clone() {
         VelocityParticle vp = new VelocityParticle();
+        vp.setType(type);
         vp.setId(id);
         vp.setX(x);
         vp.setY(y);
@@ -143,10 +146,6 @@ public class VelocityParticle extends Particle {
         vp.setCollisions(collisions);
 
         return vp;
-    }
-
-    public void setCollisions(long collisions) {
-        this.collisions = collisions;
     }
 
     ////////////////////////////// Bureaucracy //////////////////////////////
@@ -175,10 +174,23 @@ public class VelocityParticle extends Particle {
         this.mass = mass;
     }
 
+    public void setCollisions(long collisions) {
+        this.collisions = collisions;
+    }
+
+    public ParticleType getType() {
+        return type;
+    }
+
+    public void setType(ParticleType type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "VelocityParticle{" +
-            "id=" + id +
+            "type=" + type +
+            ", id=" + id +
             ", x=" + x +
             ", y=" + y +
             ", radius=" + radius +

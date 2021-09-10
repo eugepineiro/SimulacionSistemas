@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 public class XYZ_Writer {
     private static class PCoords {
+        private final String type;
         private final long id;
         private final double x, y, vx, vy, mass, radius, time;
 
-        public PCoords(long id, double x, double y, double vx, double vy, double mass, double radius, double time) {
+        public PCoords(String type, long id, double x, double y, double vx, double vy, double mass, double radius, double time) {
+            this.type = type;
             this.id = id;
             this.x = x;
             this.y = y;
@@ -22,7 +24,7 @@ public class XYZ_Writer {
         
         @Override
         public String toString() {
-            return String.format("%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\n", id, x, y, vx, vy, mass, radius, time);
+            return String.format("%s\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\n", type, id, x, y, vx, vy, mass, radius, time);
         }
     }
 
@@ -49,7 +51,7 @@ public class XYZ_Writer {
 
     public XYZ_Writer addFrame(ExtendedEvent extendedEvent) {
         List<PCoords> frame = extendedEvent.getFrame().stream()
-                .map(p -> new PCoords(p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius(), extendedEvent.getEvent().getTime()))
+                .map(p -> new PCoords(p.getType().toString(), p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius(), extendedEvent.getEvent().getTime()))
                 .collect(Collectors.toList());
         frames.add(frame);
 
