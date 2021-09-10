@@ -53,8 +53,8 @@ public class Simulation {
 
             List<VelocityParticle> particles = new ArrayList<>();
 
-            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0);
             // Generate big particle
+            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0);
             particles.add(bigParticle);
 
             // Generate small particles
@@ -67,21 +67,21 @@ public class Simulation {
 
             long startTime = System.nanoTime();
 
-            List<ExtendedEvent> events = Brownian.simulate(particles, l_grid_side);
+            List<ExtendedEvent> events = Brownian.simulate(particles, bigParticle, l_grid_side);
 
             long endTime = System.nanoTime();
             long timeElapsed = endTime - startTime;
 
             System.out.println("Time in ms: " + timeElapsed / 1000000.0 );
 
-            // save results
-            new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
-
-            List<Double> timesList =  events.stream().map( e -> e.getEvent().getTime()).collect(Collectors.toList());
-
-            new JsonWriter(POSTPROCESSING_FILENAME)
-                    .withObj(timesList)
-                    .write();
+//            // save results
+//            new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
+//
+//            List<Double> timesList =  events.stream().map( e -> e.getEvent().getTime()).collect(Collectors.toList());
+//
+//            new JsonWriter(POSTPROCESSING_FILENAME)
+//                    .withObj(timesList)
+//                    .write();
 
 
 

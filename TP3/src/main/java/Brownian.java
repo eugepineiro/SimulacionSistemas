@@ -4,13 +4,67 @@ import java.util.stream.Collectors;
 
 public class Brownian {
 
-    private static final double MAX_TIME = 20;
-    private static final double MAX_EVENTS = 100000;
+    // Status bar
+    private static final int                STATUS_BAR_SIZE         = 31;
+    private static final String             SUBJECT_NAME            = "BIG";
+
+    // Stop conditions
+    private static final double             MAX_EVENTS              = 100000;
 
     private static final long               STUDIED_SUBJECT_ID      = 0;
     private static final Predicate<Event>   isSubjectHittingWall    = (event) -> (event instanceof WallCollisionEvent && ((WallCollisionEvent) event).getParticle().getId() == STUDIED_SUBJECT_ID);
-    
-    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, long gridSide) {
+
+    private static String getStatusBar(long gridSide, double pos, double radius) {
+
+        double radiusPctg, pctgPos;
+        int subjectPosition, radiusOffset, lowerBound, upperBound, subjectNameMargin;
+
+        pctgPos                     =       pos     /   gridSide;
+        radiusPctg                  =       radius  /   gridSide;
+
+        subjectPosition             = (int) Math.ceil(pctgPos * STATUS_BAR_SIZE) - 1;
+        radiusOffset                = (int) Math.ceil(radiusPctg * STATUS_BAR_SIZE) - 1;
+        lowerBound                  =       subjectPosition - radiusOffset;
+        upperBound                  =       subjectPosition + radiusOffset;
+
+        subjectNameMargin           =       ( ( (upperBound - lowerBound) - 1 ) - SUBJECT_NAME.length() ) / 2;
+
+        StringBuilder statusBar = new StringBuilder("|");
+
+        for (int h = 0; h < STATUS_BAR_SIZE; h++) {
+            if      (h < lowerBound)
+                statusBar.append("*");
+            else if (h == lowerBound)
+                statusBar.append("(");
+            else if (h < upperBound) {
+                int l = (h - lowerBound - 1) - subjectNameMargin;
+                if (l >= 0 && l < SUBJECT_NAME.length())
+                    statusBar.append(SUBJECT_NAME.charAt(l));
+                else
+                    statusBar.append(" ");
+            }
+            else if (h == upperBound)
+                statusBar.append(")");
+            else
+                statusBar.append("*");
+        }
+
+        statusBar.append("|");
+
+        return statusBar.toString();
+    }
+
+    private static void printStatusBar(long gridSide, VelocityParticle subject, long events) {
+
+        String statusBarX = getStatusBar(gridSide, subject.getX(), subject.getRadius());
+        String statusBarY = getStatusBar(gridSide, subject.getY(), subject.getRadius());
+
+        long numberOfEvents = (events / 1000) * 1000;
+
+        System.out.printf("\r%s (X) %s (Y) - %d events", statusBarX, statusBarY, numberOfEvents);
+    }
+
+    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, VelocityParticle bigParticle, long gridSide) {
 
         List<ExtendedEvent> extendedEvents = new LinkedList<>();
         List<Event> programmedEvents = new SortedList<>(Comparator.comparing(Event::getTime));
@@ -26,21 +80,19 @@ public class Brownian {
         // Calculate first events
         addFirstEvents(programmedEvents, particles, gridSide, currentTime);
 
-        for (long events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < MAX_EVENTS; events++) { // TODO check cut condition
-//            System.out.println("-------------- QUEUE:");
-//            programmedEvents.forEach(System.out::println);
-//            System.out.println("QUEUE END --------------\n");
+        for (long events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < MAX_EVENTS; events++) {
 
             currentEvent = programmedEvents.get(0);
             deltaTime = currentEvent.getTime() - currentTime;
             currentTime += deltaTime;
 
-//            System.out.printf("Delta time added: %.4g\n", deltaTime);
-
             subjectHittingWall = isSubjectHittingWall.test(currentEvent);
 
             // Update particles times
             updateParticles(particles, deltaTime);
+
+            // Status bar
+            printStatusBar(gridSide, bigParticle, events);
 
             // Solve collisions and update collided particles
             lastModified = solveCollision(currentEvent);
@@ -52,18 +104,13 @@ public class Brownian {
             addNewEvents(programmedEvents, particles, gridSide, currentEvent, currentTime);
 
             // Add to history
+            programmedEvents.remove(currentEvent);
             currentEvent.freeze();
             extendedEvents.add(ExtendedEvent.from(currentEvent).withFrame(particles));
-            programmedEvents.remove(currentEvent);
-
-//            System.out.println(currentEvent);
-
-//            System.out.println("\n-------------- PARTICLES:");
-//            particles.forEach(System.out::println);
-//            System.out.println("PARTICLES --------------");
-//
-//            System.out.println("\n------------------------------------------------------------\n");
         }
+
+        // Status bar end
+        System.out.println();
 
         return extendedEvents;
     }

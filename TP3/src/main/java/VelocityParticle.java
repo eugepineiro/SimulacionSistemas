@@ -36,9 +36,9 @@ public class VelocityParticle extends Particle {
     /* Duration of time until the invoking particle collides with a vertical wall */
     public double collidesX(long gridSide) {
         return (vx < 0) ?
-            (0-x)/vx :              // left wall
+            (0-x+radius)/vx :              // left wall
             ( (vx > 0) ?
-                (gridSide-x)/vx :   // right wall
+                (gridSide-x-radius)/vx :   // right wall
                 -1                  // going up or down
             );
     }
@@ -46,9 +46,9 @@ public class VelocityParticle extends Particle {
     /* Duration of time until the invoking particle collides with a horizontal wall */
     public double collidesY(long gridSide) {
         return (vy < 0) ?
-            (0-y)/vy :              // lower wall
+            (0-y+radius)/vy :              // lower wall
             ( (vy > 0) ?
-                (gridSide-y)/vy :   // upper wall
+                (gridSide-y-radius)/vy :   // upper wall
                 -1                  // going left or right
             );
     }
