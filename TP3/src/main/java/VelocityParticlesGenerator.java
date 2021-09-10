@@ -3,7 +3,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 /*
 * (random * (upper - lower)) + lower
@@ -57,7 +56,7 @@ public class VelocityParticlesGenerator {
             angle = r.nextDouble() * 2*Math.PI;
             newSpeed = r.nextDouble() * speed;
 
-            generated.add(new VelocityParticle(ParticleType.WATER, newParticle, newSpeed, angle, mass));
+            generated.add(new VelocityParticle(ParticleType.SMALL, newParticle, newSpeed, angle, mass));
         }
 
         return generated;

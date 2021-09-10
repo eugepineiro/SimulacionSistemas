@@ -4,7 +4,6 @@
 public class Config {
 
     private Long seed;
-    private Integer m_grid_dimension;
     private Double r_interaction_radius;
     private Integer n_number_of_particles;
     private Integer l_grid_side;
@@ -19,14 +18,6 @@ public class Config {
 
     public void setSeed(Long seed) {
         this.seed = seed;
-    }
-
-    public Integer getM_grid_dimension() {
-        return m_grid_dimension;
-    }
-
-    public void setM_grid_dimension(Integer m_grid_dimension) {
-        this.m_grid_dimension = m_grid_dimension;
     }
 
     public Double getR_interaction_radius() {
@@ -89,7 +80,6 @@ public class Config {
     public String toString() {
         return "Config{" +
                 "seed=" + seed +
-                ", m_grid_dimension=" + m_grid_dimension +
                 ", r_interaction_radius=" + r_interaction_radius +
                 ", l_grid_side=" + l_grid_side +
                 ", frames=" + frames +

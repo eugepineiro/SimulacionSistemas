@@ -1,6 +1,5 @@
 {
   "seed": 400,
-  "m_grid_dimension": 5,
   "r_interaction_radius": 1,
   "n_number_of_particles": 100,
   "frames": 2000,
