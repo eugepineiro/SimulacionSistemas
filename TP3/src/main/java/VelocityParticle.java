@@ -118,17 +118,17 @@ public class VelocityParticle extends Particle {
     }
 
     private Map<String, Double> getDeltasAndInners(VelocityParticle p) {
-        Map<String, Double> deltas = new HashMap<>();
+        Map<String, Double> dt = new HashMap<>();
 
-        deltas.put("delta_x",   p.getX()    -   x);
-        deltas.put("delta_y",   p.getY()    -   y);
-        deltas.put("delta_vx",  p.getVx()   -   vx);
-        deltas.put("delta_vy",  p.getVy()   -   vy);
-        deltas.put("inner_v_r", deltas.get("delta_vx") * deltas.get("delta_x") + deltas.get("delta_vy") * deltas.get("delta_y"));
-        deltas.put("inner_v_v", deltas.get("delta_vx") * deltas.get("delta_vx") + deltas.get("delta_vy") * deltas.get("delta_vy"));
-        deltas.put("inner_r_r", deltas.get("delta_x") * deltas.get("delta_x") + deltas.get("delta_y") * deltas.get("delta_y"));
+        dt.put("delta_x",   p.getX()    -   x);
+        dt.put("delta_y",   p.getY()    -   y);
+        dt.put("delta_vx",  p.getVx()   -   vx);
+        dt.put("delta_vy",  p.getVy()   -   vy);
+        dt.put("inner_v_r", dt.get("delta_vx") * dt.get("delta_x") + dt.get("delta_vy") * dt.get("delta_y"));
+        dt.put("inner_v_v", dt.get("delta_vx") * dt.get("delta_vx") + dt.get("delta_vy") * dt.get("delta_vy"));
+        dt.put("inner_r_r", dt.get("delta_x") * dt.get("delta_x") + dt.get("delta_y") * dt.get("delta_y"));
 
-        return deltas;
+        return dt;
     }
 
     public VelocityParticle clone() {

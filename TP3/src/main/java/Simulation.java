@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Simulation {
 
@@ -80,6 +81,13 @@ public class Simulation {
 
             // save results
             new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
+
+            List<Double> timesList =  events.stream().map( e -> e.getEvent().getTime()).collect(Collectors.toList());
+
+            new JsonWriter(POSTPROCESSING_FILENAME)
+                    .withObj(timesList)
+                    .write();
+
 
         } catch (IOException e) {
             e.printStackTrace();
