@@ -1,15 +1,19 @@
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Brownian {
 
     private static final double MAX_TIME = 20;
-    private static final double MAX_EVENTS = 200;
+    private static final double MAX_EVENTS = 100000;
 
+    private static final long               STUDIED_SUBJECT_ID      = 0;
+    private static final Predicate<Event>   isSubjectHittingWall    = (event) -> (event instanceof WallCollisionEvent && ((WallCollisionEvent) event).getParticle().getId() == STUDIED_SUBJECT_ID);
+    
     public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, long gridSide) {
 
         List<ExtendedEvent> extendedEvents = new LinkedList<>();
-        SortedSet<Event> programmedEvents = new TreeSet<>(Comparator.comparing(Event::getTime));
+        List<Event> programmedEvents = new SortedList<>(Comparator.comparing(Event::getTime));
 
         Event currentEvent;
         List<VelocityParticle> lastModified;
@@ -17,19 +21,23 @@ public class Brownian {
         double currentTime = 0;
         double deltaTime = 0;
 
+        boolean subjectHittingWall = false;
+
         // Calculate first events
         addFirstEvents(programmedEvents, particles, gridSide, currentTime);
 
-        for (long events = 0; !programmedEvents.isEmpty() /* && currentTime < MAX_TIME */ && events < MAX_EVENTS; events++) { // TODO check cut condition
+        for (long events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < MAX_EVENTS; events++) { // TODO check cut condition
 //            System.out.println("-------------- QUEUE:");
 //            programmedEvents.forEach(System.out::println);
 //            System.out.println("QUEUE END --------------\n");
 
-            currentEvent = programmedEvents.first();
+            currentEvent = programmedEvents.get(0);
             deltaTime = currentEvent.getTime() - currentTime;
             currentTime += deltaTime;
 
 //            System.out.printf("Delta time added: %.4g\n", deltaTime);
+
+            subjectHittingWall = isSubjectHittingWall.test(currentEvent);
 
             // Update particles times
             updateParticles(particles, deltaTime);
@@ -38,23 +46,7 @@ public class Brownian {
             lastModified = solveCollision(currentEvent);
 
             // Remove deprecated collisions
-            // TODO: Mandar a una funcion esto
-            Iterator<Event> it = programmedEvents.iterator();
-
-            while (it.hasNext()) {
-                Event e = it.next();
-                if (e instanceof WallCollisionEvent) {
-                    VelocityParticle particle = ((WallCollisionEvent) e).getParticle();
-                    if (lastModified.contains(particle))
-                        it.remove();
-                }
-                else { // (e instanceof ParticleCollisionEvent)
-                    VelocityParticle particle1 = ((ParticleCollisionEvent) e).getParticle1();
-                    VelocityParticle particle2 = ((ParticleCollisionEvent) e).getParticle2();
-                    if (lastModified.contains(particle1) || lastModified.contains(particle2))
-                        it.remove();
-                }
-            }
+            removeDeprecatedCollisions(programmedEvents, lastModified);
 
             // New collisions
             addNewEvents(programmedEvents, particles, gridSide, currentEvent, currentTime);
@@ -64,7 +56,7 @@ public class Brownian {
             extendedEvents.add(ExtendedEvent.from(currentEvent).withFrame(particles));
             programmedEvents.remove(currentEvent);
 
-            System.out.println(currentEvent);
+//            System.out.println(currentEvent);
 
 //            System.out.println("\n-------------- PARTICLES:");
 //            particles.forEach(System.out::println);
@@ -76,7 +68,7 @@ public class Brownian {
         return extendedEvents;
     }
 
-    private static void addFirstEvents(SortedSet<Event> queue ,List<VelocityParticle> velocityParticles, long gridSide, double currentTime){
+    private static void addFirstEvents(List<Event> programmedEvents, List<VelocityParticle> velocityParticles, long gridSide, double currentTime){
         double time;
 
         for (int i = 0; i < velocityParticles.size(); i++) {
@@ -85,13 +77,13 @@ public class Brownian {
             // Vertical Wall
             time = particle1.collidesX(gridSide);
             if (time >= 0) {
-                queue.add(Event.collision(particle1, Wall.VERTICAL, currentTime + time));
+                programmedEvents.add(Event.collision(particle1, Wall.VERTICAL, currentTime + time));
             }
 
             // Horizontal Wall
             time = particle1.collidesY(gridSide);
             if (time >= 0) {
-                queue.add(Event.collision(particle1, Wall.HORIZONTAL, currentTime + time));
+                programmedEvents.add(Event.collision(particle1, Wall.HORIZONTAL, currentTime + time));
             }
 
             for (int j = i+1; j < velocityParticles.size(); j++) {
@@ -100,12 +92,56 @@ public class Brownian {
                 //Particles Collision
                 time = particle1.collides(particle2);
                 if (time >= 0) {
-                    queue.add(Event.collision(particle1, particle2, currentTime + time));
+                    programmedEvents.add(Event.collision(particle1, particle2, currentTime + time));
                 }
             }
         }
+    }
 
+    private static void addNewEvents(List<Event> programmedEvents, List<VelocityParticle> velocityParticles, long gridSide, Event event, double currentTime){
+        List<VelocityParticle> collidedParticles = new ArrayList<>();
 
+        if (event instanceof WallCollisionEvent) {
+            WallCollisionEvent e = (WallCollisionEvent) event;
+            VelocityParticle particle = e.getParticle();
+
+            collidedParticles.add(particle);
+        }
+        else if (event instanceof ParticleCollisionEvent) {
+            ParticleCollisionEvent e = (ParticleCollisionEvent) event;
+            VelocityParticle particle1 = e.getParticle1();
+            VelocityParticle particle2 = e.getParticle2();
+
+            collidedParticles.add(particle1);
+            collidedParticles.add(particle2);
+        }
+
+        double time;
+
+        for (VelocityParticle particle: collidedParticles) {
+
+            // Vertical Wall
+            time = particle.collidesX(gridSide);
+            if (time >= 0) {
+                programmedEvents.add(Event.collision(particle, Wall.VERTICAL, currentTime + time));
+            }
+
+            // Horizontal Wall
+            time = particle.collidesY(gridSide);
+            if (time >= 0) {
+                programmedEvents.add(Event.collision(particle, Wall.HORIZONTAL, currentTime + time));
+            }
+
+            for (VelocityParticle other: velocityParticles) {
+                if (!collidedParticles.contains(other)) { // TODO: Not looking for next collision with exact same pair of particles at this point. Expecting collision with something else first.
+                    //Particles Collision
+                    time = particle.collides(other);
+                    if(time >= 0 ) {
+                        programmedEvents.add(Event.collision(particle, other, currentTime + time));
+                    }
+                }
+            }
+        }
     }
 
     private static void updateParticles(List<VelocityParticle> particles, double deltaTime){
@@ -143,51 +179,23 @@ public class Brownian {
         return ret;
     }
 
-    private static void addNewEvents(SortedSet<Event> queue, List<VelocityParticle> velocityParticles, long gridSide, Event event, double currentTime){
-        List<VelocityParticle> collidedParticles = new ArrayList<>();
+    private static void removeDeprecatedCollisions(List<Event> programmedEvents, List<VelocityParticle> lastModified) {
+        Iterator<Event> it = programmedEvents.iterator();
 
-        if (event instanceof WallCollisionEvent) {
-            WallCollisionEvent e = (WallCollisionEvent) event;
-            VelocityParticle particle = e.getParticle();
-
-            collidedParticles.add(particle);
-        }
-        else if (event instanceof ParticleCollisionEvent) {
-            ParticleCollisionEvent e = (ParticleCollisionEvent) event;
-            VelocityParticle particle1 = e.getParticle1();
-            VelocityParticle particle2 = e.getParticle2();
-
-            collidedParticles.add(particle1);
-            collidedParticles.add(particle2);
-        }
-
-        double time;
-
-        for (VelocityParticle particle: collidedParticles) {
-
-            // Vertical Wall
-            time = particle.collidesX(gridSide);
-            if (time >= 0) {
-                queue.add(Event.collision(particle, Wall.VERTICAL, currentTime + time));
+        while (it.hasNext()) {
+            Event e = it.next();
+            if (e instanceof WallCollisionEvent) {
+                VelocityParticle particle = ((WallCollisionEvent) e).getParticle();
+                if (lastModified.contains(particle))
+                    it.remove();
             }
-
-            // Horizontal Wall
-            time = particle.collidesY(gridSide);
-            if (time >= 0) {
-                queue.add(Event.collision(particle, Wall.HORIZONTAL, currentTime + time));
-            }
-
-            for (VelocityParticle other: velocityParticles) {
-                if (!collidedParticles.contains(other)) { // TODO: Not looking for next collision with exact same pair of particles at this point. Expecting collision with something else first.
-                    //Particles Collision
-                    time = particle.collides(other);
-                    if(time >= 0 ) {
-                        queue.add(Event.collision(particle, other, currentTime + time));
-                    }
-                }
+            else { // (e instanceof ParticleCollisionEvent)
+                VelocityParticle particle1 = ((ParticleCollisionEvent) e).getParticle1();
+                VelocityParticle particle2 = ((ParticleCollisionEvent) e).getParticle2();
+                if (lastModified.contains(particle1) || lastModified.contains(particle2))
+                    it.remove();
             }
         }
-
     }
 
 }
