@@ -55,20 +55,20 @@ public class Simulation {
             }
 
             List<VelocityParticle> particles = new ArrayList<>();
-//            // Generate big particle
-//            particles.add(new VelocityParticle(0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0));
-//
-//            // Generate small particles
-//            particles = VelocityParticlesGenerator.generateRandom(particles, numberOfParticles, l_grid_side, 0.2, 2.0, r, 0.9); // TODO speed entre -2 y 2
+            // Generate big particle
+            particles.add(new VelocityParticle(0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0));
 
-            particles.add(new VelocityParticle(0, 0, 0, 1, 0.5, 0, 1));  // -->
-            particles.add(new VelocityParticle(1, 24, 0, 1, 0.5, Math.PI, 1)); // <--
+            // Generate small particles
+            particles = VelocityParticlesGenerator.generateRandom(particles, numberOfParticles, l_grid_side, 0.2, 2.0, r, 0.9); // TODO speed entre -2 y 2
+
+//            particles.add(new VelocityParticle(0, 2, 3, 1, 0.5, Math.PI/2, 1));  // -->
+//            particles.add(new VelocityParticle(1, 2, 23, 1, 0.5, 3*Math.PI/2, 1)); // <--
 
             particles.forEach(System.out::println);
 
             long startTime = System.nanoTime();
 
-            Queue<Event> events = Brownian.simulate(particles, l_grid_side);
+            List<ExtendedEvent> events = Brownian.simulate(particles, l_grid_side);
 //            events.forEach(System.out::println);
 
 //            frames = OffLattice.simulate(particles, config.getR_interaction_radius(), config.getM_grid_dimension(), l_grid_side ,config.getNoise_amplitude(),  config.getFrames(), r);
@@ -79,7 +79,7 @@ public class Simulation {
             System.out.println("Time in ms: " + timeElapsed / 1000000.0 );
 
             // save results
-//            new XYZ_Writer(FILENAME).addAllFrames(frames).writeAndClose();
+            new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
 
         } catch (IOException e) {
             e.printStackTrace();

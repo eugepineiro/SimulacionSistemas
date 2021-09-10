@@ -46,12 +46,12 @@ public class VelocityParticlesGenerator {
         for (int i = 0; i < N; i++) {
             Particle newParticle;
             do {
-                x = r.nextDouble() * L; // upper bound excluded
-                y = r.nextDouble() * L; // upper bound excluded
                 if (fixedRadius == null)
                     radius = r.nextDouble() * maxRadius; // upper bound excluded
                 else
                     radius = fixedRadius;
+                x = r.nextDouble() * (L - 2*radius) + radius; // upper bound excluded
+                y = r.nextDouble() * (L - 2*radius) + radius; // upper bound excluded
                 newParticle = new Particle(i, x, y, radius);
             } while (!allTestTrue(generated, newParticle, new ParticleCollision().negate()));
             angle = r.nextDouble() * 2*Math.PI;

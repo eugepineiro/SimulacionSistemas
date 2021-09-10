@@ -65,8 +65,6 @@ public class VelocityParticle extends Particle {
         if ( dt.get("inner_v_r") >= 0 || distance < 0)
             return -1; // inf
 
-        Double ans = - ( dt.get("inner_v_r") + Math.sqrt(distance) ) / dt.get("inner_v_v");
-        System.out.println(ans);
         return - ( dt.get("inner_v_r") + Math.sqrt(distance) ) / dt.get("inner_v_v");
     }
 

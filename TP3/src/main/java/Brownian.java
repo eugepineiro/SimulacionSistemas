@@ -1,13 +1,14 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Brownian {
 
     private static final double MAX_TIME = 20;
-    private static final double MAX_EVENTS = 2;
+    private static final double MAX_EVENTS = 200;
 
-    public static Queue<Event> simulate(List<VelocityParticle> particles, long gridSide) {
+    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, long gridSide) {
 
-        Queue<Event> history = new LinkedList<>();
+        List<ExtendedEvent> extendedEvents = new LinkedList<>();
         SortedSet<Event> programmedEvents = new TreeSet<>(Comparator.comparing(Event::getTime));
 
         Event currentEvent;
@@ -19,15 +20,16 @@ public class Brownian {
         // Calculate first events
         addFirstEvents(programmedEvents, particles, gridSide, currentTime);
 
-        System.out.println("QUEUE:\n");
-        programmedEvents.forEach(System.out::println);
-
         for (long events = 0; !programmedEvents.isEmpty() /* && currentTime < MAX_TIME */ && events < MAX_EVENTS; events++) { // TODO check cut condition
+//            System.out.println("-------------- QUEUE:");
+//            programmedEvents.forEach(System.out::println);
+//            System.out.println("QUEUE END --------------\n");
+
             currentEvent = programmedEvents.first();
             deltaTime = currentEvent.getTime() - currentTime;
             currentTime += deltaTime;
 
-            System.out.printf("Delta time added: %.4g\n", deltaTime);
+//            System.out.printf("Delta time added: %.4g\n", deltaTime);
 
             // Update particles times
             updateParticles(particles, deltaTime);
@@ -36,6 +38,7 @@ public class Brownian {
             lastModified = solveCollision(currentEvent);
 
             // Remove deprecated collisions
+            // TODO: Mandar a una funcion esto
             Iterator<Event> it = programmedEvents.iterator();
 
             while (it.hasNext()) {
@@ -58,21 +61,19 @@ public class Brownian {
 
             // Add to history
             currentEvent.freeze();
-            history.add(currentEvent);
+            extendedEvents.add(ExtendedEvent.from(currentEvent).withFrame(particles));
             programmedEvents.remove(currentEvent);
 
             System.out.println(currentEvent);
 
-            System.out.println("PARTICLES:\n");
-            particles.forEach(System.out::println);
-
-            System.out.println("QUEUE:\n");
-            programmedEvents.forEach(System.out::println);
-
-            System.out.println("\n------------------------------------------------------------\n");
+//            System.out.println("\n-------------- PARTICLES:");
+//            particles.forEach(System.out::println);
+//            System.out.println("PARTICLES --------------");
+//
+//            System.out.println("\n------------------------------------------------------------\n");
         }
 
-        return history;
+        return extendedEvents;
     }
 
     private static void addFirstEvents(SortedSet<Event> queue ,List<VelocityParticle> velocityParticles, long gridSide, double currentTime){
