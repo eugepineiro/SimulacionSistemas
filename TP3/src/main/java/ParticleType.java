@@ -1,6 +1,6 @@
 public enum ParticleType {
-    POLLEN,
-    WATER;
+    BIG,
+    SMALL;
 
     @Override
     public String toString() {

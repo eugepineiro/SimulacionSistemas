@@ -50,15 +50,11 @@ public class Simulation {
                 l_grid_side = config.getL_grid_side();
             }
 
-            if (1.0 * l_grid_side / config.getM_grid_dimension() <= (config.getR_interaction_radius() /*+ 2.0 * l_grid_side / 50)*/) ) {
-                throw new IllegalArgumentException("L/M > rc");
-            }
-
             List<VelocityParticle> particles = new ArrayList<>();
 
-            VelocityParticle pollenParticle = new VelocityParticle(ParticleType.POLLEN, 0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0);
+            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0);
             // Generate big particle
-            particles.add(pollenParticle);
+            particles.add(bigParticle);
 
             // Generate small particles
             particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, l_grid_side, 0.2, 2.0, r, 0.9); // TODO speed entre -2 y 2

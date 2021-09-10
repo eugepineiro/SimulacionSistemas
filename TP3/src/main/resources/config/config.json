@@ -1,10 +1,9 @@
 {
   "seed": 400,
-  "m_grid_dimension": 10,
   "r_interaction_radius": 1,
-  "n_number_of_particles": 200,
+  "n_number_of_particles": 100,
   "frames": 2000,
-  "l_grid_side": 25,
+  "l_grid_side": 6,
   "speed": 0.03,
   "noise_amplitude": 0.1
 }
