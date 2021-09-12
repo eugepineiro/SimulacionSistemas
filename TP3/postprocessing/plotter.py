@@ -16,16 +16,26 @@ def plot_time_probability_distribution(times, n_array):
         avg_times_by_n.append(avg_times)
     
 
-    plot_probability_distribution(avg_times_by_n, n_array, bin_size=0.001)
+    plot_probability_distribution(avg_times_by_n, n_array, bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
 
-def plot_speed_probability_distribution(speeds, n_array): 
-
+def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
     # pd de la rapidez de las particulas en el ultimo tercio de la simulacion 
     last_third_events_by_n = []
 
-    for n in range(len(speeds)): 
+    for n in range(len(speeds_by_n)): 
 
-        last_third_events_by_n.append(speeds[-int(math.floor(len(n_array)/3)):]) 
+        # speeds_by_n[n] == 
+        # [
+        #     [],  e1 --> sum(e1)/len(e1) --> avg(e1)
+        #     [], e1 --> sum(e1)/len(e1) --> avg(e1)
+        # ]
+
+        speeds_by_events = speeds_by_n[n]
+        speeds = list(map(lambda s: sum(s)/len(s), speeds_by_events))
+        print(speeds)
+
+        last_third_events_by_n.append(speeds[-int(math.floor(len(speeds)/3)):]) # last third 
+        
 
     plot_probability_distribution(last_third_events_by_n, n_array, bin_size=0.0005)
            
@@ -63,7 +73,7 @@ def plot_probability_distribution(data, n_array, bin_size=0.01):
         ))
     
     fig.update_layout(
-    title="Times Probability Distribution",
+    title="Times Probability Distribution", #TODO fix title (velocity o time)
     xaxis_title="Time",
     yaxis_title="Probability",
     legend_title=f"References\n",

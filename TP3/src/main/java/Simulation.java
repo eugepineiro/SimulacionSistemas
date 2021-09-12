@@ -84,7 +84,7 @@ public class Simulation {
 
     static void simulateWithMultipleN(List<Long> values, long gridSide, long maxEvents, long seed) throws IOException {
         List<MultipleNResult<Double>> timesResults = new ArrayList<>();
-        List<MultipleNResult<List<Double>>> speedResults = new ArrayList<>();
+        List<MultipleNResult<List<Double>>> smallParticlesSpeedsResults = new ArrayList<>();
 
         Random r;
         List<VelocityParticle> particles;
@@ -116,16 +116,17 @@ public class Simulation {
             );
             timesResults.add(times);
 
-            MultipleNResult<List<Double>> speeds = new MultipleNResult<>(
+            MultipleNResult<List<Double>> smallParticlesSpeeds = new MultipleNResult<>(
                 numberOfParticles,
                 res.stream()
                     .map(extendedEvent -> extendedEvent.getFrame().stream()
+                        .filter(velocityParticle -> velocityParticle.getType().equals(ParticleType.SMALL))
                         .map(VelocityParticle::getSpeed)
                         .collect(Collectors.toList())
                     )
                     .collect(Collectors.toList())
             );
-            speedResults.add(speeds);
+            smallParticlesSpeedsResults.add(smallParticlesSpeeds);
         }
 
         long endTime = System.nanoTime();
@@ -137,8 +138,8 @@ public class Simulation {
             .withObj(timesResults)
             .write();
 
-        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_n_speeds")
-            .withObj(speedResults)
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_n_small_particles_speeds")
+            .withObj(smallParticlesSpeedsResults)
             .write();
 
         System.out.println("Finished saving");

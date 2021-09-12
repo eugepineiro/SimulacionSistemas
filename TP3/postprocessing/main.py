@@ -9,7 +9,7 @@ from json_parser import parse_extended_events
 with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multiple_n_event_times.json") as f:
     times_and_n = json.load(f)
 
-with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multiple_n_speeds.json") as f:
+with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multiple_n_small_particles_speeds.json") as f:
     speeds_and_n = json.load(f)
 
 # [
@@ -18,11 +18,11 @@ with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multip
 # ]
 
 # 3.1 Plot Times
-times_by_n = list(map(lambda a: a['results'], times_and_n))
-n_array = list(map(lambda a: a['n'], times_and_n))
-plot_time_probability_distribution(times_by_n, n_array) 
+# times_by_n = list(map(lambda a: a['results'], times_and_n))
+# n_array = list(map(lambda a: a['n'], times_and_n))
+# plot_time_probability_distribution(times_by_n, n_array) 
 
 # 3.2 Plot Speeds
-speeds_by_n = list(map(lambda a: a['results'], times_and_n))
-n_array = list(map(lambda a: a['n'], times_and_n))
+speeds_by_n = list(map(lambda a: a['results'], speeds_and_n))
+n_array = list(map(lambda a: a['n'], speeds_and_n))
 plot_speed_probability_distribution(speeds_by_n, n_array)
