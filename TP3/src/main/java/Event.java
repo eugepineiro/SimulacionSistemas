@@ -1,8 +1,15 @@
-public class Event implements Comparable<Event>{
+public abstract class Event implements Comparable<Event>{
 
+    public enum Type {
+        WALL_COLLISION,
+        PARTICLE_COLLISION
+    }
+
+    final protected Type type;
     final protected double time;
 
-    public Event(double time) {
+    public Event(Type type, double time) {
+        this.type = type;
         this.time = time;
     }
 
@@ -16,6 +23,10 @@ public class Event implements Comparable<Event>{
 
     public double getTime() {
         return time;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public void freeze() {

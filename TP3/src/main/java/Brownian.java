@@ -9,8 +9,6 @@ public class Brownian {
     private static final String             SUBJECT_NAME            = "BIG";
 
     // Stop conditions
-    private static final double             MAX_EVENTS              = 100000;
-
     private static final long               STUDIED_SUBJECT_ID      = 0;
     private static final Predicate<Event>   isSubjectHittingWall    = (event) -> (event instanceof WallCollisionEvent && ((WallCollisionEvent) event).getParticle().getId() == STUDIED_SUBJECT_ID);
 
@@ -64,7 +62,7 @@ public class Brownian {
         System.out.printf("\r%s (X) %s (Y) - %d events", statusBarX, statusBarY, numberOfEvents);
     }
 
-    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, VelocityParticle bigParticle, long gridSide) {
+    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, VelocityParticle bigParticle, long gridSide, long maxEvents) {
 
         List<ExtendedEvent> extendedEvents = new LinkedList<>();
         List<Event> programmedEvents = new SortedList<>(Comparator.comparing(Event::getTime));
@@ -80,7 +78,7 @@ public class Brownian {
         // Calculate first events
         addFirstEvents(programmedEvents, particles, gridSide, currentTime);
 
-        for (long events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < MAX_EVENTS; events++) {
+        for (long events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < maxEvents; events++) {
 
             currentEvent = programmedEvents.get(0);
             deltaTime = currentEvent.getTime() - currentTime;

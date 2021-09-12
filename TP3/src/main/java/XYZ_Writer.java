@@ -28,7 +28,7 @@ public class XYZ_Writer {
         }
     }
 
-    private static String PATH = "TP2/src/main/resources/ovito";
+    private static String PATH = "TP3/src/main/resources/ovito";
     private final List<List<PCoords>> frames;
     private FileWriter file;
 

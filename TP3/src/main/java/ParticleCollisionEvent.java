@@ -1,9 +1,10 @@
 public class ParticleCollisionEvent extends Event{
+
     private VelocityParticle particle1;
     private VelocityParticle particle2;
 
     public ParticleCollisionEvent(VelocityParticle particle1, VelocityParticle particle2, double time) {
-        super(time);
+        super(Type.PARTICLE_COLLISION, time);
         this.particle1 = particle1;
         this.particle2 = particle2;
     }

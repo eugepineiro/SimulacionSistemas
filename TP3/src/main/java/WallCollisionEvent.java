@@ -1,9 +1,10 @@
 public class WallCollisionEvent extends Event {
+
     private VelocityParticle particle;
     final private Wall wall;
 
     public WallCollisionEvent(VelocityParticle particle, Wall wall, double time) {
-        super(time);
+        super(Type.WALL_COLLISION, time);
         this.particle = particle;
         this.wall = wall;
     }

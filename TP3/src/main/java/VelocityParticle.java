@@ -109,11 +109,6 @@ public class VelocityParticle extends Particle {
         collisions++;
     }
 
-    /* Total number of collisions involving this particle */
-    public long getCollisionCount(){
-        return collisions;
-    }
-
     public void play(double deltaTime) {
         x += vx * deltaTime;
         y += vy * deltaTime;
@@ -172,6 +167,10 @@ public class VelocityParticle extends Particle {
 
     public void setMass(double mass) {
         this.mass = mass;
+    }
+
+    public long getCollisions() {
+        return collisions;
     }
 
     public void setCollisions(long collisions) {

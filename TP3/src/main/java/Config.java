@@ -4,13 +4,9 @@
 public class Config {
 
     private Long seed;
-    private Double r_interaction_radius;
-    private Integer n_number_of_particles;
-    private Integer l_grid_side;
-    private Integer frames;
-    private Double density;
-    private Double speed;
-    private Double noise_amplitude;
+    private Long n_number_of_particles;
+    private Long l_grid_side;
+    private Long max_events;
 
     public Long getSeed() {
         return seed;
@@ -20,72 +16,37 @@ public class Config {
         this.seed = seed;
     }
 
-    public Double getR_interaction_radius() {
-        return r_interaction_radius;
-    }
-
-    public void setR_interaction_radius(Double r_interaction_radius) {
-        this.r_interaction_radius = r_interaction_radius;
-    }
-
-    public Integer getN_number_of_particles() {
+    public Long getN_number_of_particles() {
         return n_number_of_particles;
     }
 
-    public void setN_number_of_particles(Integer n_number_of_particles) {
+    public void setN_number_of_particles(Long n_number_of_particles) {
         this.n_number_of_particles = n_number_of_particles;
     }
 
-    public Integer getL_grid_side() {
+    public Long getL_grid_side() {
         return l_grid_side;
     }
 
-    public void setL_grid_side(Integer l_grid_side) {
+    public void setL_grid_side(Long l_grid_side) {
         this.l_grid_side = l_grid_side;
     }
 
-    public Integer getFrames() {
-        return frames;
+    public Long getMax_events() {
+        return max_events;
     }
 
-    public void setFrames(Integer frames) {
-        this.frames = frames;
-    }
-
-    public Double getDensity() {
-        return density;
-    }
-
-    public void setDensity(Double density) {
-        this.density = density;
-    }
-
-    public Double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(Double speed) {
-        this.speed = speed;
-    }
-
-    public Double getNoise_amplitude() {
-        return noise_amplitude;
-    }
-
-    public void setNoise_amplitude(Double noise_amplitude) {
-        this.noise_amplitude = noise_amplitude;
+    public void setMax_events(Long max_events) {
+        this.max_events = max_events;
     }
 
     @Override
     public String toString() {
         return "Config{" +
                 "seed=" + seed +
-                ", r_interaction_radius=" + r_interaction_radius +
+                ", n_number_of_particles=" + n_number_of_particles +
                 ", l_grid_side=" + l_grid_side +
-                ", frames=" + frames +
-                ", density=" + density +
-                ", speed=" + speed +
-                ", noise_amplitude=" + noise_amplitude +
+                ", max_events=" + max_events +
                 '}';
     }
 }

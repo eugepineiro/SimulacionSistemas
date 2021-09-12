@@ -3,7 +3,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Simulation {
 
@@ -22,10 +21,6 @@ public class Simulation {
             // JSON file to Java object
             Config config = mapper.readValue(new File("TP3/src/main/resources/config/config.json"), Config.class);
 
-//            // pretty print
-//            String prettyConfig = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(config);
-//            System.out.println(prettyConfig);
-
             // Configure random
             Random r;
             Long seed = config.getSeed();
@@ -38,52 +33,39 @@ public class Simulation {
                 r = new Random(seed);
 
 
-            int numberOfParticles;
-            int l_grid_side;
-            if(config.getN_number_of_particles() == null){
-                l_grid_side = config.getL_grid_side();
-                numberOfParticles = (int) (config.getDensity() * Math.pow(config.getL_grid_side(), 2));
-            }else if( config.getL_grid_side() == null ){
-                numberOfParticles = config.getN_number_of_particles();
-                l_grid_side = (int) Math.sqrt(config.getN_number_of_particles()/config.getDensity());
-            } else {
-                numberOfParticles = config.getN_number_of_particles();
-                l_grid_side = config.getL_grid_side();
-            }
+            long numberOfParticles, lGridSide, maxEvents;
+
+            lGridSide = config.getL_grid_side();
+            numberOfParticles = config.getN_number_of_particles();
+            maxEvents = config.getMax_events();
 
             List<VelocityParticle> particles = new ArrayList<>();
 
             // Generate big particle
-            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, l_grid_side/2.0, l_grid_side/2.0, 0.7, 0.0, 0.0, 2.0);
+            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, lGridSide/2.0, lGridSide/2.0, 0.7, 0.0, 0.0, 2.0);
             particles.add(bigParticle);
 
             // Generate small particles
-            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, l_grid_side, 0.2, 2.0, r, 0.9); // TODO speed entre -2 y 2
-
-//            particles.add(new VelocityParticle(0, 2, 2, 1, 0.5, Math.PI/2, 1));  // -->
-//            particles.add(new VelocityParticle(1, 2, 23, 1, 0.5, 3*Math.PI/2, 1)); // <--
-
-//            particles.forEach(System.out::println);
+            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, lGridSide, 0.2, 2.0, r, 0.9); // TODO speed entre -2 y 2
 
             long startTime = System.nanoTime();
 
-            List<ExtendedEvent> events = Brownian.simulate(particles, bigParticle, l_grid_side);
+            List<ExtendedEvent> events = Brownian.simulate(particles, bigParticle, lGridSide, maxEvents);
 
             long endTime = System.nanoTime();
             long timeElapsed = endTime - startTime;
 
-            System.out.println("Time in ms: " + timeElapsed / 1000000.0 );
+            System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
-//            // save results
-//            new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
-//
-//            List<Double> timesList =  events.stream().map( e -> e.getEvent().getTime()).collect(Collectors.toList());
-//
-//            new JsonWriter(POSTPROCESSING_FILENAME)
-//                    .withObj(timesList)
-//                    .write();
+            // Save results
 
+            // 1. Ovito
+            new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
 
+            // 2. Postprocessing
+            new JsonWriter(POSTPROCESSING_FILENAME)
+                .withObj(events)
+                .write();
 
         } catch (IOException e) {
             e.printStackTrace();

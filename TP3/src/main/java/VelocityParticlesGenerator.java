@@ -36,13 +36,13 @@ public class VelocityParticlesGenerator {
         }
     }
 
-    public static List<VelocityParticle> generateRandomWaterParticles(List<VelocityParticle> particles, int N, int L, Double fixedRadius, double speed, Random r, double mass){
+    public static List<VelocityParticle> generateRandomWaterParticles(List<VelocityParticle> particles, long N, long L, Double fixedRadius, double speed, Random r, double mass){
         List<VelocityParticle> generated = new ArrayList<>(particles);
 
         double x, y, angle, newSpeed;
         double radius, maxRadius = L/50.0; // TODO: Is it okay?
 
-        for (int i = 0; i < N; i++) {
+        for (long i = 0; i < N; i++) {
             Particle newParticle;
             do {
                 if (fixedRadius == null)
