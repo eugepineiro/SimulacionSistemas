@@ -52,12 +52,12 @@ public class Brownian {
         return statusBar.toString();
     }
 
-    private static void printStatusBar(long gridSide, VelocityParticle subject, long events) {
+    private static void printStatusBar(long gridSide, VelocityParticle subject, long events, boolean exact) {
 
         String statusBarX = getStatusBar(gridSide, subject.getX(), subject.getRadius());
         String statusBarY = getStatusBar(gridSide, subject.getY(), subject.getRadius());
 
-        long numberOfEvents = (events / 1000) * 1000;
+        long numberOfEvents = exact ? events : (events / 1000) * 1000;
 
         System.out.printf("\r%s (X) %s (Y) - %d events", statusBarX, statusBarY, numberOfEvents);
     }
@@ -78,7 +78,9 @@ public class Brownian {
         // Calculate first events
         addFirstEvents(programmedEvents, particles, gridSide, currentTime);
 
-        for (long events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < maxEvents; events++) {
+        long events;
+
+        for (events = 0; !programmedEvents.isEmpty() && !subjectHittingWall && events < maxEvents; events++) {
 
             currentEvent = programmedEvents.get(0);
             deltaTime = currentEvent.getTime() - currentTime;
@@ -90,7 +92,7 @@ public class Brownian {
             updateParticles(particles, deltaTime);
 
             // Status bar
-            printStatusBar(gridSide, bigParticle, events);
+            printStatusBar(gridSide, bigParticle, events, false);
 
             // Solve collisions and update collided particles
             lastModified = solveCollision(currentEvent);
@@ -108,6 +110,7 @@ public class Brownian {
         }
 
         // Status bar end
+        printStatusBar(gridSide, bigParticle, events, true);
         System.out.println();
 
         return extendedEvents;

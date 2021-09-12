@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Simulation {
 
@@ -38,6 +39,12 @@ public class Simulation {
             lGridSide = config.getL_grid_side();
             numberOfParticles = config.getN_number_of_particles();
             maxEvents = config.getMax_events();
+            MultipleN multipleN = config.getMultiple_n();
+
+            if (multipleN.isActivated()) {
+                simulateWithMultipleN(multipleN.getValues(), lGridSide, maxEvents, seed);
+                return;
+            }
 
             List<VelocityParticle> particles = new ArrayList<>();
 
@@ -63,13 +70,78 @@ public class Simulation {
             new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
 
             // 2. Postprocessing
-            new JsonWriter(POSTPROCESSING_FILENAME)
-                .withObj(events)
-                .write();
+//            new JsonWriter(POSTPROCESSING_FILENAME)
+//                .withObj(events)
+//                .write();
+
+            System.out.println("Finished saving");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    static void simulateWithMultipleN(List<Long> values, long gridSide, long maxEvents, long seed) throws IOException {
+        List<MultipleNResult<Double>> timesResults = new ArrayList<>();
+        List<MultipleNResult<List<Double>>> speedResults = new ArrayList<>();
+
+        Random r;
+        List<VelocityParticle> particles;
+        List<ExtendedEvent> res;
+
+        long startTime = System.nanoTime();
+
+        for (Long numberOfParticles: values) {
+            System.out.printf("%d particles\n", numberOfParticles);
+
+            r = new Random(seed);
+
+            particles = new ArrayList<>();
+
+            // Generate big particle
+            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, gridSide/2.0, gridSide/2.0, 0.7, 0.0, 0.0, 2.0);
+            particles.add(bigParticle);
+
+            // Generate small particles
+            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, gridSide, 0.2, 2.0, r, 0.9); // TODO speed entre -2 y 2
+
+            res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents);
+
+            MultipleNResult<Double> times = new MultipleNResult<>(
+                numberOfParticles,
+                res.stream()
+                    .map(extendedEvent -> extendedEvent.getEvent().getTime())
+                    .collect(Collectors.toList())
+            );
+            timesResults.add(times);
+
+            MultipleNResult<List<Double>> speeds = new MultipleNResult<>(
+                numberOfParticles,
+                res.stream()
+                    .map(extendedEvent -> extendedEvent.getFrame().stream()
+                        .map(VelocityParticle::getSpeed)
+                        .collect(Collectors.toList())
+                    )
+                    .collect(Collectors.toList())
+            );
+            speedResults.add(speeds);
+        }
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
+
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_n_event_times")
+            .withObj(timesResults)
+            .write();
+
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_n_speeds")
+            .withObj(speedResults)
+            .write();
+
+        System.out.println("Finished saving");
     }
 
 }

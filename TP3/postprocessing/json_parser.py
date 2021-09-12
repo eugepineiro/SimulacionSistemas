@@ -1,6 +1,6 @@
 from models import ExtendedEvent, Event, WallCollisionEvent, ParticleCollisionEvent, Wall, VelocityParticle, ParticleType
 
-def parse(extended_events):
+def parse_extended_events(extended_events):
     res = []
 
     for ev in extended_events:

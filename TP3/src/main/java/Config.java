@@ -7,6 +7,7 @@ public class Config {
     private Long n_number_of_particles;
     private Long l_grid_side;
     private Long max_events;
+    private MultipleN multiple_n;
 
     public Long getSeed() {
         return seed;
@@ -40,6 +41,14 @@ public class Config {
         this.max_events = max_events;
     }
 
+    public MultipleN getMultiple_n() {
+        return multiple_n;
+    }
+
+    public void setMultiple_n(MultipleN multiple_n) {
+        this.multiple_n = multiple_n;
+    }
+
     @Override
     public String toString() {
         return "Config{" +
@@ -47,6 +56,7 @@ public class Config {
                 ", n_number_of_particles=" + n_number_of_particles +
                 ", l_grid_side=" + l_grid_side +
                 ", max_events=" + max_events +
+                ", multiple_n=" + multiple_n +
                 '}';
     }
 }
