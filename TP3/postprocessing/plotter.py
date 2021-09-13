@@ -3,10 +3,10 @@ import plotly.graph_objects as go
 import numpy as np
 import math
 
+############## 3.1 & 3.2 PROBABILITIES ############## 
 
 def plot_time_probability_distribution(times, n_array): 
- 
-    
+  
     avg_times_by_n = []
 
     for n in range(len(times)): 
@@ -16,7 +16,7 @@ def plot_time_probability_distribution(times, n_array):
         avg_times_by_n.append(avg_times)
     
 
-    plot_probability_distribution(avg_times_by_n, n_array, bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
+    plot_probability_distribution(avg_times_by_n, n_array, 'Time',bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
 
 def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
     # pd de la rapidez de las particulas en el ultimo tercio de la simulacion 
@@ -32,16 +32,15 @@ def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
 
         speeds_by_events = speeds_by_n[n]
         speeds = list(map(lambda s: sum(s)/len(s), speeds_by_events))
-        print(speeds)
-
+       
         last_third_events_by_n.append(speeds[-int(math.floor(len(speeds)/3)):]) # last third 
         
 
-    plot_probability_distribution(last_third_events_by_n, n_array, bin_size=0.0005)
+    plot_probability_distribution(last_third_events_by_n, n_array, 'Velocity', bin_size=0.0005)
            
 
 
-def plot_probability_distribution(data, n_array, bin_size=0.01): 
+def plot_probability_distribution(data, n_array, fig_title, bin_size=0.01): 
 
     new_data_by_n = []
 
@@ -73,8 +72,8 @@ def plot_probability_distribution(data, n_array, bin_size=0.01):
         ))
     
     fig.update_layout(
-    title="Times Probability Distribution", #TODO fix title (velocity o time)
-    xaxis_title="Time",
+    title=fig_title + " Probability Distribution",
+    xaxis_title=fig_title,
     yaxis_title="Probability",
     legend_title=f"References\n",
     font=dict( 
@@ -94,4 +93,35 @@ def get_probability_distribution(data): #tiene que haber ya una funcion de pytho
         probabilities.append(data.count(n)/len_data)
  
     return probabilities
-         
+
+############## 3.3 TEMPERATURE ############## 
+
+def plot_big_particle_trajectories(trajectories_by_t, temperature_array):
+
+    fig = go.Figure()
+
+    for t in range(len(trajectories_by_t)): 
+        
+        fig.add_trace(go.Scatter( 
+            x=trajectories_by_t[t][0] , 
+            y=trajectories_by_t[t][1], 
+            mode='lines',
+            name=f'T = {temperature_array[t]}'           
+        ))
+
+    fig.update_layout(
+    title="Big Particle Trajectories by Temperature",
+    xaxis_title="x",
+    yaxis_title="y",
+    legend_title=f"References\n",
+    font=dict( 
+        size=20, 
+        )
+    )
+   
+    fig.show()
+
+############## 3.4 DCM ##############
+
+#def plot_dcm(): 
+

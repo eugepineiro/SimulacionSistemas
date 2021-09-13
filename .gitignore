@@ -21,3 +21,6 @@
 
 # Latex 
 **/build/**
+
+# Files 
+**/postprocessing/
