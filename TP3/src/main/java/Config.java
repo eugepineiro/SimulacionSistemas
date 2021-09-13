@@ -7,8 +7,11 @@ public class Config {
     private Long n_number_of_particles;
     private Long l_grid_side;
     private Long max_events;
+    private Double min_speed;
+    private Double max_speed;
     private MultipleN multiple_n;
     private MultipleTemperatures multiple_temperatures;
+    private MultipleSimulations multiple_simulations;
 
     public Long getSeed() {
         return seed;
@@ -42,6 +45,22 @@ public class Config {
         this.max_events = max_events;
     }
 
+    public Double getMin_speed() {
+        return min_speed;
+    }
+
+    public void setMin_speed(Double min_speed) {
+        this.min_speed = min_speed;
+    }
+
+    public Double getMax_speed() {
+        return max_speed;
+    }
+
+    public void setMax_speed(Double max_speed) {
+        this.max_speed = max_speed;
+    }
+
     public MultipleN getMultiple_n() {
         return multiple_n;
     }
@@ -58,6 +77,14 @@ public class Config {
         this.multiple_temperatures = multiple_temperatures;
     }
 
+    public MultipleSimulations getMultiple_simulations() {
+        return multiple_simulations;
+    }
+
+    public void setMultiple_simulations(MultipleSimulations multiple_simulations) {
+        this.multiple_simulations = multiple_simulations;
+    }
+
     @Override
     public String toString() {
         return "Config{" +
@@ -65,8 +92,11 @@ public class Config {
                 ", n_number_of_particles=" + n_number_of_particles +
                 ", l_grid_side=" + l_grid_side +
                 ", max_events=" + max_events +
+                ", min_speed=" + min_speed +
+                ", max_speed=" + max_speed +
                 ", multiple_n=" + multiple_n +
                 ", multiple_temperatures=" + multiple_temperatures +
+                ", multiple_simulations=" + multiple_simulations +
                 '}';
     }
 }

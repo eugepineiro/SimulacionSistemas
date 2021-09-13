@@ -2,7 +2,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Simulation {
@@ -35,18 +38,35 @@ public class Simulation {
 
 
             long numberOfParticles, lGridSide, maxEvents;
+            double minSpeed, maxSpeed;
 
             lGridSide                                   = config.getL_grid_side();
             numberOfParticles                           = config.getN_number_of_particles();
             maxEvents                                   = config.getMax_events();
+            minSpeed                                    = config.getMin_speed();
+            maxSpeed                                    = config.getMax_speed();
             MultipleN multipleN                         = config.getMultiple_n();
             MultipleTemperatures multipleTemperatures   = config.getMultiple_temperatures();
+            MultipleSimulations multipleSimulations     = config.getMultiple_simulations();
 
-            if (multipleN.isActivated()) simulateWithMultipleN(multipleN.getValues(), lGridSide, maxEvents, seed);
+            boolean simpleSimulation                    = true;
 
-            if (multipleTemperatures.isActivated()) simulateWithMultipleTemperatures(multipleTemperatures.getSpeeds_ranges(), numberOfParticles, lGridSide, maxEvents, seed);
+            if (multipleN.isActivated()) {
+                simulateWithMultipleN(minSpeed, maxSpeed, multipleN.getValues(), lGridSide, maxEvents, seed);
+                simpleSimulation = false;
+            }
 
-            if (multipleN.isActivated() || multipleTemperatures.isActivated()) return;
+            if (multipleTemperatures.isActivated()) {
+                simulateWithMultipleTemperatures(multipleTemperatures.getSpeeds_ranges(), numberOfParticles, lGridSide, maxEvents, seed);
+                simpleSimulation = false;
+            }
+
+            if (multipleSimulations.isActivated()) {
+                simulatewithMultipleSimulations(multipleSimulations.getSimulations(), minSpeed, maxSpeed, numberOfParticles, lGridSide, maxEvents, seed);
+                simpleSimulation = false;
+            }
+
+            if (!simpleSimulation) return;
 
             List<VelocityParticle> particles = new ArrayList<>();
 
@@ -55,11 +75,11 @@ public class Simulation {
             particles.add(bigParticle);
 
             // Generate small particles
-            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, lGridSide, 0.2, 0.0, 2.0, r, 0.9); // TODO speed entre -2 y 2
+            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, lGridSide, 0.2, minSpeed, maxSpeed, r, 0.9); // TODO speed entre -2 y 2
 
             long startTime = System.nanoTime();
 
-            List<ExtendedEvent> events = Brownian.simulate(particles, bigParticle, lGridSide, maxEvents);
+            List<ExtendedEvent> events = Brownian.simulate(particles, bigParticle, lGridSide, maxEvents, true);
 
             long endTime = System.nanoTime();
             long timeElapsed = endTime - startTime;
@@ -84,7 +104,7 @@ public class Simulation {
 
     }
 
-    static void simulateWithMultipleN(List<Long> values, long gridSide, long maxEvents, long seed) throws IOException {
+    static void simulateWithMultipleN(double minSpeed, double maxSpeed, List<Long> values, long gridSide, long maxEvents, long seed) throws IOException {
         List<MultipleNResult<Double>> timesResults = new ArrayList<>();
         List<MultipleNResult<List<Double>>> smallParticlesSpeedsResults = new ArrayList<>();
 
@@ -106,9 +126,9 @@ public class Simulation {
             particles.add(bigParticle);
 
             // Generate small particles
-            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, gridSide, 0.2, 0.0, 2.0, r, 0.9); // TODO speed entre -2 y 2
+            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, gridSide, 0.2, minSpeed, maxSpeed, r, 0.9); // TODO speed entre -2 y 2
 
-            res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents);
+            res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents, true);
 
             MultipleNResult<Double> times = new MultipleNResult<>(
                 numberOfParticles,
@@ -162,7 +182,7 @@ public class Simulation {
             minSpeed = speedRange.get(0);
             maxSpeed = speedRange.get(1);
 
-            System.out.printf("Speeds between %.2g and %.2g\n", minSpeed, maxSpeed);
+            System.out.printf("Simulation\n", minSpeed, maxSpeed);
 
             r = new Random(seed);
 
@@ -175,19 +195,19 @@ public class Simulation {
             // Generate small particles
             particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, gridSide, 0.2, minSpeed, maxSpeed, r, 0.9); // TODO speed entre -2 y 2
 
-            res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents);
+            res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents, true);
 
             MultipleTemperaturesResult positionsResult = new MultipleTemperaturesResult(
-                numberOfParticles,
-                minSpeed,
-                maxSpeed,
-                res.stream()
-                    .map(extendedEvent -> extendedEvent.getFrame().stream()
-                        .filter(particle -> particle.getType() == ParticleType.BIG)
-                        .findFirst().orElse(null))
-                        .filter(Objects::nonNull)
-                        .map(velocityParticle -> new MultipleTemperaturesResult.Position(velocityParticle.getX(), velocityParticle.getY()))
-                        .collect(Collectors.toList())
+                    numberOfParticles,
+                    minSpeed,
+                    maxSpeed,
+                    res.stream()
+                            .map(extendedEvent -> extendedEvent.getFrame().stream()
+                                    .filter(particle -> particle.getType() == ParticleType.BIG)
+                                    .findFirst().orElse(null))
+                            .filter(Objects::nonNull)
+                            .map(velocityParticle -> new MultipleTemperaturesResult.Position(velocityParticle.getX(), velocityParticle.getY()))
+                            .collect(Collectors.toList())
             );
 
             positionsResults.add(positionsResult);
@@ -199,7 +219,78 @@ public class Simulation {
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
         new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_temperatures_big_particle_positions")
-                .withObj(positionsResults)
+            .withObj(positionsResults)
+            .write();
+
+        System.out.println("Finished saving");
+    }
+
+    private static final Integer LOADING_BAR_SIZE = 20;
+
+    public static void printLoadingBar(double percentage) {
+        StringBuilder loadingBar = new StringBuilder("[");
+        for (int h = 0; h < LOADING_BAR_SIZE; h++) {
+            if (h < Math.ceil(percentage * LOADING_BAR_SIZE) - 1)
+                loadingBar.append("=");
+            else if (h < Math.ceil(percentage * LOADING_BAR_SIZE))
+                loadingBar.append(">");
+            else
+                loadingBar.append(" ");
+        }
+        loadingBar.append("]");
+        System.out.printf("%s %d%% Completed\r", loadingBar, (int) (percentage * 100));
+    }
+
+    static void simulatewithMultipleSimulations(long simulations, double minSpeed, double maxSpeed, long numberOfParticles, long gridSide, long maxEvents, long seed) throws IOException {
+        List<MultipleSimulationsResult> simulationsResults = new ArrayList<>();
+
+        Random r;
+        List<VelocityParticle> particles;
+        List<ExtendedEvent> res;
+
+        long startTime = System.nanoTime();
+
+        for (long iter = 0; iter < simulations; iter++) {
+
+            printLoadingBar(1.0 * iter / simulations);
+
+            r = new Random(seed);
+
+            particles = new ArrayList<>();
+
+            // Generate big particle
+            VelocityParticle bigParticle = new VelocityParticle(ParticleType.BIG, 0, gridSide/2.0, gridSide/2.0, 0.7, 0.0, 0.0, 2.0);
+            particles.add(bigParticle);
+
+            // Generate small particles
+            particles = VelocityParticlesGenerator.generateRandomWaterParticles(particles, numberOfParticles, gridSide, 0.2, minSpeed, maxSpeed, r, 0.9); // TODO speed entre -2 y 2
+
+            res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents, false);
+
+            List<MultipleSimulationsResult.TimedPosition> timedPositions = new ArrayList<>();
+
+            for (ExtendedEvent extendedEvent : res) {
+                for (VelocityParticle velocityParticle : extendedEvent.getFrame()) {
+                    if (velocityParticle.getType() == ParticleType.BIG) {
+                        timedPositions.add(new MultipleSimulationsResult.TimedPosition(
+                                extendedEvent.getEvent().getTime(),
+                                velocityParticle.getX(),
+                                velocityParticle.getY()
+                        ));
+                    }
+                }
+            }
+
+            simulationsResults.add(new MultipleSimulationsResult(timedPositions));
+        }
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
+
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_simulations_big_particle_positions")
+                .withObj(simulationsResults)
                 .write();
 
         System.out.println("Finished saving");

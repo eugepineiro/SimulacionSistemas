@@ -3,16 +3,22 @@
   "n_number_of_particles": 140,
   "l_grid_side": 6,
   "max_events": 10000,
+  "min_speed": 0,
+  "max_speed": 2,
   "multiple_n": {
     "activated": false,
     "values": [100, 120, 140]
   },
   "multiple_temperatures": {
-    "activated": true,
+    "activated": false,
     "speeds_ranges": [
       [0, 1],
       [1, 2],
       [2, 3]
     ]
+  },
+  "multiple_simulations": {
+    "activated": true,
+    "simulations": 10
   }
 }

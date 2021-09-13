@@ -62,7 +62,7 @@ public class Brownian {
         System.out.printf("\r%s (X) %s (Y) - %d events", statusBarX, statusBarY, numberOfEvents);
     }
 
-    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, VelocityParticle bigParticle, long gridSide, long maxEvents) {
+    public static List<ExtendedEvent> simulate(List<VelocityParticle> particles, VelocityParticle bigParticle, long gridSide, long maxEvents, boolean displayStatusBar) {
 
         List<ExtendedEvent> extendedEvents = new LinkedList<>();
         List<Event> programmedEvents = new SortedList<>(Comparator.comparing(Event::getTime));
@@ -92,7 +92,7 @@ public class Brownian {
             updateParticles(particles, deltaTime);
 
             // Status bar
-            printStatusBar(gridSide, bigParticle, events, false);
+            if (displayStatusBar) printStatusBar(gridSide, bigParticle, events, false);
 
             // Solve collisions and update collided particles
             lastModified = solveCollision(currentEvent);
@@ -110,8 +110,10 @@ public class Brownian {
         }
 
         // Status bar end
-        printStatusBar(gridSide, bigParticle, events, true);
-        System.out.println();
+        if (displayStatusBar) {
+            printStatusBar(gridSide, bigParticle, events, true);
+            System.out.println();
+        }
 
         return extendedEvents;
     }
