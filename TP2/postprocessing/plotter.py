@@ -41,6 +41,8 @@ def plot_polarization_by_frame(results, density, n):
         )
     )
 
+    fig.update_yaxes(type="log")
+
     fig.show()
 
 def plot_polarization_by_density(results, noise, n, density_range, density_increase):
