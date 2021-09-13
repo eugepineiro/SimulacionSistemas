@@ -16,31 +16,31 @@ def plot_time_probability_distribution(times, n_array):
         avg_times_by_n.append(avg_times)
     
 
-    plot_probability_distribution(avg_times_by_n, n_array, 'Time',bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
+    plot_probability_distribution(avg_times_by_n, n_array, 'Time', 'lines+markers', bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
 
 def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
     # pd de la rapidez de las particulas en el ultimo tercio de la simulacion 
-    last_third_events_by_n = []
 
+    res = []
+  
     for n in range(len(speeds_by_n)): 
-
-        # speeds_by_n[n] == 
-        # [
-        #     [],  e1 --> sum(e1)/len(e1) --> avg(e1)
-        #     [], e1 --> sum(e1)/len(e1) --> avg(e1)
-        # ]
-
+    
         speeds_by_events = speeds_by_n[n]
-        speeds = list(map(lambda s: sum(s)/len(s), speeds_by_events))
-       
-        last_third_events_by_n.append(speeds[-int(math.floor(len(speeds)/3)):]) # last third 
-        
+        speeds_by_events_final_third = speeds_by_events[-int(math.floor(len(speeds_by_events)/3)):] # last third 
 
-    plot_probability_distribution(last_third_events_by_n, n_array, 'Velocity', bin_size=0.0005)
-           
+        speeds = []
 
+        for event_speeds in speeds_by_events_final_third:
+  
+            for s in event_speeds:
+                speeds.append(s)  
+     
+        res.append(speeds)
+    
+    plot_probability_distribution(res, n_array, 'Velocity', 'markers', bin_size=0.001)
+    
 
-def plot_probability_distribution(data, n_array, fig_title, bin_size=0.01): 
+def plot_probability_distribution(data, n_array, fig_title, mode, bin_size=0.01): 
 
     new_data_by_n = []
 
@@ -67,7 +67,7 @@ def plot_probability_distribution(data, n_array, fig_title, bin_size=0.01):
         fig.add_trace(go.Scatter( 
             x=list(dict.fromkeys(new_data_by_n[n])), 
             y=get_probability_distribution(new_data_by_n[n]), 
-            mode='lines+markers',
+            mode=mode,
             name=f'N = {n_array[n]}'           
         ))
     
@@ -80,6 +80,9 @@ def plot_probability_distribution(data, n_array, fig_title, bin_size=0.01):
         size=20, 
         )
     )
+
+    if(fig_title == 'Time'):
+        fig.update_yaxes(type="log")
    
     fig.show()
 
