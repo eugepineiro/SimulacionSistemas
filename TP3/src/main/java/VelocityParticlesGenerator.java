@@ -10,8 +10,8 @@ import java.util.function.BiPredicate;
 
 public class VelocityParticlesGenerator {
 
-    public static List<VelocityParticle> generateRandomWaterParticles(int N, int L, Double fixedRadius, double speed, Random r, double mass) {
-        return generateRandomWaterParticles(Collections.emptyList(), N, L, fixedRadius, speed, r, mass);
+    public static List<VelocityParticle> generateRandomWaterParticles(int N, int L, Double fixedRadius, double minSpeed, double maxSpeed, Random r, double mass) {
+        return generateRandomWaterParticles(Collections.emptyList(), N, L, fixedRadius, minSpeed, maxSpeed, r, mass);
     }
 
     private static class ParticleCollision implements BiPredicate<Particle, Particle> {
@@ -36,7 +36,7 @@ public class VelocityParticlesGenerator {
         }
     }
 
-    public static List<VelocityParticle> generateRandomWaterParticles(List<VelocityParticle> particles, long N, long L, Double fixedRadius, double speed, Random r, double mass){
+    public static List<VelocityParticle> generateRandomWaterParticles(List<VelocityParticle> particles, long N, long L, Double fixedRadius, double minSpeed, double maxSpeed, Random r, double mass){
         List<VelocityParticle> generated = new ArrayList<>(particles);
 
         double x, y, angle, newSpeed;
@@ -54,7 +54,7 @@ public class VelocityParticlesGenerator {
                 newParticle = new Particle(i+1, x, y, radius);
             } while (!allTestTrue(generated, newParticle, new ParticleCollision().negate()));
             angle = r.nextDouble() * 2*Math.PI;
-            newSpeed = r.nextDouble() * speed;
+            newSpeed = r.nextDouble() * (maxSpeed - minSpeed) + minSpeed;
 
             generated.add(new VelocityParticle(ParticleType.SMALL, newParticle, newSpeed, angle, mass));
         }

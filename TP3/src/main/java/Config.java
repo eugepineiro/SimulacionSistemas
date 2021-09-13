@@ -8,6 +8,7 @@ public class Config {
     private Long l_grid_side;
     private Long max_events;
     private MultipleN multiple_n;
+    private MultipleTemperatures multiple_temperatures;
 
     public Long getSeed() {
         return seed;
@@ -49,6 +50,14 @@ public class Config {
         this.multiple_n = multiple_n;
     }
 
+    public MultipleTemperatures getMultiple_temperatures() {
+        return multiple_temperatures;
+    }
+
+    public void setMultiple_temperatures(MultipleTemperatures multiple_temperatures) {
+        this.multiple_temperatures = multiple_temperatures;
+    }
+
     @Override
     public String toString() {
         return "Config{" +
@@ -57,6 +66,7 @@ public class Config {
                 ", l_grid_side=" + l_grid_side +
                 ", max_events=" + max_events +
                 ", multiple_n=" + multiple_n +
+                ", multiple_temperatures=" + multiple_temperatures +
                 '}';
     }
 }
