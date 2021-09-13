@@ -39,7 +39,7 @@ public class XYZ_Writer {
     public XYZ_Writer(String filename) {
 
         try {
-            this.file = new FileWriter(String.format("%s/%s.xyze", PATH, filename));
+            this.file = new FileWriter(String.format("%s/%s.exyz", PATH, filename));
         } catch (IOException e) {
             System.out.printf("%s.xyze open failed.\n", filename);
             e.printStackTrace();
