@@ -2,9 +2,17 @@
   "seed": 100,
   "n_number_of_particles": 140,
   "l_grid_side": 6,
-  "max_events": 1000000,
+  "max_events": 10000,
   "multiple_n": {
-    "activated": true,
+    "activated": false,
     "values": [100, 120, 140]
+  },
+  "multiple_temperatures": {
+    "activated": true,
+    "speeds_ranges": [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ]
   }
 }
