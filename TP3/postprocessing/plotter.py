@@ -37,7 +37,7 @@ def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
      
         res.append(speeds)
     
-    plot_probability_distribution(res, n_array, 'Modulo de la Velocidad en el último tercio', 'lines+markers', 'Modulo de la Velocidad (m/s)', bin_size=0.01)
+    plot_probability_distribution(res, n_array, 'Modulo de la Velocidad en el último tercio', 'lines+markers', 'Modulo de la Velocidad (m/s)', bin_size=0.1)
 
 def plot_speed_probability_distribution_initial_time(speeds_by_n, n_array): #[ [[ ]]]
     # pd de la rapidez de las particulas en t = 0

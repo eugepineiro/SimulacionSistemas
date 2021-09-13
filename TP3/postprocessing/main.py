@@ -23,7 +23,7 @@ n_array = list(map(lambda a: a['n'], times_and_n))
 #3.2 Plot Speeds
 speeds_by_n = list(map(lambda a: a['results'], speeds_and_n))
 n_array = list(map(lambda a: a['n'], speeds_and_n))
-#plot_speed_probability_distribution(speeds_by_n, n_array)
+plot_speed_probability_distribution(speeds_by_n, n_array)
 
 #plot_speed_probability_distribution_initial_time(speeds_by_n, n_array)
 ############# 3.3 Plot trajectories #############
