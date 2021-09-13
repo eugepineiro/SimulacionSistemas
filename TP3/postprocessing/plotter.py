@@ -16,7 +16,7 @@ def plot_time_probability_distribution(times, n_array):
         avg_times_by_n.append(avg_times)
     
 
-    plot_probability_distribution(avg_times_by_n, n_array, 'Time', 'lines+markers', bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
+    plot_probability_distribution(avg_times_by_n, n_array, 'Tiempo', 'lines+markers', 'Tiempo (s)', bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
 
 def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
     # pd de la rapidez de las particulas en el ultimo tercio de la simulacion 
@@ -37,10 +37,30 @@ def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
      
         res.append(speeds)
     
-    plot_probability_distribution(res, n_array, 'Velocity', 'markers', bin_size=0.001)
+    plot_probability_distribution(res, n_array, 'Modulo de la Velocidad en el último tercio', 'lines+markers', 'Modulo de la Velocidad (m/s)', bin_size=0.01)
+
+def plot_speed_probability_distribution_initial_time(speeds_by_n, n_array): #[ [[ ]]]
+    # pd de la rapidez de las particulas en t = 0
+
+    res = []
+  
+    for n in range(len(speeds_by_n)): 
+    
+        speeds_by_events = speeds_by_n[n]
+        speeds_by_events_final_third = speeds_by_events[0] 
+
+        speeds = []
+ 
+  
+        for s in speeds_by_events_final_third:
+            speeds.append(s)  
+     
+        res.append(speeds)
+    
+    plot_probability_distribution(res, n_array, 'Modulo de la Velocidad en t=0', 'markers', 'Modulo de la Velocidad (m/s)', bin_size=0.001)
     
 
-def plot_probability_distribution(data, n_array, fig_title, mode, bin_size=0.01): 
+def plot_probability_distribution(data, n_array, fig_title, mode, x_axis_legend, bin_size=0.01): 
 
     new_data_by_n = []
 
@@ -72,16 +92,16 @@ def plot_probability_distribution(data, n_array, fig_title, mode, bin_size=0.01)
         ))
     
     fig.update_layout(
-    title=fig_title + " Probability Distribution",
-    xaxis_title=fig_title,
-    yaxis_title="Probability",
-    legend_title=f"References\n",
+    title="Distribución de la probabilidad del " + fig_title,
+    xaxis_title=x_axis_legend,
+    yaxis_title="Probabilidad",
+    legend_title=f"Referencias\n",
     font=dict( 
         size=20, 
         )
     )
 
-    if(fig_title == 'Time'):
+    if(fig_title == 'Tiempo'):
         fig.update_yaxes(type="log")
    
     fig.show()
@@ -99,7 +119,12 @@ def get_probability_distribution(data): #tiene que haber ya una funcion de pytho
 
 ############## 3.3 TEMPERATURE ############## 
 
-def plot_big_particle_trajectories(trajectories_by_t, temperature_array):
+def plot_big_particle_trajectories(trajectories_by_t, temperature_array, number_of_particles):
+
+    temperature_labels = list(map(
+        lambda a: f"[{a[0]:.2f}, {a[1]:.2f})",
+        temperature_array
+    ))
 
     fig = go.Figure()
 
@@ -109,14 +134,14 @@ def plot_big_particle_trajectories(trajectories_by_t, temperature_array):
             x=trajectories_by_t[t][0] , 
             y=trajectories_by_t[t][1], 
             mode='lines',
-            name=f'T = {temperature_array[t]}'           
+            name=f'|v| = {temperature_labels[t]}'           
         ))
 
     fig.update_layout(
-    title="Big Particle Trajectories by Temperature",
-    xaxis_title="x",
-    yaxis_title="y",
-    legend_title=f"References\n",
+    title="Trayectoria de la Partícula Grande por Temperatura",
+    xaxis_title="Posición x",
+    yaxis_title="Posición y",
+    legend_title=f"Referencias<br> N="+str(number_of_particles),
     font=dict( 
         size=20, 
         )
@@ -126,5 +151,34 @@ def plot_big_particle_trajectories(trajectories_by_t, temperature_array):
 
 ############## 3.4 DCM ##############
 
-#def plot_dcm(): 
+def plot_dcm(dcm, times): 
 
+    fig = go.Figure()
+
+    pnp = np.array(dcm)
+    mean = np.mean(pnp, axis=1)
+    std = np.std(pnp, axis=1)
+
+    fig.add_trace(go.Scatter(
+        x=times, 
+        y=mean,
+        mode='lines+markers',
+        name=f'Densidad',
+        error_y=dict(
+            type='data',
+            symmetric=True,
+            array=std
+        )
+    )) 
+    
+    fig.update_layout(
+    title="Desplazamiento Cuadrático Medio",
+    xaxis_title="Tiempo",
+    yaxis_title="DCM",
+    legend_title=f"Referencias\n",
+    font=dict( 
+        size=20, 
+        )
+    )
+   
+    fig.show()
