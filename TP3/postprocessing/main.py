@@ -15,6 +15,9 @@ with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multip
 with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multiple_temperatures_big_particle_positions.json") as f:
     trajectories_and_speeds = json.load(f)
 
+with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multiple_simulations_big_particle_positions.json") as f:
+    simulations_trajectories_results = json.load(f)
+
 ############# 3.1 Plot Times #############
 times_by_n = list(map(lambda a: a['results'], times_and_n))
 n_array = list(map(lambda a: a['n'], times_and_n))
@@ -26,9 +29,8 @@ n_array = list(map(lambda a: a['n'], speeds_and_n))
 plot_speed_probability_distribution(speeds_by_n, n_array)
 
 #plot_speed_probability_distribution_initial_time(speeds_by_n, n_array)
+
 ############# 3.3 Plot trajectories #############
-
-
 trajectories_by_t = list(
     map(
         lambda a: [
@@ -38,7 +40,6 @@ trajectories_by_t = list(
         trajectories_and_speeds
     )
 )
-
 speeds = list(
     map(
         lambda a: [
@@ -54,6 +55,6 @@ number_of_particles = trajectories_and_speeds[0]['n']
 #plot_big_particle_trajectories(trajectories_by_t, speeds, number_of_particles)
 
 ############# 3.4 Plot DCM #############
-
-#plot_dcm(dcm, times)
+simulations_trajectories = list(map(lambda a: a['positions'], simulations_trajectories_results))
+plot_dcm(simulations_trajectories, 1)
 

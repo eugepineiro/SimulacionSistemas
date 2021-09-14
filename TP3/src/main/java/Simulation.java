@@ -248,13 +248,13 @@ public class Simulation {
         List<VelocityParticle> particles;
         List<ExtendedEvent> res;
 
+        r = new Random(seed);
+
         long startTime = System.nanoTime();
 
         for (long iter = 0; iter < simulations; iter++) {
 
             printLoadingBar(1.0 * iter / simulations);
-
-            r = new Random(seed);
 
             particles = new ArrayList<>();
 

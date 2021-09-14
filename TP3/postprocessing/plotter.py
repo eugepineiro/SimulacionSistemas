@@ -151,24 +151,80 @@ def plot_big_particle_trajectories(trajectories_by_t, temperature_array, number_
 
 ############## 3.4 DCM ##############
 
-def plot_dcm(dcm, times): 
+def plot_dcm(simulations_trajectories, times_gap=1): 
+
+    max_time = min(
+        list(
+            map(
+                lambda a: a[-1]['time'],
+                simulations_trajectories
+            )
+        )
+    )
+
+    max_time = int(max_time / times_gap) * times_gap
+
+    fixed_times = np.arange(0, max_time+0.0001, times_gap)
+
+    print(fixed_times)
+
+    def get_nearest(array, time):
+        before = None
+        after = None
+
+        for e in array:
+            if time >= e['time']:
+                before = e
+            else: # time < e['time']:
+                if after is None:
+                    after = e
+                else:
+                    continue
+
+        if before is None:
+            return after
+        if after is None:
+            return before
+        
+        return before if (time - before['time']) <= (after['time'] - time) else after
+
+    simulations_positions_at_times = list(
+        map(
+            lambda positions: list(
+                map(
+                    lambda time: get_nearest(positions, time),
+                    fixed_times
+                )
+            ),
+            simulations_trajectories
+        )
+    )
+
+    print(simulations_positions_at_times)
+    
+    init_pos = {
+        'x': 3,
+        'y': 3
+    }
+
+    dcms = []
+
+    for t in range(len(simulations_positions_at_times[0])):
+        dcm = 0
+        for sim in range(len(simulations_positions_at_times)):
+            dcm += (simulations_positions_at_times[sim][t]['x'] - init_pos['x']) ** 2 + (simulations_positions_at_times[sim][t]['y'] - init_pos['y']) ** 2
+        dcm /= len(simulations_positions_at_times)
+        dcms.append(dcm)
+
+    print(dcms)
 
     fig = go.Figure()
 
-    pnp = np.array(dcm)
-    mean = np.mean(pnp, axis=1)
-    std = np.std(pnp, axis=1)
-
     fig.add_trace(go.Scatter(
-        x=times, 
-        y=mean,
+        x=fixed_times, 
+        y=dcms,
         mode='lines+markers',
-        name=f'Densidad',
-        error_y=dict(
-            type='data',
-            symmetric=True,
-            array=std
-        )
+        name=f'Tiempos'
     )) 
     
     fig.update_layout(

@@ -1,8 +1,8 @@
 {
   "seed": 100,
-  "n_number_of_particles": 140,
+  "n_number_of_particles": 100,
   "l_grid_side": 6,
-  "max_events": 10000,
+  "max_events": 100000,
   "min_speed": 0,
   "max_speed": 2,
   "multiple_n": {
@@ -19,6 +19,6 @@
   },
   "multiple_simulations": {
     "activated": true,
-    "simulations": 10
+    "simulations": 20
   }
 }
