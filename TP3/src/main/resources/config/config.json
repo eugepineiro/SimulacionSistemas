@@ -4,7 +4,8 @@
   "l_grid_side": 6,
   "max_events": 100000,
   "min_speed": 0,
-  "max_speed": 2,
+  "max_speed": 1,
+  "record_small_particles_positions": false,
   "multiple_n": {
     "activated": false,
     "values": [100, 120, 140]
@@ -18,7 +19,7 @@
     ]
   },
   "multiple_simulations": {
-    "activated": true,
+    "activated": false,
     "simulations": 20
   }
 }

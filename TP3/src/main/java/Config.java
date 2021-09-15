@@ -9,6 +9,7 @@ public class Config {
     private Long max_events;
     private Double min_speed;
     private Double max_speed;
+    private Boolean record_small_particles_positions;
     private MultipleN multiple_n;
     private MultipleTemperatures multiple_temperatures;
     private MultipleSimulations multiple_simulations;
@@ -61,6 +62,14 @@ public class Config {
         this.max_speed = max_speed;
     }
 
+    public Boolean getRecord_small_particles_positions() {
+        return record_small_particles_positions;
+    }
+
+    public void setRecord_small_particles_positions(Boolean record_small_particles_positions) {
+        this.record_small_particles_positions = record_small_particles_positions;
+    }
+
     public MultipleN getMultiple_n() {
         return multiple_n;
     }
@@ -94,6 +103,7 @@ public class Config {
                 ", max_events=" + max_events +
                 ", min_speed=" + min_speed +
                 ", max_speed=" + max_speed +
+                ", record_small_particles_positions=" + record_small_particles_positions +
                 ", multiple_n=" + multiple_n +
                 ", multiple_temperatures=" + multiple_temperatures +
                 ", multiple_simulations=" + multiple_simulations +

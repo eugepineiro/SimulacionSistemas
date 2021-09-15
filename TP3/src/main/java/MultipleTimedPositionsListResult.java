@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class MultipleSimulationsResult {
+public class MultipleTimedPositionsListResult {
 
     static class TimedPosition {
         final private double time;
@@ -28,7 +28,7 @@ public class MultipleSimulationsResult {
 
     final private List<TimedPosition> positions;
 
-    public MultipleSimulationsResult(List<TimedPosition> positions) {
+    public MultipleTimedPositionsListResult(List<TimedPosition> positions) {
         this.positions = positions;
     }
 

@@ -2,10 +2,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Simulation {
@@ -39,12 +36,14 @@ public class Simulation {
 
             long numberOfParticles, lGridSide, maxEvents;
             double minSpeed, maxSpeed;
+            boolean recordSmallParticlesPositions;
 
             lGridSide                                   = config.getL_grid_side();
             numberOfParticles                           = config.getN_number_of_particles();
             maxEvents                                   = config.getMax_events();
             minSpeed                                    = config.getMin_speed();
             maxSpeed                                    = config.getMax_speed();
+            recordSmallParticlesPositions               = config.getRecord_small_particles_positions();
             MultipleN multipleN                         = config.getMultiple_n();
             MultipleTemperatures multipleTemperatures   = config.getMultiple_temperatures();
             MultipleSimulations multipleSimulations     = config.getMultiple_simulations();
@@ -96,12 +95,45 @@ public class Simulation {
 //                .withObj(events)
 //                .write();
 
+            if (recordSmallParticlesPositions) {
+                new JsonWriter(POSTPROCESSING_FILENAME + "_small_particles_positions")
+                    .withObj(
+                        getMultipleTimedPositionsListResultsSmallParticles(events)
+                    )
+                    .write();
+            }
+
             System.out.println("Finished saving");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    static List<MultipleTimedPositionsListResult> getMultipleTimedPositionsListResultsSmallParticles(List<ExtendedEvent> events) {
+        Map<Long, List<MultipleTimedPositionsListResult.TimedPosition>> m = new HashMap<>();
+
+        List<List<VelocityParticle>> frames = events.stream().map(ExtendedEvent::getFrame).collect(Collectors.toList());
+
+        if (frames.size() > 0) frames.get(0).stream().filter(velocityParticle -> velocityParticle.getType() == ParticleType.SMALL).forEach(velocityParticle -> m.put(velocityParticle.getId(), new ArrayList<>()));
+
+        for (int i = 0; i < events.size(); i++) {
+            ExtendedEvent extendedEvent = events.get(i);
+            Event event = extendedEvent.getEvent();
+            List<VelocityParticle> allParticles = extendedEvent.getFrame();
+
+            for (int j = 0; j < allParticles.size(); j++) {
+                VelocityParticle p = allParticles.get(j);
+                if (p.getType() == ParticleType.SMALL) {
+                    m.get(p.getId()).add(new MultipleTimedPositionsListResult.TimedPosition(event.getTime(), p.getX(), p.getY()));
+                }
+            }
+        }
+
+        return m.values().stream()
+            .map(MultipleTimedPositionsListResult::new)
+            .collect(Collectors.toList());
     }
 
     static void simulateWithMultipleN(double minSpeed, double maxSpeed, List<Long> values, long gridSide, long maxEvents, long seed) throws IOException {
@@ -182,7 +214,7 @@ public class Simulation {
             minSpeed = speedRange.get(0);
             maxSpeed = speedRange.get(1);
 
-            System.out.printf("Simulation\n", minSpeed, maxSpeed);
+            System.out.printf("Simulation with speed between %.2g and %.2g\n", minSpeed, maxSpeed);
 
             r = new Random(seed);
 
@@ -242,7 +274,7 @@ public class Simulation {
     }
 
     static void simulatewithMultipleSimulations(long simulations, double minSpeed, double maxSpeed, long numberOfParticles, long gridSide, long maxEvents, long seed) throws IOException {
-        List<MultipleSimulationsResult> simulationsResults = new ArrayList<>();
+        List<MultipleTimedPositionsListResult> simulationsResults = new ArrayList<>();
 
         Random r;
         List<VelocityParticle> particles;
@@ -267,12 +299,12 @@ public class Simulation {
 
             res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents, false);
 
-            List<MultipleSimulationsResult.TimedPosition> timedPositions = new ArrayList<>();
+            List<MultipleTimedPositionsListResult.TimedPosition> timedPositions = new ArrayList<>();
 
             for (ExtendedEvent extendedEvent : res) {
                 for (VelocityParticle velocityParticle : extendedEvent.getFrame()) {
                     if (velocityParticle.getType() == ParticleType.BIG) {
-                        timedPositions.add(new MultipleSimulationsResult.TimedPosition(
+                        timedPositions.add(new MultipleTimedPositionsListResult.TimedPosition(
                                 extendedEvent.getEvent().getTime(),
                                 velocityParticle.getX(),
                                 velocityParticle.getY()
@@ -281,7 +313,7 @@ public class Simulation {
                 }
             }
 
-            simulationsResults.add(new MultipleSimulationsResult(timedPositions));
+            simulationsResults.add(new MultipleTimedPositionsListResult(timedPositions));
         }
 
         long endTime = System.nanoTime();
