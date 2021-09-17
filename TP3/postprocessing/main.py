@@ -22,24 +22,21 @@ with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_multip
 # with open("../src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results_small_particles_positions.json") as f:
 #     small_trajectories_results = json.load(f)
 
+
 ############# 3.1 Plot Times #############
 if not times_and_n is None:
     times_by_n = list(map(lambda a: a['results'], times_and_n))
     n_array = list(map(lambda a: a['n'], times_and_n))
-    #plot_time_probability_distribution(times_by_n, n_array) 
+
+    plot_time_probability_distribution(times_by_n, n_array) 
 
 ############## 3.2 Plot Speeds ############# 
 if not speeds_and_n is None:
     speeds_by_n = list(map(lambda a: a['results'], speeds_and_n))
     n_array = list(map(lambda a: a['n'], speeds_and_n))
-    #plot_speed_probability_distribution(speeds_by_n, n_array) # in t=2/3
+    # plot_speed_probability_distribution(speeds_by_n, n_array) # in t=2/3
 
-    print(len(speeds_by_n))
-    print(len(speeds_by_n[0][0])) 
-    print(len(speeds_by_n[1][0]))
-    print(len(speeds_by_n[2][0]))
-
-    plot_speed_probability_distribution_initial_time(speeds_by_n, n_array) # in t=0
+    # plot_speed_probability_distribution_initial_time(speeds_by_n, n_array) # in t=0
 
 ############# 3.3 Plot trajectories #############
 if not trajectories_and_speeds is None:

@@ -19,6 +19,13 @@ def plot_time_probability_distribution(times, n_array):
             avg_times.append(times[n][i+1] - times[n][i])   
         avg_times_by_n.append(avg_times)
     
+    avg_collision_time = list(map(lambda a: sum(a)/len(a), avg_times_by_n))
+    print("average collison times:")
+    for time in avg_collision_time:
+        print(format(time, ".3e"))
+
+    collision_freq = list(map(lambda a: int(len(a)/a[-1]), times))
+    print(f"\ncollison frequency: {collision_freq}")
 
     plot_probability_distribution(avg_times_by_n, n_array, 'Tiempo', 'lines+markers', 'Tiempo (s)', bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
 

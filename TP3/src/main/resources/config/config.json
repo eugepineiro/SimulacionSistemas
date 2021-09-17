@@ -8,7 +8,7 @@
   "record_small_particles_positions": false,
   "multiple_n": {
     "activated": true,
-    "values": [100, 120, 140]
+    "values": [110, 125, 140]
   },
   "multiple_temperatures": {
     "activated": false,
