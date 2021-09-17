@@ -22,7 +22,7 @@ def plot_time_probability_distribution(times, n_array):
 
     plot_probability_distribution(avg_times_by_n, n_array, 'Tiempo', 'lines+markers', 'Tiempo (s)', bin_size=0.0001) # TODO: Plot bin size and average of collisions frequence
 
-def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]]
+def plot_speed_probability_distribution(speeds_by_n, n_array): #[ [[ ]]] por cada N, 
     # pd de la rapidez de las particulas en el ultimo tercio de la simulacion 
 
     res = []
@@ -49,17 +49,9 @@ def plot_speed_probability_distribution_initial_time(speeds_by_n, n_array): #[ [
     res = []
   
     for n in range(len(speeds_by_n)): 
-    
-        speeds_by_events = speeds_by_n[n]
-        speeds_by_events_final_third = speeds_by_events[0] 
 
-        speeds = []
- 
-  
-        for s in speeds_by_events_final_third:
-            speeds.append(s)  
-     
-        res.append(speeds)
+        speeds_by_events_initial = speeds_by_n[n][0]      
+        res.append(speeds_by_events_initial)
     
     plot_probability_distribution(res, n_array, 'Modulo de la Velocidad en t=0', 'lines+markers', 'Modulo de la Velocidad (m/s)', bin_size=0.1)
     

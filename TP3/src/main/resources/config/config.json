@@ -7,7 +7,7 @@
   "max_speed": 1,
   "record_small_particles_positions": false,
   "multiple_n": {
-    "activated": false,
+    "activated": true,
     "values": [100, 120, 140]
   },
   "multiple_temperatures": {
