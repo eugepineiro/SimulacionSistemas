@@ -262,40 +262,69 @@ def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
     # # option 1
     # last_time = 0
     # last_mean = 0
-    # cd = 0
+    # m = 0
     # for idx in range(1, len(fixed_times)):
-    #     cd += (mean[idx] - last_mean)/(2*(fixed_times[idx] - last_time))
+    #     m += (mean[idx] - last_mean)/(fixed_times[idx] - last_time)
     #     last_time = fixed_times[idx]
     #     last_mean = mean[idx]
-    # cd /= len(fixed_times)
+    # m /= len(fixed_times)
+    # cd = m/2
 
-    # print(f'M1 - Coeficiente de difusión de {particle_title}: {cd}')
+    # print(f'M1 - Coeficiente de difusión de {particle_title}: {m/2}')
 
     # # option 2
-    # cd = 0
+    # m = 0
     # for idx in range(1, len(fixed_times)):
-    #     cd += mean[idx]/(2*fixed_times[idx])
-    # cd /= len(fixed_times)
+    #     m += mean[idx]/fixed_times[idx]
+    # m /= len(fixed_times)
+    # cd = m/2
 
     # print(f'M2 - Coeficiente de difusión de {particle_title}: {cd}')
 
     # option 3 https://www.varsitytutors.com/hotmath/hotmath_help/spanish/topics/line-of-best-fit
-    s_xy = sum([fixed_times[i] * mean[i] for i in range(len(fixed_times))])
-    s_x = sum(fixed_times)
-    s_x2 = sum([time ** 2 for time in fixed_times])
-    s_y = sum(mean)
-    n = len(fixed_times)
-    m = ( s_xy - ( (s_x * s_y) / n ) ) / ( s_x2 - ( ( s_x ** 2 ) / n ) )
-    cd = m/2
+    # s_xy = sum([fixed_times[i] * mean[i] for i in range(len(fixed_times))])
+    # s_x = sum(fixed_times)
+    # s_x2 = sum([time ** 2 for time in fixed_times])
+    # s_y = sum(mean)
+    # n = len(fixed_times)
+    # m = ( s_xy - ( (s_x * s_y) / n ) ) / ( s_x2 - ( ( s_x ** 2 ) / n ) )
+    # cd = m/2
+
+    # print(f'M3 - Coeficiente de difusión de {particle_title}: {cd}')
 
     # option 4 - teórica 0
 
-    print(f'M3 - Coeficiente de difusión de {particle_title}: {cd}')
+    x = fixed_times
+    y = mean
+
+    c = np.arange(0, 0.2, 0.00001)
+    
+    min_f = (-1, float("inf"))
+    
+    ec = []
+    for value in c:
+        ec_value = sum(np.power((y - value*x), 2))
+        if ec_value < min_f[1]:
+            min_f = (value, ec_value)
+        ec.append(ec_value)
+    ec = np.array(ec)
+
+    line_x = np.arange(fixed_times[0], fixed_times[-1]+0.001)
+    line_y = min_f[0]*line_x
+
+    cd = min_f[0]/2
+
+    fig.add_trace(go.Scatter(
+        x=line_x, 
+        y=line_y,
+        mode='lines+markers',
+        name=f'D = {cd:.4f} m^2/s'
+    ))
 
     fig.update_layout(
-        title=f"Desplazamiento Cuadrático Medio de {particle_title} (Coeficiente de Difusión estimado: {cd:.3f})",
-        xaxis_title="Tiempo",
-        yaxis_title="DCM",
+        title=f"Desplazamiento Cuadrático Medio de {particle_title}",
+        xaxis_title="Tiempo (s)",
+        yaxis_title="DCM (m^2)",
         legend_title=f"Referencias\n",
         font=dict( 
             size=20, 
@@ -303,3 +332,32 @@ def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
     )
    
     fig.show()
+
+    # E(c)
+
+    fig2 = go.Figure()
+
+    fig2.add_trace(go.Scatter(
+        x=c, 
+        y=ec,
+        mode='lines+markers',
+        # name=f'D = {cd:.3f} m^2/s'
+    ))
+
+    fig2.add_trace(go.Scatter(
+        x=np.array([min_f[0]]), 
+        y=np.array([min_f[1]]),
+        mode='lines+markers'
+    ))
+
+    fig2.update_layout(
+        title=f"Ajusto del error para la regresión lineal del Desplazamiento Cuadrático Medio de {particle_title}",
+        xaxis_title="c",
+        yaxis_title="E(c)",
+        legend_title=f"Referencias\n",
+        font=dict( 
+            size=20, 
+        )
+    )
+
+    fig2.show()
