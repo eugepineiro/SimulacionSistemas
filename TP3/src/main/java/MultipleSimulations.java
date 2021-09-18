@@ -2,7 +2,7 @@ import java.util.List;
 
 public class MultipleSimulations {
     private boolean activated;
-    private long simulations;
+    private List<Long> seeds;
 
     public boolean isActivated() {
         return activated;
@@ -12,11 +12,11 @@ public class MultipleSimulations {
         this.activated = activated;
     }
 
-    public long getSimulations() {
-        return simulations;
+    public List<Long> getSeeds() {
+        return seeds;
     }
 
-    public void setSimulations(long simulations) {
-        this.simulations = simulations;
+    public void setSeeds(List<Long> seeds) {
+        this.seeds = seeds;
     }
 }

@@ -1,13 +1,12 @@
 {
   "seed": 100,
-  "n_number_of_particles": 100,
+  "n_number_of_particles": 140,
   "l_grid_side": 6,
-  "max_events": 100000,
+  "max_events": 200000,
   "min_speed": 0,
-  "max_speed": 1,
-  "record_small_particles_positions": false,
+  "max_speed": 2,
   "multiple_n": {
-    "activated": true,
+    "activated": false,
     "values": [110, 125, 140]
   },
   "multiple_temperatures": {
@@ -19,7 +18,7 @@
     ]
   },
   "multiple_simulations": {
-    "activated": false,
-    "simulations": 20
+    "activated": true,
+    "seeds": [100, 200, 300, 400, 500]
   }
 }

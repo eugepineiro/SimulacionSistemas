@@ -288,6 +288,8 @@ def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
     m = ( s_xy - ( (s_x * s_y) / n ) ) / ( s_x2 - ( ( s_x ** 2 ) / n ) )
     cd = m/2
 
+    # option 4 - teórica 0
+
     print(f'M3 - Coeficiente de difusión de {particle_title}: {cd}')
 
     fig.update_layout(

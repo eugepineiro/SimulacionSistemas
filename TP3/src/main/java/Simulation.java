@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class Simulation {
 
+    private static final Integer EVENTS_SAVING_EACH = 25;
     private static final String JSON_WRITER_PATH = "TP3/src/main/resources/postprocessing";
     private static final String XYZ_WRITER_PATH = "TP3/src/main/resources/ovito";
     private static final String FILENAME = "SdS_TP3_2021Q2G01_output";
@@ -36,14 +37,12 @@ public class Simulation {
 
             long numberOfParticles, lGridSide, maxEvents;
             double minSpeed, maxSpeed;
-            boolean recordSmallParticlesPositions;
 
             lGridSide                                   = config.getL_grid_side();
             numberOfParticles                           = config.getN_number_of_particles();
             maxEvents                                   = config.getMax_events();
             minSpeed                                    = config.getMin_speed();
             maxSpeed                                    = config.getMax_speed();
-            recordSmallParticlesPositions               = config.getRecord_small_particles_positions();
             MultipleN multipleN                         = config.getMultiple_n();
             MultipleTemperatures multipleTemperatures   = config.getMultiple_temperatures();
             MultipleSimulations multipleSimulations     = config.getMultiple_simulations();
@@ -61,7 +60,7 @@ public class Simulation {
             }
 
             if (multipleSimulations.isActivated()) {
-                simulatewithMultipleSimulations(multipleSimulations.getSimulations(), minSpeed, maxSpeed, numberOfParticles, lGridSide, maxEvents, seed);
+                simulatewithMultipleSimulations(multipleSimulations.getSeeds(), minSpeed, maxSpeed, numberOfParticles, lGridSide, maxEvents);
                 simpleSimulation = false;
             }
 
@@ -87,23 +86,10 @@ public class Simulation {
 
             // Save results
 
-            // 1. Ovito
+            // Ovito
             new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
 
-            // 2. Postprocessing
-//            new JsonWriter(POSTPROCESSING_FILENAME)
-//                .withObj(events)
-//                .write();
-
-            if (recordSmallParticlesPositions) {
-                new JsonWriter(POSTPROCESSING_FILENAME + "_small_particles_positions")
-                    .withObj(
-                        getMultipleTimedPositionsListResultsSmallParticles(events)
-                    )
-                    .write();
-            }
-
-            System.out.println("Finished saving");
+            System.out.println("Finished saving " + FILENAME + ".json");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,38 +97,13 @@ public class Simulation {
 
     }
 
-    static List<MultipleTimedPositionsListResult> getMultipleTimedPositionsListResultsSmallParticles(List<ExtendedEvent> events) {
-        Map<Long, List<MultipleTimedPositionsListResult.TimedPosition>> m = new HashMap<>();
-
-        List<List<VelocityParticle>> frames = events.stream().map(ExtendedEvent::getFrame).collect(Collectors.toList());
-
-        if (frames.size() > 0) frames.get(0).stream().filter(velocityParticle -> velocityParticle.getType() == ParticleType.SMALL).forEach(velocityParticle -> m.put(velocityParticle.getId(), new ArrayList<>()));
-
-        for (int i = 0; i < events.size(); i++) {
-            ExtendedEvent extendedEvent = events.get(i);
-            Event event = extendedEvent.getEvent();
-            List<VelocityParticle> allParticles = extendedEvent.getFrame();
-
-            for (int j = 0; j < allParticles.size(); j++) {
-                VelocityParticle p = allParticles.get(j);
-                if (p.getType() == ParticleType.SMALL) {
-                    m.get(p.getId()).add(new MultipleTimedPositionsListResult.TimedPosition(event.getTime(), p.getX(), p.getY()));
-                }
-            }
-        }
-
-        return m.values().stream()
-            .map(MultipleTimedPositionsListResult::new)
-            .collect(Collectors.toList());
-    }
-
     static void simulateWithMultipleN(double minSpeed, double maxSpeed, List<Long> values, long gridSide, long maxEvents, long seed) throws IOException {
         List<MultipleNResult<Double>> timesResults = new ArrayList<>();
-        List<MultipleNResult<List<Double>>> smallParticlesSpeedsResults = new ArrayList<>();
+        List<MultipleNResult<ExtendedEvent>> multipleNResults = new ArrayList<>();
 
         Random r;
         List<VelocityParticle> particles;
-        List<ExtendedEvent> res;
+        List<ExtendedEvent> res, filteredRes;
 
         long startTime = System.nanoTime();
 
@@ -170,17 +131,16 @@ public class Simulation {
             );
             timesResults.add(times);
 
-            MultipleNResult<List<Double>> smallParticlesSpeeds = new MultipleNResult<>(
-                numberOfParticles,
-                res.stream()
-                    .map(extendedEvent -> extendedEvent.getFrame().stream()
-                        .filter(velocityParticle -> velocityParticle.getType().equals(ParticleType.SMALL))
-                        .map(VelocityParticle::getSpeed)
-                        .collect(Collectors.toList())
-                    )
-                    .collect(Collectors.toList())
-            );
-            smallParticlesSpeedsResults.add(smallParticlesSpeeds);
+            filteredRes = new ArrayList<>();
+
+            for (int i = 0; i < res.size() - 1; i += EVENTS_SAVING_EACH) {
+                ExtendedEvent extendedEvent = res.get(i);
+                filteredRes.add(extendedEvent);
+            }
+
+            filteredRes.add(res.get(res.size()-1));
+
+            multipleNResults.add(new MultipleNResult<>(numberOfParticles, filteredRes));
         }
 
         long endTime = System.nanoTime();
@@ -192,19 +152,21 @@ public class Simulation {
             .withObj(timesResults)
             .write();
 
-        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_n_small_particles_speeds")
-            .withObj(smallParticlesSpeedsResults)
+        System.out.println("Finished saving " + POSTPROCESSING_FILENAME + "_multiple_n_event_times.json");
+
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_n")
+            .withObj(multipleNResults)
             .write();
 
-        System.out.println("Finished saving");
+        System.out.println("Finished saving " + POSTPROCESSING_FILENAME + "_multiple_n.json");
     }
 
     static void simulateWithMultipleTemperatures(List<List<Double>> speedRanges, long numberOfParticles, long gridSide, long maxEvents, long seed) throws IOException {
-        List<MultipleTemperaturesResult> positionsResults = new ArrayList<>();
+        List<MultipleTemperaturesResult> multipleTemperaturesResults = new ArrayList<>();
 
         Random r;
         List<VelocityParticle> particles;
-        List<ExtendedEvent> res;
+        List<ExtendedEvent> res, filteredRes;
 
         double minSpeed, maxSpeed;
 
@@ -229,20 +191,21 @@ public class Simulation {
 
             res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents, true);
 
-            MultipleTemperaturesResult positionsResult = new MultipleTemperaturesResult(
-                    numberOfParticles,
-                    minSpeed,
-                    maxSpeed,
-                    res.stream()
-                            .map(extendedEvent -> extendedEvent.getFrame().stream()
-                                    .filter(particle -> particle.getType() == ParticleType.BIG)
-                                    .findFirst().orElse(null))
-                            .filter(Objects::nonNull)
-                            .map(velocityParticle -> new MultipleTemperaturesResult.Position(velocityParticle.getX(), velocityParticle.getY()))
-                            .collect(Collectors.toList())
-            );
+            filteredRes = new ArrayList<>();
 
-            positionsResults.add(positionsResult);
+            for (int i = 0; i < res.size() - 1; i += EVENTS_SAVING_EACH) {
+                ExtendedEvent extendedEvent = res.get(i);
+                filteredRes.add(extendedEvent);
+            }
+
+            filteredRes.add(res.get(res.size()-1));
+
+            multipleTemperaturesResults.add(new MultipleTemperaturesResult(
+                numberOfParticles,
+                minSpeed,
+                maxSpeed,
+                filteredRes
+            ));
         }
 
         long endTime = System.nanoTime();
@@ -250,11 +213,11 @@ public class Simulation {
 
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
-        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_temperatures_big_particle_positions")
-            .withObj(positionsResults)
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_temperatures")
+            .withObj(multipleTemperaturesResults)
             .write();
 
-        System.out.println("Finished saving");
+        System.out.println("Finished saving " + POSTPROCESSING_FILENAME + "_multiple_temperatures.json");
     }
 
     private static final Integer LOADING_BAR_SIZE = 20;
@@ -273,20 +236,21 @@ public class Simulation {
         System.out.printf("%s %d%% Completed\r", loadingBar, (int) (percentage * 100));
     }
 
-    static void simulatewithMultipleSimulations(long simulations, double minSpeed, double maxSpeed, long numberOfParticles, long gridSide, long maxEvents, long seed) throws IOException {
-        List<MultipleTimedPositionsListResult> simulationsResults = new ArrayList<>();
+    static void simulatewithMultipleSimulations(List<Long> seeds, double minSpeed, double maxSpeed, long numberOfParticles, long gridSide, long maxEvents) throws IOException {
+        List<List<ExtendedEvent>> simulationsResults = new ArrayList<>();
 
         Random r;
         List<VelocityParticle> particles;
-        List<ExtendedEvent> res;
-
-        r = new Random(seed);
+        List<ExtendedEvent> res, filteredRes;
 
         long startTime = System.nanoTime();
 
-        for (long iter = 0; iter < simulations; iter++) {
+        for (int iter = 0; iter < seeds.size(); iter++) {
+            Long seed = seeds.get(iter);
 
-            printLoadingBar(1.0 * iter / simulations);
+            r = new Random(seed + iter);
+
+            printLoadingBar(1.0 * iter / seeds.size());
 
             particles = new ArrayList<>();
 
@@ -299,21 +263,16 @@ public class Simulation {
 
             res = Brownian.simulate(particles, bigParticle, gridSide, maxEvents, false);
 
-            List<MultipleTimedPositionsListResult.TimedPosition> timedPositions = new ArrayList<>();
+            filteredRes = new ArrayList<>();
 
-            for (ExtendedEvent extendedEvent : res) {
-                for (VelocityParticle velocityParticle : extendedEvent.getFrame()) {
-                    if (velocityParticle.getType() == ParticleType.BIG) {
-                        timedPositions.add(new MultipleTimedPositionsListResult.TimedPosition(
-                                extendedEvent.getEvent().getTime(),
-                                velocityParticle.getX(),
-                                velocityParticle.getY()
-                        ));
-                    }
-                }
+            for (int i = 0; i < res.size() - 1; i += EVENTS_SAVING_EACH) {
+                ExtendedEvent extendedEvent = res.get(i);
+                filteredRes.add(extendedEvent);
             }
 
-            simulationsResults.add(new MultipleTimedPositionsListResult(timedPositions));
+            filteredRes.add(res.get(res.size()-1));
+
+            simulationsResults.add(filteredRes);
         }
 
         long endTime = System.nanoTime();
@@ -321,11 +280,11 @@ public class Simulation {
 
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
-        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_simulations_big_particle_positions")
+        new JsonWriter(POSTPROCESSING_FILENAME + "_multiple_simulations")
                 .withObj(simulationsResults)
                 .write();
 
-        System.out.println("Finished saving");
+        System.out.println("Finished saving " + POSTPROCESSING_FILENAME + "_multiple_simulations.json");
     }
 
 }
