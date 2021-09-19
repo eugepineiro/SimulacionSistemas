@@ -98,9 +98,9 @@ def plot_probability_distribution(data, n_array, fig_title, mode, x_axis_legend,
         title="Distribución de la probabilidad del " + fig_title,
         xaxis_title=x_axis_legend,
         yaxis_title="Probabilidad",
-        legend_title=f"Referencias\n",
+        legend_title=f"<b>Referencias</b> <br> Ancho de bin {bin_size}",
         font=dict( 
-            size=20, 
+            size=28, 
         )
     )
 
@@ -167,11 +167,11 @@ def plot_big_particle_trajectories(trajectories_by_t, temperature_array, number_
 
     fig.update_layout(
         title="Trayectoria de la Partícula Grande por Temperatura",
-        xaxis_title="Posición x",
-        yaxis_title="Posición y",
-        legend_title=f"Referencias<br> N="+str(number_of_particles),
+        xaxis_title="Posición x (m)",
+        yaxis_title="Posición y (m)",
+        legend_title=f"<b>Referencias</b> <br> N="+str(number_of_particles),
         font=dict( 
-            size=20, 
+            size=28, 
         )
     )
 
@@ -182,7 +182,7 @@ def plot_big_particle_trajectories(trajectories_by_t, temperature_array, number_
 
 ############## 3.4 DCM ##############
 
-def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
+def plot_dcm(simulations_trajectories, particle_type, number_of_particles, times_gap=1):
 
     max_time = min(
         list(
@@ -249,7 +249,7 @@ def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
         x=fixed_times, 
         y=mean,
         mode='lines+markers',
-        name=f'Tiempos',
+        name=f'DCM',
         error_y=dict(
             type='data',
             symmetric=True,
@@ -318,16 +318,16 @@ def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
         x=line_x, 
         y=line_y,
         mode='lines+markers',
-        name=f'D = {cd:.4f} m^2/s'
+        name=f'Ajuste modelo lineal (D = {cd:.4f} m<sup>2</sup>/s)'
     ))
 
     fig.update_layout(
         title=f"Desplazamiento Cuadrático Medio de {particle_title}",
         xaxis_title="Tiempo (s)",
-        yaxis_title="DCM (m^2)",
-        legend_title=f"Referencias\n",
+        yaxis_title="DCM (m<sup>2</sup>)",
+        legend_title=f"<b>Referencias</b> <br> N={number_of_particles}",
         font=dict( 
-            size=20, 
+            size=28, 
         )
     )
    
@@ -352,11 +352,11 @@ def plot_dcm(simulations_trajectories, particle_type, times_gap=1):
 
     fig2.update_layout(
         title=f"Ajusto del error para la regresión lineal del Desplazamiento Cuadrático Medio de {particle_title}",
-        xaxis_title="c",
-        yaxis_title="E(c)",
-        legend_title=f"Referencias\n",
+        xaxis_title="c (m<sup>2</sup>/s)",
+        yaxis_title="E(c) (m<sup>4</sup>)",
+        legend_title=f"<b>Referencias</b>",
         font=dict( 
-            size=20, 
+            size=28, 
         )
     )
 
