@@ -89,7 +89,7 @@ public class Simulation {
             // Ovito
             new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
 
-            System.out.println("Finished saving " + FILENAME + ".json");
+            System.out.println("Finished saving " + FILENAME + ".exyz");
 
         } catch (IOException e) {
             e.printStackTrace();
