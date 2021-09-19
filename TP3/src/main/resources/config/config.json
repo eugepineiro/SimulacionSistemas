@@ -2,9 +2,10 @@
   "seed": 100,
   "n_number_of_particles": 110,
   "l_grid_side": 6,
-  "max_events": 200000,
-  "min_speed": 0,
-  "max_speed": 2,
+  "max_events": 100000,
+  "min_speed": 2,
+  "max_speed": 3,
+  "record_small_particles_positions": false,
   "multiple_n": {
     "activated": false,
     "values": [110, 125, 140]
