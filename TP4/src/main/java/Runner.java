@@ -57,9 +57,16 @@ public class Runner {
 
             // Generate particles
 
+            // Start simulation
+
+            Simulation simulation = new NamedSimulation()
+                .withGridSide(lGridSide)
+                .withParticles(particles)
+                .withStatusBarActivated(true);
+
             long startTime = System.nanoTime();
 
-//            List<ExtendedEvent> events = Brownian.simulate(particles, bigParticle, lGridSide, maxEvents, true);
+            Object results = simulation.simulate();
 
             long endTime = System.nanoTime();
             long timeElapsed = endTime - startTime;
@@ -69,7 +76,7 @@ public class Runner {
             // Save results
 
             // Ovito
-//            new XYZ_Writer(FILENAME).addAllFrames(events).writeAndClose();
+//            new XYZ_Writer(FILENAME).addAllFrames(results).writeAndClose();
 
             System.out.println("Finished saving " + FILENAME + ".exyz");
 

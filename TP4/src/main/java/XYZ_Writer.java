@@ -49,19 +49,18 @@ public class XYZ_Writer {
         this.frames = new ArrayList<>();
     }
 
-//    public XYZ_Writer addFrame(ExtendedEvent extendedEvent) {
-//        List<PCoords> frame = extendedEvent.getFrame().stream()
-//                .map(p -> new PCoords(p.getType().toString(), p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getMass(), p.getRadius(), extendedEvent.getEvent().getTime()))
-//                .collect(Collectors.toList());
-//        frames.add(frame);
-//
-//        return this;
-//    }
+    public XYZ_Writer addFrame(Object object) {
+        List<PCoords> frame = null;
 
-//    public XYZ_Writer addAllFrames(List<ExtendedEvent> events) {
-//        events.forEach(this::addFrame);
-//        return this;
-//    }
+        frames.add(frame);
+
+        return this;
+    }
+
+    public XYZ_Writer addAllFrames(List<Object> objects) {
+        objects.forEach(this::addFrame);
+        return this;
+    }
     
     public void writeAndClose() {
         try{
