@@ -42,7 +42,7 @@ with open("../src/main/resources/postprocessing/SdS_TP2_2021Q2G01_results.json")
 # for noise, n in zip(noise_array, number_of_particles_array): 
 #     pairs_noise_n.add((noise,n))
     
-# print("Plotting Polarization by Frame, by Density and by Noise:\n")
+# print("Plotting ar.edu.itba.ss.Polarization by ar.edu.itba.ss.models.Frame, by Density and by Noise:\n")
 # print("Possible pairs Density-Number Of Particles")
 # print(pairs_d_n)
 

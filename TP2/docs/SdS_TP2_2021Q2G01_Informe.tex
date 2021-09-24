@@ -86,11 +86,11 @@ Por último, se guardan los resultados en distintos archivos que serán utilizad
 \end{figure}
 
  
-En cuanto a la implementación de la Simulación, se cuenta con distintas clases en Java (ver Figura \ref{fig:uml}). La clase que implementa el flujo principal (main) es \emph{OffLatticeSimulation}. Las partículas se modelaron con la clase \emph{VelocityPaticle}, que extiende de una clase \emph{Particle} y cuenta con su posición, ángulo y rapidez. Las mismas se generan a partir de la clase \emph{VelocityParticleGenerator}.\\
+En cuanto a la implementación de la Simulación, se cuenta con distintas clases en Java (ver Figura \ref{fig:uml}). La clase que implementa el flujo principal (main) es \emph{ar.edu.itba.ss.OffLatticeSimulation}. Las partículas se modelaron con la clase \emph{VelocityPaticle}, que extiende de una clase \emph{ar.edu.itba.ss.Particle} y cuenta con su posición, ángulo y rapidez. Las mismas se generan a partir de la clase \emph{VelocityParticleGenerator}.\\
 
-Para calcular la polarización de las mismas se cuenta con la clase \emph{Polarization}. El algoritmo del autómata se implementó en la clase \emph{OffLattice} que hace uso de las mencionadas anteriormente.\\  
+Para calcular la polarización de las mismas se cuenta con la clase \emph{ar.edu.itba.ss.Polarization}. El algoritmo del autómata se implementó en la clase \emph{ar.edu.itba.ss.OffLattice} que hace uso de las mencionadas anteriormente.\\
 
-A su vez, se cuenta con las clases para obtener los parámetros de configuración y obtención de resultados \emph{Config, XYZWriter, JsonWriter} y \emph{Postprocessing}, sobre las cuales no se entrará en detalle ya que corresponden al postprocesamiento.
+A su vez, se cuenta con las clases para obtener los parámetros de configuración y obtención de resultados \emph{ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.Config, XYZWriter, ar.edu.itba.ss.JsonWriter} y \emph{ar.edu.itba.ss.Postprocessing}, sobre las cuales no se entrará en detalle ya que corresponden al postprocesamiento.
 
 \pagebreak
 
@@ -108,13 +108,13 @@ Luego, se actualizan el ángulo y la posición de cada partícula utilizando las
 
 \pagebreak
 \begin{algorithm}
-    \caption{Off-Lattice Simulation Main}\label{main}
+    \caption{Off-Lattice ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.Simulation Main}\label{main}
     \begin{algorithmic}[1]
     \Procedure{main}{}
     \State $\textit{config} \gets \text{mapper.readValues()}$
-    \State $particles \gets \textit{VelocityParticlesGenerator.generateRandom(config)}$
-    \State $frames \gets \textit{OffLattice.simulate(config)}$
-    \State $XYZ_Writer(FILENAME).addAllFrames(frames)$
+    \State $particles \gets \textit{ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.VelocityParticlesGenerator.generateRandom(config)}$
+    \State $frames \gets \textit{ar.edu.itba.ss.OffLattice.simulate(config)}$
+    \State $ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.XYZ_Writer(FILENAME).addAllFrames(frames)$
     \EndProcedure
     \end{algorithmic}
 \end{algorithm}
@@ -127,7 +127,7 @@ Algoritmo 1. Flujo Principal del Programa
     \begin{algorithmic}[1]
     \Procedure{simulate}{}
     \BState \emph{\textbf{for} frame in frames}:
-    \State $\textit{neighbours} \gets \text{CellIndexMethod.search()}$
+    \State $\textit{neighbours} \gets \text{ar.edu.itba.ss.CellIndexMethod.search()}$
     \BState \emph{\textbf{for} particle in neighbours + itself}:
     \State $\textit{newAngle} \gets \text{atan2(sinAvg, cosAvg) + noise}$
     \State $particle.setAngle(newAngle)$

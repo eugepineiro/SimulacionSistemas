@@ -75,7 +75,7 @@ Para configurar la simulación se utiliza un archivo de configuración (`/TP3/sr
 $> mvn clean install
 ```
 
-### 4. Postprocessing
+### 4. ar.edu.itba.ss.Postprocessing
 
 Al configurar el `config.json` activando el postprocesamiento, se obtendrá como output el archivo `/TP3/src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results.json` que luego será postprocesado:
 

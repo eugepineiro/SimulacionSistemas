@@ -11,7 +11,7 @@
     "values": [110, 125, 140]
   },
   "multiple_temperatures": {
-    "activated": true,
+    "activated": false,
     "speeds_ranges": [
       [0, 1],
       [1, 2],

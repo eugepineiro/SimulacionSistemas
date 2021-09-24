@@ -20,7 +20,7 @@ Para configurar la simulación se utiliza un archivo de configuración (`/TP2/sr
 | Parámetro| Descripción                    | Opciones|
 | ------------- | ------------------------------ | ------------- |
 |"seed"     |  Semilla para la generación random de partículas  | número entero |
-|"m_grid_dimension"     |  Dimensión de la grilla MxM para la búsqueda de vecinos con el CellIndexMethod  | número entero |
+|"m_grid_dimension"     |  Dimensión de la grilla MxM para la búsqueda de vecinos con el ar.edu.itba.ss.CellIndexMethod  | número entero |
 |"r_interaction_radius"     |  Radio de interacción entre partículas  | número entero |
 |"n_number_of_particles"     |  Cantidad de partículas a generar  | número entero |
 |"frames"     |  Intervalor de tiempo (las animaciones se realizaron con 60 frames por segundo)  | número entero |
@@ -79,7 +79,7 @@ $> pip3 install -r requirements.txt
 $> mvn clean install
 ```
 
-### 4. Postprocessing
+### 4. ar.edu.itba.ss.Postprocessing
 
 Al configurar el `config.json` activando el postprocesamiento, se obtendrá como output el archivo `/TP2/src/main/resources/postprocessing/SdS_TP2_2021Q2G01_results.json` que luego será postprocesado:
 

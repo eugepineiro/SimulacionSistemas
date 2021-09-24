@@ -73,7 +73,7 @@ def get_polarization_by_frame_figure(results, density, n):
     else: 
         raise ValueError(f"There is no polarization with density {density:.2f} and number of particles {n}\n")
     
-    fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
+    fig = go.Figure() #px.line(df,x="ar.edu.itba.ss.models.Frame", y="ar.edu.itba.ss.Polarization", title="ar.edu.itba.ss.Polarization By ar.edu.itba.ss.models.Frame", markers=True)
     for i in range(len(polarization_array)): 
         
         fig.add_trace(go.Scatter(
@@ -105,7 +105,7 @@ def get_polarization_by_frame_density_figure(results, noise, n):
     else: 
         raise ValueError(f"There is no polarization with noise {noise:.2f} and number of particles {n}\n")
     
-    fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
+    fig = go.Figure() #px.line(df,x="ar.edu.itba.ss.models.Frame", y="ar.edu.itba.ss.Polarization", title="ar.edu.itba.ss.Polarization By ar.edu.itba.ss.models.Frame", markers=True)
     for i in range(len(polarization_array)): 
         
         fig.add_trace(go.Scatter(
@@ -377,7 +377,7 @@ def plot_results(results):
                         ),
 
                         # html.P(
-                        #     children='Simulation',
+                        #     children='ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.Simulation',
                         #     className='header-description'
                         # ),
                     ],
@@ -386,7 +386,7 @@ def plot_results(results):
 
                 # Graphs
 
-                ## Polarization By Frame (Noise)
+                ## ar.edu.itba.ss.Polarization By ar.edu.itba.ss.models.Frame (Noise)
 
                 html.Div(
                     children=[
@@ -432,7 +432,7 @@ def plot_results(results):
                     ]
                 ),
 
-                ## Polarization By Density
+                ## ar.edu.itba.ss.Polarization By Density
 
                 html.Div(
                     children=[
@@ -478,7 +478,7 @@ def plot_results(results):
                     ]
                 ),
 
-                ## Polarization by Density
+                ## ar.edu.itba.ss.Polarization by Density
 
                 html.Div(
                     children=[
@@ -490,7 +490,7 @@ def plot_results(results):
                                 html.Div(
                                     children=[
                                         html.P(
-                                            children='Averaging since Frame Nº'
+                                            children='Averaging since ar.edu.itba.ss.models.Frame Nº'
                                         ),
                                         daq.NumericInput(
                                             id='polarization_by_density_averaging_since',
@@ -540,7 +540,7 @@ def plot_results(results):
                     ]
                 ),
 
-                ## Polarization by Noise
+                ## ar.edu.itba.ss.Polarization by Noise
 
                 html.Div(
                     children=[
@@ -552,7 +552,7 @@ def plot_results(results):
                                 html.Div(
                                     children=[
                                         html.P(
-                                            children='Averaging since Frame Nº'
+                                            children='Averaging since ar.edu.itba.ss.models.Frame Nº'
                                         ),
                                         daq.NumericInput(
                                             id='polarization_by_noise_averaging_since',
@@ -612,7 +612,7 @@ def plot_results(results):
                                 html.Div(
                                     children=[
                                         html.P(
-                                            children='Averaging since Frame Nº'
+                                            children='Averaging since ar.edu.itba.ss.models.Frame Nº'
                                         ),
                                         daq.NumericInput(
                                             id='polarization_by_noise_with_multiple_n_averaging_since',

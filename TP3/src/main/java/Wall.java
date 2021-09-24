@@ -1,4 +1,0 @@
-enum Wall {
-    HORIZONTAL,
-    VERTICAL
-}

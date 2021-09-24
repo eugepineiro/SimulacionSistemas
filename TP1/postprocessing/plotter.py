@@ -67,7 +67,7 @@ def plot(particles_x, particles_y, particles_radius, particles_id, particle, int
     axes.set_yticks(minor_ticks, minor=True)
     plt.grid(color='#CCCCCC') # MxM
 
-    plt.title('Particle')
+    plt.title('ar.edu.itba.ss.Particle')
     # max_radius = grid_side/50
 
     # plt.xlim([0 - max_radius, grid_side + max_radius])
@@ -84,7 +84,7 @@ def plot_chosen_particle(particle, interaction_radius, axes):
     # Draw particle 
     draw_particle_radius = plt.Circle((particle['x'], particle['y']), particle['radius'], color='k') # particle 
     axes.add_artist(draw_particle_radius)
-    particle_scatter = plt.scatter(particle['x'], particle['y'], alpha=0.5,label='Particle', color="black")
+    particle_scatter = plt.scatter(particle['x'], particle['y'], alpha=0.5,label='ar.edu.itba.ss.Particle', color="black")
     cursor_particles=mplcursors.cursor(particle_scatter)
     cursor_particles.connect("add", lambda sel: sel.annotation.set_text(particle['id']))
     #axes.annotate(str(particle['id']), xy=(particle['x'], particle['y']), fontsize=15, ha="center", color='cyan')

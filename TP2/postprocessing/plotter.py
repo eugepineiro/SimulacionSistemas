@@ -14,11 +14,11 @@ def plot_polarization_by_frame(results, density, n):
     print(noise_array) 
 
     df = pd.DataFrame(dict(
-        Polarization =  polarization_array[0],   
-        Frame = frames
+        ar.edu.itba.ss.Polarization =  polarization_array[0],
+        ar.edu.itba.ss.models.Frame = frames
     ))
     
-    fig = go.Figure() #px.line(df,x="Frame", y="Polarization", title="Polarization By Frame", markers=True)
+    fig = go.Figure() #px.line(df,x="ar.edu.itba.ss.models.Frame", y="ar.edu.itba.ss.Polarization", title="ar.edu.itba.ss.Polarization By ar.edu.itba.ss.models.Frame", markers=True)
     for i in range(len(polarization_array)): 
         #fig.add_scatter(x=polarization_array[i], y=frames, mode='lines+markers', name='noise = '+str(noise_array[i]))
         fig.add_trace(go.Scatter(
@@ -30,9 +30,9 @@ def plot_polarization_by_frame(results, density, n):
         )
 
     fig.update_layout(
-    title="Polarization By Frame",
-    xaxis_title="Frame",
-    yaxis_title="Polarization",
+    title="ar.edu.itba.ss.Polarization By ar.edu.itba.ss.models.Frame",
+    xaxis_title="ar.edu.itba.ss.models.Frame",
+    yaxis_title="ar.edu.itba.ss.Polarization",
     legend_title=f"References\nDensity: {density}\nNumber of Particles: {n}\n",
     font=dict(
         #family="Courier New, monospace",
@@ -58,10 +58,10 @@ def plot_polarization_by_density(results, noise, n, density_range, density_incre
     print(len(polarization_array))
     print(d_array) 
     df = pd.DataFrame(dict(
-        Polarization =  avg_polarizations_by_density,   
+        ar.edu.itba.ss.Polarization =  avg_polarizations_by_density,
         Density = d_array
     ))
-    fig = px.box(df, x="Density", y="Polarization", title="Polarization By Density")
+    fig = px.box(df, x="Density", y="ar.edu.itba.ss.Polarization", title="ar.edu.itba.ss.Polarization By Density")
     fig.show()
 
 def get_polarization_by(param1, value1, param2, value2, results, other_param): 

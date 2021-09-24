@@ -83,7 +83,7 @@ if not multiple_simulations_results is None:
     extended_events = multiple_simulations_results[0]
     small_particles = list(filter(lambda p: p['type'] == 'SMALL', extended_events[0]['frame']))
 
-    # Big Particle
+    # Big ar.edu.itba.ss.Particle
     simulations_big_trajectories = []
 
     for idx, temp_sim in enumerate(multiple_simulations_results):
@@ -97,7 +97,7 @@ if not multiple_simulations_results is None:
 
     plot_dcm(simulations_big_trajectories, 'BIG', len(small_particles), 1)
 
-    # Small Particle
+    # Small ar.edu.itba.ss.Particle
     simulations_small_trajectories_map = {}
 
     for p in small_particles:
