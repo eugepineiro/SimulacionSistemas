@@ -6,28 +6,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class XYZ_Writer {
     private static class PCoords {
         private final String type;
         private final long id;
-        private final double x, y, vx, vy, mass, radius, time;
+        private final double x, y, vx, vy;
 
-        public PCoords(String type, long id, double x, double y, double vx, double vy, double mass, double radius, double time) {
+        public PCoords(String type, long id, double x, double y, double vx, double vy) {
             this.type = type;
             this.id = id;
             this.x = x;
             this.y = y;
             this.vx = vx;
             this.vy = vy;
-            this.mass  = mass;
-            this.radius = radius;
-            this.time = time;
         }
         
         @Override
         public String toString() {
-            return String.format("%s\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\n", type, id, x, y, vx, vy, mass, radius, time);
+            return String.format("%s\t%d\t%g\t%g\t%g\t%g\n", type, id, x, y, vx, vy);
         }
     }
 
@@ -53,7 +51,7 @@ public class XYZ_Writer {
     }
 
     public XYZ_Writer addFrame(Frame frame) {
-        List<PCoords> f = null; // TODO: Update
+        List<PCoords> f = frame.getParticles().stream().map(p -> new PCoords(p.getType().name(), p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy())).collect(Collectors.toList());
 
         frames.add(f);
 

@@ -43,7 +43,7 @@ class ar.edu.itba.ss.ar.edu.itba.ss.models.ParticleType(Enum):
 
 @auto_str
 @auto_repr
-class ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.models.VelocityParticle(ar.edu.itba.ss.Particle):
+class ar.edu.itba.ss.ar.edu.itba.ss.ar.edu.itba.ss.models.AcceleratedParticle(ar.edu.itba.ss.Particle):
     def __init__(self, id, x, y, radius, type, vx, vy, mass, collisions):
         self.id = id
         self.type = type

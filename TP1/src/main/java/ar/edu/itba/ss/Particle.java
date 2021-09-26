@@ -20,33 +20,45 @@ public class Particle {
     public long getId() {
         return id;
     }
+    public void setId(long id) {
+        this.id = id;
+    }
+    public Particle withId(long id) {
+        setId(id);
+        return this;
+    }
 
     public double getX() {
         return x;
+    }
+    public void setX(double x) {
+        this.x = x;
+    }
+    public Particle withX(double x) {
+        setX(x);
+        return this;
     }
 
     public double getY() {
         return y;
     }
+    public void setY(double y) {
+        this.y = y;
+    }
+    public Particle withY(double y) {
+        setY(y);
+        return this;
+    }
 
     public double getRadius() {
         return radius;
     }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
     public void setRadius(double radius) {
         this.radius = radius;
     }
-
-    public void setId(long id) {
-        this.id = id;
+    public Particle withRadius(double radius) {
+        setRadius(radius);
+        return this;
     }
 
     @Override
@@ -64,7 +76,7 @@ public class Particle {
 
     @Override
     public String toString() {
-        return "ar.edu.itba.ss.Particle{" +
+        return "Particle{" +
                 "id=" + id +
                 ", x=" + x +
                 ", y=" + y +

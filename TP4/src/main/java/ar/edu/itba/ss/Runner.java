@@ -1,23 +1,25 @@
 package ar.edu.itba.ss;
 
-import ar.edu.itba.ss.models.Frame;
-import ar.edu.itba.ss.models.VelocityParticle;
+import ar.edu.itba.ss.integrations.Beeman;
+import ar.edu.itba.ss.integrations.Gear;
+import ar.edu.itba.ss.integrations.Integration;
+import ar.edu.itba.ss.integrations.VerletOriginal;
+import ar.edu.itba.ss.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Runner {
 
-    private static final Integer    EVENTS_SAVING_EACH     = 25;
-    private static final String     CONFIG_PATH             = "TP4/src/main/resources/config/config.json";
-    private static final String     JSON_WRITER_PATH        = "TP4/src/main/resources/postprocessing";
-    private static final String     XYZ_WRITER_PATH         = "TP4/src/main/resources/ovito";
-    private static final String     FILENAME                = "SdS_TP4_2021Q2G01_output";
-    private static final String     POSTPROCESSING_FILENAME = "SdS_TP4_2021Q2G01_results";
+    private static final Integer    EVENTS_SAVING_EACH                  = 25;
+    private static final String     CONFIG_PATH                         = "TP4/src/main/resources/config/config.json";
+    private static final String     JSON_WRITER_PATH                    = "TP4/src/main/resources/postprocessing";
+    private static final String     XYZ_WRITER_PATH                     = "TP4/src/main/resources/ovito";
+    private static final String     OVITO_FILENAME                      = "SdS_TP4_2021Q2G01_output";
+    private static final String     OSCILLATOR_POSTPROCESSING_FILENAME  = "SdS_TP4_2021Q2G01_oscillator_results";
+    private static final String     MARS_POSTPROCESSING_FILENAME        = "SdS_TP4_2021Q2G01_mars_results";
 
     // Main
 
@@ -32,40 +34,52 @@ public class Runner {
             Config config = mapper.readValue(new File(CONFIG_PATH), Config.class);
 
             // Configure random
-            Random r;
+            Random random;
             Long seed = config.getSeed();
             if (seed == 0) {
                 curr = System.currentTimeMillis();
                 System.out.printf("Current seed: %d\n", curr);
-                r = new Random(curr);
+                random = new Random(curr);
             }
             else
-                r = new Random(seed);
+                random = new Random(seed);
 
-
-            long numberOfParticles, lGridSide, maxEvents;
-            double minSpeed, maxSpeed;
-
-            lGridSide                                   = config.getL_grid_side();
-            numberOfParticles                           = config.getN_number_of_particles();
-
-
-            boolean simpleSimulation                    = true;
+            boolean simpleSimulation            = true;
 
             // Multiple simulations if specified
 
             if (!simpleSimulation) return;
 
-            List<VelocityParticle> particles = new ArrayList<>();
+            // Simulation
 
-            // Generate particles
+            String system = config.getSystem();
 
             // Start simulation
 
-             Simulation<List<Frame>> simulation = new OscillatorSimulation()
-                .withGridSide(lGridSide)
-                .withParticles(particles)
-                .withStatusBarActivated(true);
+            Simulation<List<Frame>> simulation;
+
+            HashMap<String, Integration> integrationHashMap = new HashMap<String, Integration>() {{
+                put(IntegrationType.VERLET_ORIGINAL.name().toLowerCase(),   new VerletOriginal());
+                put(IntegrationType.BEEMAN.name().toLowerCase(),            new Beeman());
+                put(IntegrationType.GEAR.name().toLowerCase(),              new Gear());
+            }};
+
+            if (system.equals(SystemType.OSCILLATOR.name().toLowerCase())) {
+                simulation = new OscillatorSimulation()
+                    .withIntegration(integrationHashMap.get(config.getIntegration()))
+                    .withDt(config.getDt())
+                    .withMaxTime(config.getMax_time())            // seconds
+                    .withStatusBarActivated(config.getLoading_bar())
+                    ;
+            }
+            else if (system.equals(SystemType.MARS.name().toLowerCase())) {
+                simulation = new MarsSimulation()
+
+                ;
+            }
+            else {
+                throw new IllegalArgumentException(String.format("System type %s undefined\n", system));
+            }
 
             long startTime = System.nanoTime();
 
@@ -76,12 +90,20 @@ public class Runner {
 
             System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
+            results.forEach(System.out::println);
+
             // Save results
+            
+            new JsonWriter(OSCILLATOR_POSTPROCESSING_FILENAME)
+                .withObj(results)
+                .write();
 
+            System.out.println("Finished saving " + OSCILLATOR_POSTPROCESSING_FILENAME + ".json");
+            
             // Ovito
-            new XYZ_Writer(FILENAME).addAllFrames(results).writeAndClose();
+            new XYZ_Writer(OVITO_FILENAME).addAllFrames(results).writeAndClose();
 
-            System.out.println("Finished saving " + FILENAME + ".exyz");
+            System.out.println("Finished saving " + OVITO_FILENAME + ".exyz");
 
         } catch (IOException e) {
             e.printStackTrace();

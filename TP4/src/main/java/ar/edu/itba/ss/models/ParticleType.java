@@ -1,8 +1,7 @@
 package ar.edu.itba.ss.models;
 
 public enum ParticleType {
-    BIG,
-    SMALL;
+    OSCILLABLE;
 
     @Override
     public String toString() {

@@ -1,7 +1,9 @@
 {
   "seed": 100,
-  "n_number_of_particles": 140,
-  "l_grid_side": 6,
-  "dt": 0.01,
-  "dt2_factor": 10
+  "system": "oscillator",
+  "integration": "verlet_original",
+  "dt": 0.1,
+  "max_time": 5,
+  "save_factor": 10,
+  "loading_bar": true
 }

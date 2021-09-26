@@ -1,9 +1,9 @@
 package ar.edu.itba.ss.integrations;
 
-import ar.edu.itba.ss.models.VelocityParticle;
+import ar.edu.itba.ss.models.AcceleratedParticle;
 
 public interface Integration {
-    
-    VelocityParticle update(VelocityParticle p, double dt);
+
+    AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt);
 
 }
