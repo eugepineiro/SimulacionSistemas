@@ -1,12 +1,13 @@
 package ar.edu.itba.ss.integrations;
 import ar.edu.itba.ss.models.AcceleratedParticle;
+import ar.edu.itba.ss.models.TriFunction;
 
 import java.util.function.BiFunction;
 
 public class Beeman implements Integration {
 
     @Override
-    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt, BiFunction<Double, Double, Double> calculateAcceleration){
+    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt, TriFunction<Double, Double, Double, Double> calculateAcceleration) {
 
         // Calculate Acceleration
         double mass = current.getMass();
@@ -23,8 +24,8 @@ public class Beeman implements Integration {
         double nextPredictedVelocityX = current.getVx() + (3/2.0) * currentAccelerationX * dt - (1/2.0) * previousAccelerationX * dt  ; // vx(t+dt)
         double nextPredictedVelocityY = current.getVy() + (3/2.0) * currentAccelerationY * dt - (1/2.0) * previousAccelerationY * dt  ; // vy(t+dt)
 
-        double nextAccelerationX = calculateAcceleration(nextPositionX, nextPredictedVelocityX);
-        double nextAccelerationY = calculateAcceleration(nextPositionY, nextPredictedVelocityY);
+        double nextAccelerationX = calculateAcceleration.apply(nextPositionX, nextPredictedVelocityX, mass);
+        double nextAccelerationY = calculateAcceleration.apply(nextPositionY, nextPredictedVelocityY, mass);
 
         double nextCorrectedVelocityX = current.getVx() + (1/3.0) * nextAccelerationX * dt + (5/6.0) * currentAccelerationX * dt - (1/6.0) * previousAccelerationX * dt;
         double nextCorrectedVelocityY = current.getVy() + (1/3.0) * nextAccelerationY * dt + (5/6.0) * currentAccelerationY * dt - (1/6.0) * previousAccelerationY * dt;
@@ -37,6 +38,9 @@ public class Beeman implements Integration {
 
         next.setVx(nextCorrectedVelocityX);
         next.setVy(nextCorrectedVelocityY);
+
+        next.setForceX(mass*nextAccelerationX);
+        next.setForceY(mass*nextAccelerationY);
 
         return next;
     }

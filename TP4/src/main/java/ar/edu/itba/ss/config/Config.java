@@ -1,4 +1,4 @@
-package ar.edu.itba.ss;// https://www.baeldung.com/jackson-yaml
+package ar.edu.itba.ss.config;// https://www.baeldung.com/jackson-yaml
 // https://mkyong.com/java/jackson-how-to-parse-json/
 
 public class Config {

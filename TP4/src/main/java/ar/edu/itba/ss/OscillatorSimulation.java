@@ -1,12 +1,13 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.integrations.Integration;
-import ar.edu.itba.ss.integrations.VerletOriginal;
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.Frame;
 import ar.edu.itba.ss.models.ParticleType;
+import ar.edu.itba.ss.models.TriFunction;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class OscillatorSimulation implements Simulation<List<Frame>> {
 
@@ -30,14 +31,17 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
         double r        = 1;                    // m
         double gamma    = 100;                  // kg/s
         double vy       = -gamma/2;             // m/s
+        double mass     = 70;
+
+        TriFunction<Double, Double, Double, Double> calculateAcceleration = (pos, vel, m) -> (- k * pos - gamma * vel)/m;
 
         particle = new AcceleratedParticle()
             .withType(ParticleType.OSCILLABLE)
             .withY(r)
             .withVy(vy)
-            .withMass(70)                   // kg
+            .withMass(mass)                   // kg
+            .withForceY(mass*calculateAcceleration.apply(r,vy,mass))
             ;
-
 
         List<Frame> frames = new ArrayList<>();
 
@@ -54,21 +58,26 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
             .withTime(0)
         );
 
+        long count = 0;
         for (double time = dt; time < maxTime; time += dt) {   // currentTime
             if (statusBarActivated) Utils.printLoadingBar(time/maxTime, STATUS_BAR_SIZE);
 
-            currentForce = - k * current.getY() - gamma * current.getVy();  // f(t) = -k*r - gamma*r'
-            current.setForceY(currentForce);
+//            currentForce = - k * current.getY() - gamma * current.getVy();  // f(t) = -k*r - gamma*r'
+//            current.setForceY(currentForce);
 
-            next = integration.update(current, previous, dt);       //updated particle with ri(t+dt) y vi(t)
+            next = integration.update(current, previous, dt, calculateAcceleration);       //updated particle with ri(t+dt) y vi(t)
 
-            frames.add(new Frame()
-                .withParticles(Collections.singletonList(current))
-                .withTime(time)
-            );
+            if (count % saveFactor == 0) {
+                frames.add(new Frame()
+                    .withParticles(Collections.singletonList(current))
+                    .withTime(time)
+                );
+            }
 
             previous = current;
             current  = next;
+
+            count++;
         }
 
         return frames;
