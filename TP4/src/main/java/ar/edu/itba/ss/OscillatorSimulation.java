@@ -41,33 +41,34 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
 
         List<Frame> frames = new ArrayList<>();
 
-        AcceleratedParticle previousParticle = particle;                    // (t-dt)
-        AcceleratedParticle currentParticle = previousParticle.clone();     // (t)
-        currentParticle.setY(2 * currentParticle.getY() - previousParticle.getY()+ (Math.pow(dt,2)/currentParticle.getMass())*currentParticle.getForceY()); // ry(t) // TODO: Change
-        AcceleratedParticle nextParticle;                                   // (t+dt)
+        AcceleratedParticle previous    = particle;                    // (t-dt)
+        AcceleratedParticle current     = previous.clone();            // (t)
+        AcceleratedParticle next        = null;                        // (t+dt)
+
+        integration.setup(previous, current, next, dt);
 
         double currentForce;
 
         frames.add(new Frame()
-            .withParticles(Collections.singletonList(previousParticle))
+            .withParticles(Collections.singletonList(previous))
             .withTime(0)
         );
 
         for (double time = dt; time < maxTime; time += dt) {   // currentTime
             if (statusBarActivated) Utils.printLoadingBar(time/maxTime, STATUS_BAR_SIZE);
 
-            currentForce = - k * currentParticle.getY() - gamma * currentParticle.getVy();  // f(t) = -k*r - gamma*r'
-            currentParticle.setForceY(currentForce);
+            currentForce = - k * current.getY() - gamma * current.getVy();  // f(t) = -k*r - gamma*r'
+            current.setForceY(currentForce);
 
-            nextParticle = integration.update(currentParticle, previousParticle, dt);       //updated particle with ri(t+dt) y vi(t)
+            next = integration.update(current, previous, dt);       //updated particle with ri(t+dt) y vi(t)
 
             frames.add(new Frame()
-                .withParticles(Collections.singletonList(currentParticle))
+                .withParticles(Collections.singletonList(current))
                 .withTime(time)
             );
 
-            previousParticle = currentParticle;
-            currentParticle  = nextParticle;
+            previous = current;
+            current  = next;
         }
 
         return frames;

@@ -5,6 +5,11 @@ import ar.edu.itba.ss.models.AcceleratedParticle;
 public class VerletOriginal implements Integration {
 
     @Override
+    public void setup(AcceleratedParticle previous, AcceleratedParticle current, AcceleratedParticle next, double dt) {
+        current.setY(2 * current.getY() - previous.getY()+ (Math.pow(dt,2)/current.getMass())*current.getForceY()); // ry(t) // TODO: Change
+    }
+
+    @Override
     public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt) {
 
         double nextPositionX    = 2 * current.getX() - previous.getX()+ (Math.pow(dt,2)/current.getMass())*current.getForceX(); // rx(t+dt)

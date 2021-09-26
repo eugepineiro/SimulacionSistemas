@@ -2,8 +2,8 @@
   "seed": 100,
   "system": "oscillator",
   "integration": "verlet_original",
-  "dt": 0.1,
-  "max_time": 5,
+  "dt": 0.001,
+  "max_time": 7,
   "save_factor": 10,
   "loading_bar": true
 }
