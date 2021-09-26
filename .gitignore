@@ -22,5 +22,5 @@
 # Latex 
 **/build/**
 
-# Files
+# Files 
 **/**/src/main/resources/postprocessing/

@@ -7,7 +7,7 @@ def plot_oscillator_position_by_time(integrations_positions, integrations_times,
 
     for integration in range(len(integrations_names)): 
         fig.add_trace(go.Scatter( 
-            x=integrations_times[integration], 
+            x=integrations_times, 
             y=integrations_positions[integration] , 
             mode='lines',
             name=f'{integrations_names[integration]}'           
@@ -22,3 +22,5 @@ def plot_oscillator_position_by_time(integrations_positions, integrations_times,
             size=28, 
         )
     )
+
+    fig.show()
