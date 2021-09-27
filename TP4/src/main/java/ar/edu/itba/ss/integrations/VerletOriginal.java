@@ -1,21 +1,20 @@
 package ar.edu.itba.ss.integrations;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.TriFunction;
 
 public class VerletOriginal implements Integration {
 
     @Override
     public void setup(AcceleratedParticle previous, AcceleratedParticle current, AcceleratedParticle next, double dt) {
-        current.setX(2 * current.getY() - previous.getX()+ (Math.pow(dt,2)/current.getMass())*current.getForceX()); // rx(t)
-        current.setY(2 * current.getY() - previous.getY()+ (Math.pow(dt,2)/current.getMass())*current.getForceY()); // ry(t)
+        previous.setX(current.getX() - dt * current.getVx() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceX()); // rx(t)
+        previous.setY(current.getY() - dt * current.getVy() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceY()); // ry(t)
     }
 
     @Override
-    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt, TriFunction<Double, Double, Double, Double> calculateAcceleration) {
+    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt) {
         double mass = current.getMass();
-        double currentAccelerationX = calculateAcceleration.apply(current.getX(), current.getVx(), mass);
-        double currentAccelerationY = calculateAcceleration.apply(current.getY(), current.getVy(), mass);
+        double currentAccelerationX = current.getPositionDerivativeX(2); // calculateAcceleration.apply(current.getX(), current.getVx(), mass);
+        double currentAccelerationY = current.getPositionDerivativeY(2); //calculateAcceleration.apply(current.getY(), current.getVy(), mass);
 
         current.setForceX(mass*currentAccelerationX);
         current.setForceY(mass*currentAccelerationY);
@@ -28,6 +27,7 @@ public class VerletOriginal implements Integration {
 
         current.setVx(currentVelocityX);
         current.setVy(currentVelocityY);
+
         AcceleratedParticle next = current.clone();
         next.setX(nextPositionX);
         next.setY(nextPositionY);

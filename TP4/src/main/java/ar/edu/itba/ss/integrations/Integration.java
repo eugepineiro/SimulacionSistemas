@@ -1,9 +1,7 @@
 package ar.edu.itba.ss.integrations;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.TriFunction;
-
-import java.util.function.BiFunction;
+import ar.edu.itba.ss.models.TetraFunction;
 
 public interface Integration {
 
@@ -11,6 +9,6 @@ public interface Integration {
         // Do nothing
     }
 
-    AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt, TriFunction<Double, Double, Double, Double> calculateAcceleration);
+    AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt);
 
 }

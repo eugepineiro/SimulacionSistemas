@@ -1,39 +1,40 @@
 package ar.edu.itba.ss.integrations;
 import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.TriFunction;
+import ar.edu.itba.ss.models.TetraFunction;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.LongStream;
 
 public class Gear implements Integration {
 
     @Override
-    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt, TriFunction<Double, Double, Double, Double> calculateAcceleration) {
+    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt) {
 
         int order = 2;
         double[] nextPredictedDerivativesX = new double[order+1];
         double[] nextPredictedDerivativesY = new double[order+1];
-        double[][] derivatives = calculateDerivatives(current, calculateAcceleration);
         double[] taylorCoeffs = calculateTaylorPolynomialCoeffs(dt, order);
 
         // Predict
 
         for(int i = 0; i <= order; i++ ){
             for(int j = i; j <= order; j++){
-                nextPredictedDerivativesX[i] += derivatives[0][j] * taylorCoeffs[j-i];
-                nextPredictedDerivativesY[i] += derivatives[1][j] * taylorCoeffs[j-i];
+                nextPredictedDerivativesX[i] += current.getPositionDerivativeX(j) * taylorCoeffs[j-i];
+                nextPredictedDerivativesY[i] += current.getPositionDerivativeY(j) * taylorCoeffs[j-i];
             }
         }
-
-        double mass = current.getMass();
 
         // Evaluate
 
         double nextAccelerationWithPredictedX, nextAccelerationWithPredictedY;
 
-        nextAccelerationWithPredictedX = calculateAcceleration.apply(nextPredictedDerivativesX[0], nextPredictedDerivativesX[1], mass);
-        nextAccelerationWithPredictedY = calculateAcceleration.apply(nextPredictedDerivativesY[0], nextPredictedDerivativesY[1], mass);
+        AcceleratedParticle predictedNext = current.clone();
+        predictedNext.setX(nextPredictedDerivativesX[0]);
+        predictedNext.setVx(nextPredictedDerivativesX[1]);
+        predictedNext.setY(nextPredictedDerivativesY[0]);
+        predictedNext.setVy(nextPredictedDerivativesY[1]);
+
+        nextAccelerationWithPredictedX = predictedNext.getPositionDerivativeX(2);  //etPositionDerivativeX(2, nextPredictedDerivativesX[0], nextPredictedDerivativesX[1], mass);
+        nextAccelerationWithPredictedY = predictedNext.getPositionDerivativeY(2); // calculateAcceleration.apply(nextPredictedDerivativesY[0], nextPredictedDerivativesY[1], mass);
 
         double deltaAccelerationX, deltaAccelerationY;
 
@@ -69,16 +70,6 @@ public class Gear implements Integration {
         next.setForceY(current.getMass() * nextCorrectedDerivativesX[2]);
 
         return next;
-    }
-
-    private double[][] calculateDerivatives(AcceleratedParticle current, TriFunction<Double, Double, Double, Double> calculateAcceleration){
-        double mass = current.getMass();
-        double[][] derivatives = {
-            {current.getX(), current.getVx(), calculateAcceleration.apply(current.getX(), current.getVx(), mass)}, // x
-            {current.getY(), current.getVy(), calculateAcceleration.apply(current.getY(), current.getVy(), mass)}, // Y
-        };
-
-        return derivatives;
     }
 
     private double[] calculateTaylorPolynomialCoeffs(double dt, int order) {
