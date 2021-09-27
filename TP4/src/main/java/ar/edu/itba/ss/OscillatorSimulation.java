@@ -59,7 +59,7 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
         );
 
         long count = 0;
-        for (double time = dt; time < maxTime; time += dt) {   // currentTime
+        for (double time = dt; time <= maxTime; time += dt) {   // currentTime
             if (statusBarActivated) Utils.printLoadingBar(time/maxTime, STATUS_BAR_SIZE);
 
 //            currentForce = - k * current.getY() - gamma * current.getVy();  // f(t) = -k*r - gamma*r'

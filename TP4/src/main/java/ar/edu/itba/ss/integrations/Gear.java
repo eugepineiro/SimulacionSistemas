@@ -11,39 +11,82 @@ public class Gear implements Integration {
     @Override
     public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt, TriFunction<Double, Double, Double, Double> calculateAcceleration) {
 
-        int order = 5;
-        List<Double> nextPredictedPositions = new ArrayList<>();
-        double derivatives[][] = calculateDerivatives(current);
-        double taylor_coeffs[] = calculateTaylorPolynomialCoeffs(dt, order);
+        int order = 2;
+        double[] nextPredictedDerivativesX = new double[order+1];
+        double[] nextPredictedDerivativesY = new double[order+1];
+        double[][] derivatives = calculateDerivatives(current, calculateAcceleration);
+        double[] taylorCoeffs = calculateTaylorPolynomialCoeffs(dt, order);
 
         // Predict
-        for(int i=0; i < order+1; i++ ){
 
+        for(int i = 0; i <= order; i++ ){
+            for(int j = i; j <= order; j++){
+                nextPredictedDerivativesX[i] += derivatives[0][j] * taylorCoeffs[j-i];
+                nextPredictedDerivativesY[i] += derivatives[1][j] * taylorCoeffs[j-i];
+            }
         }
+
+        double mass = current.getMass();
 
         // Evaluate
 
+        double nextAccelerationWithPredictedX, nextAccelerationWithPredictedY;
+
+        nextAccelerationWithPredictedX = calculateAcceleration.apply(nextPredictedDerivativesX[0], nextPredictedDerivativesX[1], mass);
+        nextAccelerationWithPredictedY = calculateAcceleration.apply(nextPredictedDerivativesY[0], nextPredictedDerivativesY[1], mass);
+
+        double deltaAccelerationX, deltaAccelerationY;
+
+        deltaAccelerationX = nextAccelerationWithPredictedX - nextPredictedDerivativesX[2];
+        deltaAccelerationY = nextAccelerationWithPredictedY - nextPredictedDerivativesY[2];
+
+        double deltaR2X, deltaR2Y;
+
+        deltaR2X = deltaAccelerationX * Math.pow(dt,2) / 2;
+        deltaR2Y = deltaAccelerationY * Math.pow(dt,2) / 2;
+
         // Correct
 
-        return current.clone();
+        double[] nextCorrectedDerivativesX = new double[order+1];
+        double[] nextCorrectedDerivativesY = new double[order+1];
+
+        double[] gearCoeffs = {0, 1, 1};
+
+        for (int i = 0; i <= order; i++) {
+            nextCorrectedDerivativesX[i] = nextPredictedDerivativesX[i] + gearCoeffs[i] * deltaR2X / taylorCoeffs[i];
+            nextCorrectedDerivativesY[i] = nextPredictedDerivativesY[i] + gearCoeffs[i] * deltaR2Y / taylorCoeffs[i];
+        }
+
+        AcceleratedParticle next = current.clone();
+
+        next.setX(nextCorrectedDerivativesX[0]);
+        next.setY(nextCorrectedDerivativesY[0]);
+
+        next.setVx(nextCorrectedDerivativesX[1]);
+        next.setVy(nextCorrectedDerivativesY[1]);
+
+        next.setForceX(current.getMass() * nextCorrectedDerivativesX[2]);
+        next.setForceY(current.getMass() * nextCorrectedDerivativesX[2]);
+
+        return next;
     }
 
-    private double[][] calculateDerivatives(AcceleratedParticle current){
+    private double[][] calculateDerivatives(AcceleratedParticle current, TriFunction<Double, Double, Double, Double> calculateAcceleration){
         double mass = current.getMass();
-        double derivatives[][] = {
-            {current.getX(), current.getVx(), current.getForceX()/mass, 0, 0}, // x
-            {current.getY(), current.getVy(), current.getForceY()/mass, 0, 0}, // Y
+        double[][] derivatives = {
+            {current.getX(), current.getVx(), calculateAcceleration.apply(current.getX(), current.getVx(), mass)}, // x
+            {current.getY(), current.getVy(), calculateAcceleration.apply(current.getY(), current.getVy(), mass)}, // Y
         };
 
         return derivatives;
     }
 
     private double[] calculateTaylorPolynomialCoeffs(double dt, int order) {
-        double taylor_coeffs[] = new double[order+1];
+        double[] taylorCoeffs = new double[order+1];
         for(int i = 0; i <= order; i++){
-            taylor_coeffs[i] = Math.pow(dt, i)/factorial(i);
+            taylorCoeffs[i] = Math.pow(dt, i)/factorial(i);
         }
-        return taylor_coeffs;
+        return taylorCoeffs;
     }
 
     private long factorial(int n) {

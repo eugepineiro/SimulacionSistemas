@@ -129,7 +129,7 @@ public class AcceleratedParticle extends Particle {
         this.forceY = forceY;
     }
     public AcceleratedParticle withForceY(double forceY) {
-        setForceX(forceX);
+        setForceY(forceY);
         return this;
     }
 

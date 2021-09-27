@@ -35,7 +35,7 @@ public class Runner {
         long curr;
         try {
             // JSON file to Java object
-            ar.edu.itba.ss.config.Config config = mapper.readValue(new File(CONFIG_PATH), Config.class);
+            Config config = mapper.readValue(new File(CONFIG_PATH), Config.class);
 
             // Configure random
             Random random;

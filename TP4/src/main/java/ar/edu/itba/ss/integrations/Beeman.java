@@ -11,10 +11,10 @@ public class Beeman implements Integration {
 
         // Calculate Acceleration
         double mass = current.getMass();
-        double previousAccelerationX = previous.getForceX()/mass;
-        double previousAccelerationY = previous.getForceY()/mass;
-        double currentAccelerationX =  current.getForceX()/mass;
-        double currentAccelerationY = current.getForceY()/mass;
+        double previousAccelerationX = calculateAcceleration.apply(previous.getX(), previous.getVx(), mass);
+        double previousAccelerationY = calculateAcceleration.apply(previous.getY(), previous.getVy(), mass);
+        double currentAccelerationX =  calculateAcceleration.apply(current.getX(), current.getVx(), mass);
+        double currentAccelerationY = calculateAcceleration.apply(current.getY(), current.getVy(), mass);
 
         // Calculate Position
         double nextPositionX = current.getX() + current.getVx() * dt + (2/3.0) * currentAccelerationX * Math.pow(dt,2) - (1/6.0)* previousAccelerationX * Math.pow(dt,2);  // rx(t+dt)

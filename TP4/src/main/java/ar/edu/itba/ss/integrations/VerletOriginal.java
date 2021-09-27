@@ -7,6 +7,7 @@ public class VerletOriginal implements Integration {
 
     @Override
     public void setup(AcceleratedParticle previous, AcceleratedParticle current, AcceleratedParticle next, double dt) {
+        current.setX(2 * current.getY() - previous.getX()+ (Math.pow(dt,2)/current.getMass())*current.getForceX()); // rx(t)
         current.setY(2 * current.getY() - previous.getY()+ (Math.pow(dt,2)/current.getMass())*current.getForceY()); // ry(t)
     }
 
