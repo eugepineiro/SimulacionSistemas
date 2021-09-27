@@ -3,21 +3,55 @@ package ar.edu.itba.ss;
 import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.Frame;
+import ar.edu.itba.ss.models.ParticleType;
 
 import java.util.List;
 
 public class MarsSimulation implements Simulation<List<Frame>> {
 
     // Status bar
-    private final   int                     STATUS_BAR_SIZE         = 31;
+    private final   int             STATUS_BAR_SIZE         = 31;
 
-    private         Integration                 integration;
-    private         long                        gridSide;
-    private         boolean                     statusBarActivated;
+    private         Integration     integration;
+    private         double          dt;
+    private         double          maxTime;
+    private         long            saveFactor;
+    private         boolean         statusBarActivated;
 
-    // Stop conditions
+
+    private         AcceleratedParticle     earth, sun, spaceship, mars;
 
     public List simulate() {
+
+        double gravityConstant = Math.pow(6.693*10, -11); // m³/(kg*s²)   // TODO change units
+        /* Earth */
+        double earthRadius = 6378.137; // km
+        double earthMass = Math.pow(5.97219*10, 24); // kg
+        double earthVelocity = 0; // TODO elegir un momento
+        /* Sun */
+        //double sunRadius = ; // TODO con el archivo
+        //double sunMass = ;
+        /* Mars */
+
+        /* Spaceship */
+        double stationHeight = 1500; // km
+        double orbitalVelocity = 7.12; // km/s
+        double initialVelocity = 8 + orbitalVelocity + earthVelocity; // km // TODO elegir un momento  para earthVelocity
+        double spaceshipMass = Math.pow(2*10, 5); // kg
+
+
+        earth = new AcceleratedParticle()
+                .withType(ParticleType.EARTH)
+        ;
+
+        sun = new AcceleratedParticle() // inicia en (0,0)
+                .withType(ParticleType.SUN)
+        ;
+
+        mars = new AcceleratedParticle()
+                .withType(ParticleType.MARS)
+        ;
+
         return null;
     }
 
@@ -31,17 +65,6 @@ public class MarsSimulation implements Simulation<List<Frame>> {
     }
     public MarsSimulation withIntegration(Integration integration) {
         setIntegration(integration);
-        return this;
-    }
-
-    public long getGridSide() {
-        return gridSide;
-    }
-    public void setGridSide(long gridSide) {
-        this.gridSide = gridSide;
-    }
-    public MarsSimulation withGridSide(long gridSide) {
-        setGridSide(gridSide);
         return this;
     }
 
