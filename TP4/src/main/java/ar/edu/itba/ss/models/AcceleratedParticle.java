@@ -4,12 +4,14 @@ import ar.edu.itba.ss.Particle;
 
 public class AcceleratedParticle extends Particle {
 
-    private ParticleType type;
-    private double vx;
-    private double vy;
-    private double mass;
-    private double forceX;
-    private double forceY;
+    private ParticleType                                                type;
+    private double                                                      vx;
+    private double                                                      vy;
+    private double                                                      mass;
+    private double                                                      forceX;
+    private double                                                      forceY;
+    private TetraFunction<Integer, Double, Double, Double, Double>      derivativeFunctionX;
+    private TetraFunction<Integer, Double, Double, Double, Double>      derivativeFunctionY;
 
     public AcceleratedParticle() {
         this.id = 0;
@@ -21,13 +23,31 @@ public class AcceleratedParticle extends Particle {
         this.mass = 0;
         this.forceX = 0;
         this.forceY = 0;
+        this.derivativeFunctionX = (order, pos, vel, m) -> {
+            switch (order) {
+                case 0:
+                    return pos;
+                case 1:
+                    return vel;
+            }
+            return (double) 0;
+        };
+        this.derivativeFunctionY = (order, pos, vel, m) -> {
+            switch (order) {
+                case 0:
+                    return pos;
+                case 1:
+                    return vel;
+            }
+            return (double) 0;
+        };
     }
 
-    public AcceleratedParticle(ParticleType type, Particle particle, double vx, double vy, double mass, double forceX, double forceY) {
-        this(type, particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), vx, vy, mass, forceX, forceY);
+    public AcceleratedParticle(ParticleType type, Particle particle, double vx, double vy, double mass, double forceX, double forceY, TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionX, TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionY) {
+        this(type, particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), vx, vy, mass, forceX, forceY, derivativeFunctionX, derivativeFunctionY);
     }
 
-    public AcceleratedParticle(ParticleType type, long id, double x, double y, double radius, double vx, double vy, double mass, double forceX, double forceY) {
+    public AcceleratedParticle(ParticleType type, long id, double x, double y, double radius, double vx, double vy, double mass, double forceX, double forceY, TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionX, TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionY) {
         super(id, x, y, radius);
         this.type = type;
         this.vx = vx;
@@ -35,6 +55,8 @@ public class AcceleratedParticle extends Particle {
         this.mass = mass;
         this.forceX = forceX;
         this.forceY = forceY;
+        this.derivativeFunctionX = derivativeFunctionX;
+        this.derivativeFunctionY = derivativeFunctionY;
     }
 
     public double getSpeed() {
@@ -43,6 +65,14 @@ public class AcceleratedParticle extends Particle {
 
     public double getAngle() {
         return (vx == 0)? ((vy >= 0)? Math.PI/2.0 : Math.PI*(3/2.0)): Math.tan(vy/vx);
+    }
+
+    public double getPositionDerivativeX(int order) {
+        return derivativeFunctionX.apply(order, x, vx, mass);
+    }
+
+    public double getPositionDerivativeY(int order) {
+        return derivativeFunctionX.apply(order, y, vy, mass);
     }
 
     public AcceleratedParticle clone() {
@@ -55,6 +85,10 @@ public class AcceleratedParticle extends Particle {
         vp.setVx(vx);
         vp.setVy(vy);
         vp.setMass(mass);
+        vp.setForceX(forceX);
+        vp.setForceY(forceY);
+        vp.setDerivativeFunctionX(derivativeFunctionX);
+        vp.setDerivativeFunctionY(derivativeFunctionY);
 
         return vp;
     }
@@ -132,6 +166,29 @@ public class AcceleratedParticle extends Particle {
         setForceY(forceY);
         return this;
     }
+
+    public TetraFunction<Integer, Double, Double, Double, Double> getDerivativeFunctionX() {
+        return derivativeFunctionX;
+    }
+    public void setDerivativeFunctionX(TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionX) {
+        this.derivativeFunctionX = derivativeFunctionX;
+    }
+    public AcceleratedParticle withDerivativeFunctionX(TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionX) {
+        setDerivativeFunctionX(derivativeFunctionX);
+        return this;
+    }
+
+    public TetraFunction<Integer, Double, Double, Double, Double> getDerivativeFunctionY() {
+        return derivativeFunctionY;
+    }
+    public void setDerivativeFunctionY(TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionY) {
+        this.derivativeFunctionY = derivativeFunctionY;
+    }
+    public AcceleratedParticle withDerivativeFunctionY(TetraFunction<Integer, Double, Double, Double, Double> derivativeFunctionY) {
+        setDerivativeFunctionY(derivativeFunctionY);
+        return this;
+    }
+
 
     public ParticleType getType() {
         return type;

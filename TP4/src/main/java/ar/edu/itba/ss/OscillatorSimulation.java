@@ -4,10 +4,9 @@ import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.Frame;
 import ar.edu.itba.ss.models.ParticleType;
-import ar.edu.itba.ss.models.TriFunction;
+import ar.edu.itba.ss.models.TetraFunction;
 
 import java.util.*;
-import java.util.function.BiFunction;
 
 public class OscillatorSimulation implements Simulation<List<Frame>> {
 
@@ -30,17 +29,38 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
         double k        = Math.pow(10,4);       // N/m
         double r        = 1;                    // m
         double gamma    = 100;                  // kg/s
-        double vy       = -gamma/2;             // m/s
-        double mass     = 70;
+        double mass     = 70;                   // kg
+        double vy       = -gamma/(2*mass);      // m/s
 
-        TriFunction<Double, Double, Double, Double> calculateAcceleration = (pos, vel, m) -> (- k * pos - gamma * vel)/m;
+        TetraFunction<Integer, Double, Double, Double, Double> calculateDerivative = new TetraFunction<Integer, Double, Double, Double, Double>() {
+            @Override
+            public Double apply(Integer order, Double pos, Double vel, Double m) {
+                switch (order) {
+                    case 0:
+                        return pos;
+                    case 1:
+                        return vel;
+                    case 2:
+                        return (- k * pos - gamma * vel)/m;
+                    case 3:
+                        return (- k * vel - gamma * this.apply(2, pos, vel, m))/m;
+                    case 4:
+                        return (- k * this.apply(2, pos, vel, m) - gamma * this.apply(3, pos, vel, m))/m;
+                    case 5:
+                        return (- k * this.apply(3, pos, vel, m) - gamma * this.apply(4, pos, vel, m))/m;
+                }
+                return (double) 0;
+            }
+        };
 
         particle = new AcceleratedParticle()
             .withType(ParticleType.OSCILLABLE)
             .withY(r)
             .withVy(vy)
-            .withMass(mass)                   // kg
-            .withForceY(mass*calculateAcceleration.apply(r,vy,mass))
+            .withMass(mass)
+            .withForceY(mass*calculateDerivative.apply(2,r,vy,mass))
+            .withDerivativeFunctionX(calculateDerivative)
+            .withDerivativeFunctionY(calculateDerivative)
             ;
 
         List<Frame> frames = new ArrayList<>();
@@ -51,28 +71,18 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
 
         integration.setup(previous, current, next, dt);
 
-        double currentForce;
-
-        frames.add(new Frame()
-            .withParticles(Collections.singletonList(previous))
-            .withTime(0)
-        );
-
         long count = 0;
-        for (double time = dt; time <= maxTime; time += dt) {   // currentTime
+        for (double time = 0; time <= maxTime; time += dt) {   // currentTime
             if (statusBarActivated) Utils.printLoadingBar(time/maxTime, STATUS_BAR_SIZE);
-
-//            currentForce = - k * current.getY() - gamma * current.getVy();  // f(t) = -k*r - gamma*r'
-//            current.setForceY(currentForce);
-
-            next = integration.update(current, previous, dt, calculateAcceleration);       //updated particle with ri(t+dt) y vi(t)
 
             if (count % saveFactor == 0) {
                 frames.add(new Frame()
-                    .withParticles(Collections.singletonList(current))
+                    .withParticles(Collections.singletonList(current.clone()))
                     .withTime(time)
                 );
             }
+
+            next = integration.update(current, previous, dt);       //updated particle with ri(t+dt) y vi(t)
 
             previous = current;
             current  = next;
