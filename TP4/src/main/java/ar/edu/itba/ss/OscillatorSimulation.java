@@ -1,12 +1,12 @@
 package ar.edu.itba.ss;
 
-import ar.edu.itba.ss.integrations.Integration;
-import ar.edu.itba.ss.models.*;
+import ar.edu.itba.ss.models.AcceleratedParticle;
+import ar.edu.itba.ss.models.ParticleType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class OscillatorSimulation extends AbstractSimulation {
 
@@ -20,54 +20,20 @@ public class OscillatorSimulation extends AbstractSimulation {
         double mass     = 70;                   // kg
         double vy       = -gamma/(2*mass);      // m/s
 
-        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeX = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
-            @Override
-            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
-                double pos = current.getX();
-                double vel = current.getVx();
-                double m = current.getMass();
+        BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX = (current, all) -> {
+            final double pos = current.getX();
+            final double vel = current.getVx();
+            final double m = current.getMass();
 
-                switch (order) {
-                    case 0:
-                        return pos;
-                    case 1:
-                        return vel;
-                    case 2:
-                        return (- k * pos - gamma * vel)/m;
-                    case 3:
-                        return (- k * vel - gamma * this.apply(2, current, all))/m;
-                    case 4:
-                        return (- k * this.apply(2, current, all) - gamma * this.apply(3, current, all))/m;
-                    case 5:
-                        return (- k * this.apply(3, current, all) - gamma * this.apply(4, current, all))/m;
-                }
-                return (double) 0;
-            }
+            return (- k * pos - gamma * vel)/m;
         };
 
-        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeY = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
-            @Override
-            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
-                double pos = current.getY();
-                double vel = current.getVy();
-                double m = current.getMass();
+        BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY = (current, all) -> {
+            final double pos = current.getY();
+            final double vel = current.getVy();
+            final double m = current.getMass();
 
-                switch (order) {
-                    case 0:
-                        return pos;
-                    case 1:
-                        return vel;
-                    case 2:
-                        return (- k * pos - gamma * vel)/m;
-                    case 3:
-                        return (- k * vel - gamma * this.apply(2, current, all))/m;
-                    case 4:
-                        return (- k * this.apply(2, current, all) - gamma * this.apply(3, current, all))/m;
-                    case 5:
-                        return (- k * this.apply(3, current, all) - gamma * this.apply(4, current, all))/m;
-                }
-                return (double) 0;
-            }
+            return (- k * pos - gamma * vel)/m;
         };
 
         final AcceleratedParticle particle = new AcceleratedParticle()
@@ -75,18 +41,36 @@ public class OscillatorSimulation extends AbstractSimulation {
             .withY(r)
             .withVy(vy)
             .withMass(mass)
-            .withDerivativeFunctionX(calculateDerivativeX)
-            .withDerivativeFunctionY(calculateDerivativeY)
+            .withAccelerationFunctionX(accelerationFunctionX)
+            .withAccelerationFunctionY(accelerationFunctionY)
             ;
 
-        particle.setForceY(mass*calculateDerivativeY.apply(2, particle, Collections.singletonList(particle)));
+        double velX, accX, velY, accY, m;
+
+        m                                       = particle.getMass();
+
+        // x
+        velX                                    = particle.getVx();
+        accX                                    = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
+        ArrayList<Double> furtherDerivativesX   = particle.getFurtherDerivativesX();
+        furtherDerivativesX.set(0, (- k * velX - gamma * accX)/m);
+        furtherDerivativesX.set(1, (- k * accX - gamma * furtherDerivativesX.get(0))/m);
+        furtherDerivativesX.set(2, (- k * furtherDerivativesX.get(0) - gamma * furtherDerivativesX.get(1))/m);
+        particle.setFurtherDerivativesX(furtherDerivativesX);
+
+        // y
+        velY                                    = particle.getVy();
+        accY                                    = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
+        ArrayList<Double> furtherDerivativesY   = particle.getFurtherDerivativesY();
+        furtherDerivativesY.set(0, (- k * velY - gamma * accY)/m);
+        furtherDerivativesY.set(1, (- k * accY - gamma * furtherDerivativesY.get(0))/m);
+        furtherDerivativesY.set(2, (- k * furtherDerivativesY.get(0) - gamma * furtherDerivativesY.get(1))/m);
+        particle.setFurtherDerivativesY(furtherDerivativesY);
+
+        particle.setForceX(m * accX);
+        particle.setForceY(m * accY);
 
         return Collections.singletonList(particle);
-    }
-
-    @Override
-    public boolean stop(List<ParticleHistory> histories) {
-        return false;
     }
 
     // Autogenerated //

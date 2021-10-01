@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.integrations;
 import ar.edu.itba.ss.models.AcceleratedParticle;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.LongStream;
 
@@ -9,7 +10,7 @@ public class Gear implements Integration {
     @Override
     public AcceleratedParticle update(List<AcceleratedParticle> allParticles, AcceleratedParticle current, AcceleratedParticle previous, double dt) {
 
-        int order = 2;
+        int order = 5;
         double[] nextPredictedDerivativesX = new double[order+1];
         double[] nextPredictedDerivativesY = new double[order+1];
         double[] taylorCoeffs = calculateTaylorPolynomialCoeffs(dt, order);
@@ -51,7 +52,7 @@ public class Gear implements Integration {
         double[] nextCorrectedDerivativesX = new double[order+1];
         double[] nextCorrectedDerivativesY = new double[order+1];
 
-        double[] gearCoeffs = {0, 1, 1};
+        double[] gearCoeffs = {3/16.0, 251/360.0, 1, 11/18.0, 1/6.0, 1/60.0};
 
         for (int i = 0; i <= order; i++) {
             nextCorrectedDerivativesX[i] = nextPredictedDerivativesX[i] + gearCoeffs[i] * deltaR2X / taylorCoeffs[i];
@@ -60,11 +61,10 @@ public class Gear implements Integration {
 
         AcceleratedParticle next = current.clone();
 
-        next.setX(nextCorrectedDerivativesX[0]);
-        next.setY(nextCorrectedDerivativesY[0]);
-
-        next.setVx(nextCorrectedDerivativesX[1]);
-        next.setVy(nextCorrectedDerivativesY[1]);
+        for (int i = 0; i <= order; i++) {
+            next.setPositionDerivativeX(i, nextCorrectedDerivativesX[i]);
+            next.setPositionDerivativeY(i, nextCorrectedDerivativesY[i]);
+        }
 
         next.setForceX(current.getMass() * nextCorrectedDerivativesX[2]);
         next.setForceY(current.getMass() * nextCorrectedDerivativesX[2]);
