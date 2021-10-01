@@ -20,7 +20,9 @@ public class AcceleratedParticle extends Particle {
     private                 double                                                              mass;
     private                 double                                                              forceX;
     private                 double                                                              forceY;
+    @JsonIgnore
     private                 ArrayList<Double>                                                   furtherDerivativesX;
+    @JsonIgnore
     private                 ArrayList<Double>                                                   furtherDerivativesY;
 
     @JsonIgnore

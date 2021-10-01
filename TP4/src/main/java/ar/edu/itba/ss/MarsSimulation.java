@@ -21,31 +21,36 @@ public class MarsSimulation extends AbstractSimulation {
     public List<AcceleratedParticle> getParticles() {
 
 //        double gravityConstant  = Math.pow(6.693*10, -11);                // m³/(kg*s²)   // TODO change units
-        double gravityConstant  = Math.pow(6.693*10, -20);                  // km³/(kg*s²)
+        double gravityConstant      = Math.pow(6.693*10, -20);                  // km³/(kg*s²)
         /* Earth */
-        double earthRadius      = 6378.137;                                 // km
-        double earthMass        = 5.97219 * Math.pow(10, 24);               // kg
-        double earthVelocity    = 0;                                        // TODO elegir un
-        double earthVx          = -9.322979134387409 * Math.pow(10,-1);     // km/s
-        double earthVy          = 2.966365033636722 * Math.pow(10,1);       // km/s
-        double earthX           = 1.500619962348151 * Math.pow(10,8);       // km
-        double earthY           = 2.288499248197072 * Math.pow(10,6);       // km
+        double earthRadius          = 6378.137;                                 // km
+        double earthMass            = 5.97219 * Math.pow(10, 24);               // kg
+        double earthVelocity        = 0;                                        // TODO elegir un
+        double earthVx              = -9.322979134387409 * Math.pow(10,-1);     // km/s
+        double earthVy              = 2.966365033636722 * Math.pow(10,1);       // km/s
+        double earthX               = 1.500619962348151 * Math.pow(10,8);       // km
+        double earthY               = 2.288499248197072 * Math.pow(10,6);       // km
         /* Sun */
-        double sunRadius        = 696000;                                   // km  TODO o va el vol. mean radius ?? 695700
-        double sunMass          = 1988500 * Math.pow(10, 24);               // kg
+        double sunRadius            = 696000;                                   // km  TODO o va el vol. mean radius ?? 695700
+        double sunMass              = 1988500 * Math.pow(10, 24);               // kg
         /* Mars */
-        double marsMass         = 6.4171 * Math.pow(10, 23);                // kg
-        double marsRadius       = 3389.92;                                  // km
-        double marsVx           = 4.435907910045917;                        // km/s
-        double marsVy           = -2.190044178514185 * Math.pow(10,1);      // km/s
-        double marsX            = -2.426617401833969 * Math.pow(10,8);      // km/s
-        double marsY            = -3.578836154354768 * Math.pow(10,7) ;     // km/s
+        double marsMass             = 6.4171 * Math.pow(10, 23);                // kg
+        double marsRadius           = 3389.92;                                  // km
+        double marsVx               = 4.435907910045917;                        // km/s
+        double marsVy               = -2.190044178514185 * Math.pow(10,1);      // km/s
+        double marsX                = -2.426617401833969 * Math.pow(10,8);      // km/s
+        double marsY                = -3.578836154354768 * Math.pow(10,7) ;     // km/s
 
         /* Spaceship */
-        double stationHeight    = 1500;                                     // km
-        double orbitalVelocity  = 7.12;                                     // km/s
-        double initialVelocity  = 8 + orbitalVelocity + earthVelocity;      // km // TODO elegir un momento  para earthVelocity
-        double spaceshipMass    = Math.pow(2*10, 5);                        // kg
+        double stationHeight        = 1500;                                     // km
+        double earthInitialAngle    = getAngle(earthX, earthY);
+        double orbitalVelocity      = 7.12;                                     // km/s
+        double initialVelocity      = 8 + orbitalVelocity + earthVelocity;      // km // TODO elegir un momento  para earthVelocity
+        double spaceshipMass        = Math.pow(2*10, 5);                        // kg
+        double spaceshipVx          = 0;
+        double spaceshipVy          = 0;
+        double spaceshipX           = earthX + (earthRadius + stationHeight) * Math.cos(earthInitialAngle);
+        double spaceshipY           = earthY + (earthRadius + stationHeight) * Math.sin(earthInitialAngle);
 
         BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX = (current, all) -> {
             double m = current.getMass();
@@ -112,6 +117,10 @@ public class MarsSimulation extends AbstractSimulation {
         spaceship = new AcceleratedParticle()
                 .withType(ParticleType.SPACESHIP)
                 .withMass(spaceshipMass)
+                .withVx(spaceshipVx)
+                .withVy(spaceshipVy)
+                .withX(spaceshipX)
+                .withY(spaceshipY)
         ;
 
         final List<AcceleratedParticle> particles = Arrays.asList(earth, sun, mars, spaceship);
@@ -145,6 +154,24 @@ public class MarsSimulation extends AbstractSimulation {
         }
 
         return particles;
+    }
+
+    private static double getAngle(double x, double y) {
+//        if (x == 0) {
+//            if (y >= 0) {
+//                d = Math.PI;
+//            }
+//            else {
+//                d = (3.0/2) * Math.PI
+//            }
+//        }
+//        else {
+//            d = Math.atan(y/x);
+//        }
+
+        double d = x == 0 ? (y > 0 ? Math.PI : 3.0/2 * Math.PI) : Math.atan(y/x);
+        d = (d < 0) ? d + 2*Math.PI : d;
+        return d;
     }
 
     private static List<AcceleratedParticle> removedFromList(List<AcceleratedParticle> all, AcceleratedParticle particle) {
