@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 
 public class Runner {
 
-    private static final Integer    EVENTS_SAVING_EACH                  = 25;
     private static final String     CONFIG_PATH                         = "TP4/src/main/resources/config/config.json";
     private static final String     JSON_WRITER_PATH                    = "TP4/src/main/resources/postprocessing";
     private static final String     XYZ_WRITER_PATH                     = "TP4/src/main/resources/ovito";
     private static final String     OVITO_OSCILLATOR_VERLET_FILENAME    = "SdS_TP4_2021Q2G01_oscillator_verlet_output";
     private static final String     OVITO_OSCILLATOR_BEEMAN_FILENAME    = "SdS_TP4_2021Q2G01_oscillator_beeman_output";
+    private static final String     OVITO_MARS_FILENAME                 = "SdS_TP4_2021Q2G01_mars_output";
     private static final String     OSCILLATOR_POSTPROCESSING_FILENAME  = "SdS_TP4_2021Q2G01_oscillator_results";
     private static final String     MARS_POSTPROCESSING_FILENAME        = "SdS_TP4_2021Q2G01_mars_results";
 
@@ -175,6 +175,21 @@ public class Runner {
             .write();
 
         System.out.println("Finished saving " + OSCILLATOR_POSTPROCESSING_FILENAME + ".json");
+
+        new XYZ_Writer(OVITO_MARS_FILENAME)
+            .addAllFrames(results)
+            .writeAndClose();
+
+//        new XYZ_Writer(OVITO_MARS_FILENAME)
+//            .addAllFrames(results.stream()
+//                .map(f -> f.withParticles(f.getParticles().stream()
+//                    .map(p -> p.withRadius(p.getRadius()/Math.pow(10, 3)))
+//                    .collect(Collectors.toList())
+//                ))
+//                .collect(Collectors.toList()))
+//            .writeAndClose();
+
+        System.out.println("Finished saving " + OVITO_MARS_FILENAME + ".exyz");
     }
 
 }

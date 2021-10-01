@@ -1,10 +1,7 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.integrations.Integration;
-import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.Frame;
-import ar.edu.itba.ss.models.ParticleHistory;
-import ar.edu.itba.ss.models.ParticleType;
+import ar.edu.itba.ss.models.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,31 +27,105 @@ public class MarsSimulation implements Simulation<List<Frame>> {
 
     public List simulate() {
 
-        double gravityConstant = Math.pow(6.693*10, -11); // m³/(kg*s²)   // TODO change units
+//        double gravityConstant  = Math.pow(6.693*10, -11);                // m³/(kg*s²)   // TODO change units
+        double gravityConstant  = Math.pow(6.693*10, -20);                  // km³/(kg*s²)
         /* Earth */
-        double earthRadius      = 6378.137;                         // km
-        double earthMass        = Math.pow(5.97219*10, 24);         // kg
-        double earthVelocity    = 0;                                // TODO elegir un
-        double earthVx          = Math.pow(-9.322979134387409,-1);  // km/s
-        double earthVy          = Math.pow(2.966365033636722,1);
-        double earthX           = Math.pow(1.500619962348151,8);    // km
-        double earthY           = Math.pow(2.288499248197072,6);
+        double earthRadius      = 6378.137;                                 // km
+        double earthMass        = 5.97219 * Math.pow(10, 24);               // kg
+        double earthVelocity    = 0;                                        // TODO elegir un
+        double earthVx          = -9.322979134387409 * Math.pow(10,-1);     // km/s
+        double earthVy          = 2.966365033636722 * Math.pow(10,1);       // km/s
+        double earthX           = 1.500619962348151 * Math.pow(10,8);       // km
+        double earthY           = 2.288499248197072 * Math.pow(10,6);       // km
         /* Sun */
-        double sunRadius        = 696000;                           // km  o va el vol. mean radius ?? 695700
-        double sunMass          = Math.pow(1988500*10, 24);         // kg
+        double sunRadius        = 696000;                                   // km  TODO o va el vol. mean radius ?? 695700
+        double sunMass          = 1988500 * Math.pow(10, 24);               // kg
         /* Mars */
-        double marsMass         = Math.pow(6.4171*10, 23);          // kg
-        double marsRadius       = 3389.92;                          // km
-        double marsVx           = 4.435907910045917;
-        double marsVy           = Math.pow(-2.190044178514185,1);
-        double marsX            = Math.pow(-2.426617401833969,8);
-        double marsY            = Math.pow(-3.578836154354768,7) ;
+        double marsMass         = 6.4171 * Math.pow(10, 23);                // kg
+        double marsRadius       = 3389.92;                                  // km
+        double marsVx           = 4.435907910045917;                        // km/s
+        double marsVy           = -2.190044178514185 * Math.pow(10,1);      // km/s
+        double marsX            = -2.426617401833969 * Math.pow(10,8);      // km/s
+        double marsY            = -3.578836154354768 * Math.pow(10,7) ;     // km/s
 
         /* Spaceship */
-        double stationHeight    = 1500; // km
-        double orbitalVelocity  = 7.12; // km/s
-        double initialVelocity  = 8 + orbitalVelocity + earthVelocity; // km // TODO elegir un momento  para earthVelocity
-        double spaceshipMass    = Math.pow(2*10, 5); // kg
+        double stationHeight    = 1500;                                     // km
+        double orbitalVelocity  = 7.12;                                     // km/s
+        double initialVelocity  = 8 + orbitalVelocity + earthVelocity;      // km // TODO elegir un momento  para earthVelocity
+        double spaceshipMass    = Math.pow(2*10, 5);                        // kg
+
+        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeX = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
+            @Override
+            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
+                double pos = current.getX();
+                double vel = current.getVx();
+                double m = current.getMass();
+
+                final List<AcceleratedParticle> others = removedFromList(all, current);
+
+                double forceX = 0;
+
+                for (AcceleratedParticle other : others) {
+                    double distance = current.distance(other);
+                    double gravityForceNorm = gravityConstant * ((current.getMass()*other.getMass())/(Math.pow(distance, 2)));
+
+                    forceX += gravityForceNorm * (current.getX() - other.getX()) / distance; // TODO: Chequear con el profe que |rj - ri| es la norma 2 y que j es la otra partícula y i es la actual
+                }
+
+                switch (order) {
+                    case 0:
+                        return pos;
+                    case 1:
+                        return vel;
+                    case 2:
+                        return forceX/m;
+                    case 3:
+                        return 0.0;
+                    case 4:
+                        return 0.0;
+                    case 5:
+                        return 0.0;
+                }
+                return (double) 0;
+            }
+        };
+
+        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeY = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
+            @Override
+            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
+                double pos = current.getY();
+                double vel = current.getVy();
+                double m = current.getMass();
+
+                final List<AcceleratedParticle> others = removedFromList(all, current);
+
+                double forceY = 0;
+
+                for (AcceleratedParticle other : others) {
+                    double distance = current.distance(other);
+                    double gravityForceNorm = gravityConstant * ((current.getMass()*other.getMass())/(Math.pow(distance, 2)));
+
+                    forceY += gravityForceNorm * (current.getY() - other.getY()) / distance; // TODO: Chequear con el profe que |rj - ri| es la norma 2 y que j es la otra partícula y i es la actual
+
+                }
+
+                switch (order) {
+                    case 0:
+                        return pos;
+                    case 1:
+                        return vel;
+                    case 2:
+                        return forceY/m;
+                    case 3:
+                        return 0.0;
+                    case 4:
+                        return 0.0;
+                    case 5:
+                        return 0.0;
+                }
+                return (double) 0;
+            }
+        };
 
         List<Frame> frames = new ArrayList<>();
 
@@ -66,12 +137,16 @@ public class MarsSimulation implements Simulation<List<Frame>> {
                 .withVy(earthVy)
                 .withX(earthX)
                 .withY(earthY)
+                .withDerivativeFunctionX(calculateDerivativeX)
+                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         sun = new AcceleratedParticle() // inicia en (0,0)
                 .withType(ParticleType.SUN)
                 .withMass(sunMass)
                 .withRadius(sunRadius)
+                .withDerivativeFunctionX(calculateDerivativeX)
+                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         mars = new AcceleratedParticle()
@@ -82,11 +157,15 @@ public class MarsSimulation implements Simulation<List<Frame>> {
                 .withVy(marsVy)
                 .withX(marsX)
                 .withY(marsY)
+                .withDerivativeFunctionX(calculateDerivativeX)
+                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         spaceship = new AcceleratedParticle()
                 .withType(ParticleType.SPACESHIP)
                 .withMass(spaceshipMass)
+                .withDerivativeFunctionX(calculateDerivativeX)
+                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         List<ParticleHistory> histories = Stream.of(earth, sun, mars, spaceship)
@@ -123,6 +202,12 @@ public class MarsSimulation implements Simulation<List<Frame>> {
         }
 
         return frames;
+    }
+
+    public List<AcceleratedParticle> removedFromList(List<AcceleratedParticle> all, AcceleratedParticle particle) {
+        return all.stream()
+            .filter(p -> !(p.getType().equals(particle.getType()) || p.getId() == particle.getId()))
+            .collect(Collectors.toList());
     }
 
     //////////////// Autogenerated /////////////////

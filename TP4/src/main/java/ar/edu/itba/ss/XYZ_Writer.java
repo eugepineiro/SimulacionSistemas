@@ -12,20 +12,21 @@ public class XYZ_Writer {
     private static class PCoords {
         private final String type;
         private final long id;
-        private final double x, y, vx, vy;
+        private final double x, y, vx, vy, radius;
 
-        public PCoords(String type, long id, double x, double y, double vx, double vy) {
+        public PCoords(String type, long id, double x, double y, double vx, double vy, double radius) {
             this.type = type;
             this.id = id;
             this.x = x;
             this.y = y;
             this.vx = vx;
             this.vy = vy;
+            this.radius = radius;
         }
         
         @Override
         public String toString() {
-            return String.format("%s\t%d\t%g\t%g\t%g\t%g\n", type, id, x, y, vx, vy);
+            return String.format("%s\t%d\t%g\t%g\t%g\t%g\t%g\n", type, id, x, y, vx, vy, radius);
         }
     }
 
@@ -51,7 +52,7 @@ public class XYZ_Writer {
     }
 
     public XYZ_Writer addFrame(Frame frame) {
-        List<PCoords> f = frame.getParticles().stream().map(p -> new PCoords(p.getType().name(), p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy())).collect(Collectors.toList());
+        List<PCoords> f = frame.getParticles().stream().map(p -> new PCoords(p.getType().name(), p.getId(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getRadius())).collect(Collectors.toList());
 
         frames.add(f);
 

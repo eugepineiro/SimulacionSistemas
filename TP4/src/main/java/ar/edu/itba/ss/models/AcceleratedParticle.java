@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.models;
 
 import ar.edu.itba.ss.Particle;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
@@ -12,7 +13,9 @@ public class AcceleratedParticle extends Particle {
     private double                                                                          mass;
     private double                                                                          forceX;
     private double                                                                          forceY;
+    @JsonIgnore
     private TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>    derivativeFunctionX;
+    @JsonIgnore
     private TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>    derivativeFunctionY;
 
     public AcceleratedParticle() {
@@ -93,6 +96,10 @@ public class AcceleratedParticle extends Particle {
         vp.setDerivativeFunctionY(derivativeFunctionY);
 
         return vp;
+    }
+
+    public double distance(AcceleratedParticle other) {
+        return Math.sqrt(Math.pow(other.getX() - getX(),2) + Math.pow(other.getY() - getY(),2));
     }
 
     ////////////////////////////// Bureaucracy //////////////////////////////

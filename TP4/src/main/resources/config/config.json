@@ -1,9 +1,9 @@
 {
   "seed": 100,
-  "system": "oscillator",
+  "system": "mars",
   "integration": "verlet_original",
   "dt": 0.001,
-  "max_time": 5,
+  "max_time": 1800,
   "save_factor": 10,
   "loading_bar": true
 }
