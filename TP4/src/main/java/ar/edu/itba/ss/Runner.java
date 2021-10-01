@@ -75,7 +75,13 @@ public class Runner {
             ///////////////////////////    MARS     ///////////////////////////
 
             else if (system.equals(SystemType.MARS.name().toLowerCase())) {
-                runMarsSimulation(config, integrationHashMap);
+
+                if(config.getMultiple_dates()){
+                    runMarsSimulationWithMultipleDates(config, integrationHashMap);
+                } else {
+                    runMarsSimulation(config, integrationHashMap);
+                }
+
             }
 
             ///////////////////////////    ERROR     ///////////////////////////
@@ -164,7 +170,7 @@ public class Runner {
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
             .withMaxTime(config.getMax_time())            // seconds
-            .withLaunchDate(config.getLaunchDate())
+            .withLaunchDate(config.getLaunch_date())
             .withStatusBarActivated(false)
             ;
 
@@ -198,9 +204,11 @@ public class Runner {
 
     }
 
-    private void runMarsSimulationWithMultipleDates(LocalDateTime launchDate, Integer period, Config config, HashMap<String, Integration> integrationHashMap) throws IOException {
+    private static void runMarsSimulationWithMultipleDates(Config config, HashMap<String, Integration> integrationHashMap) throws IOException {
+        LocalDateTime launchDate = config.getLaunch_date();
+        double period = config.getMax_time();
 
-        LocalDateTime lastDate = launchDate.plusSeconds(period);
+        LocalDateTime lastDate = launchDate.plusSeconds((long) period);
 
         JsonWriter jsonWriter = new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES);
 
