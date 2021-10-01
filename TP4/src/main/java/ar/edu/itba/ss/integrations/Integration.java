@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Integration {
 
-    default void setup(ParticleHistory history, double dt) {
+    default void setup(AcceleratedParticle past, AcceleratedParticle present, AcceleratedParticle future, double dt) {
         // Do nothing
     }
 

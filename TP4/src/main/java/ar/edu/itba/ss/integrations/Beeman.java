@@ -7,11 +7,9 @@ import java.util.List;
 public class Beeman implements Integration {
 
     @Override
-    public void setup(ParticleHistory history, double dt) {
-        AcceleratedParticle previous = history.getPast();
-        AcceleratedParticle current = history.getPresent();
-        previous.setX(current.getX() - dt * history.getPresent().getVx() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceX()); // rx(t)
-        previous.setY(current.getY() - dt * current.getVy() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceY());              // ry(t)
+    public void setup(AcceleratedParticle past, AcceleratedParticle present, AcceleratedParticle future, double dt) {
+        past.setX(present.getX() - dt * present.getVx() + (Math.pow(dt,2)/(2*present.getMass()))*present.getForceX()); // rx(t)
+        past.setY(present.getY() - dt * present.getVy() + (Math.pow(dt,2)/(2*present.getMass()))*present.getForceY()); // ry(t)
     }
 
     @Override
