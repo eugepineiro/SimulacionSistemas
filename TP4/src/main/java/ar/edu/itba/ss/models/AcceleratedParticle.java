@@ -4,19 +4,25 @@ import ar.edu.itba.ss.Particle;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class AcceleratedParticle extends Particle {
 
-    private ParticleType                                                                    type;
-    private double                                                                          vx;
-    private double                                                                          vy;
-    private double                                                                          mass;
-    private double                                                                          forceX;
-    private double                                                                          forceY;
+    static private final    int                                                                 MAX_DERIVATIVE_ORDER = 5;
+
+    private                 ParticleType                                                        type;
+    private                 double                                                              vx;
+    private                 double                                                              vy;
+    private                 double                                                              mass;
+    private                 double                                                              forceX;
+    private                 double                                                              forceY;
+    private                 double[]                                                            furtherDerivativesX;
+    private                 double[]                                                            furtherDerivativesY;
+
     @JsonIgnore
-    private TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>    derivativeFunctionX;
+    private                 BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double>  accelerationFunctionX;
     @JsonIgnore
-    private TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>    derivativeFunctionY;
+    private                 BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double>  accelerationFunctionY;
 
     public AcceleratedParticle() {
         this.id = 0;
@@ -28,31 +34,15 @@ public class AcceleratedParticle extends Particle {
         this.mass = 0;
         this.forceX = 0;
         this.forceY = 0;
-        this.derivativeFunctionX = (order, curr, all) -> {
-            switch (order) {
-                case 0:
-                    return curr.getX();
-                case 1:
-                    return curr.getVx();
-            }
-            return (double) 0;
-        };
-        this.derivativeFunctionY = (order, curr, all) -> {
-            switch (order) {
-                case 0:
-                    return curr.getY();
-                case 1:
-                    return curr.getVy();
-            }
-            return (double) 0;
-        };
+        this.furtherDerivativesX = new double[MAX_DERIVATIVE_ORDER+1-3];
+        this.furtherDerivativesY = new double[MAX_DERIVATIVE_ORDER+1-3];
     }
 
-    public AcceleratedParticle(ParticleType type, Particle particle, double vx, double vy, double mass, double forceX, double forceY, TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionX, TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionY) {
-        this(type, particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), vx, vy, mass, forceX, forceY, derivativeFunctionX, derivativeFunctionY);
+    public AcceleratedParticle(ParticleType type, Particle particle, double vx, double vy, double mass, double forceX, double forceY, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY, double[] derivativesX, double[] derivativesY) {
+        this(type, particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), vx, vy, mass, forceX, forceY, accelerationFunctionX, accelerationFunctionY, derivativesX, derivativesY);
     }
 
-    public AcceleratedParticle(ParticleType type, long id, double x, double y, double radius, double vx, double vy, double mass, double forceX, double forceY, TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionX, TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionY) {
+    public AcceleratedParticle(ParticleType type, long id, double x, double y, double radius, double vx, double vy, double mass, double forceX, double forceY, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY, double[] derivativesX, double[] derivativesY) {
         super(id, x, y, radius);
         this.type = type;
         this.vx = vx;
@@ -60,8 +50,10 @@ public class AcceleratedParticle extends Particle {
         this.mass = mass;
         this.forceX = forceX;
         this.forceY = forceY;
-        this.derivativeFunctionX = derivativeFunctionX;
-        this.derivativeFunctionY = derivativeFunctionY;
+        this.accelerationFunctionX = accelerationFunctionX;
+        this.accelerationFunctionY = accelerationFunctionY;
+        this.furtherDerivativesX = derivativesX;
+        this.furtherDerivativesY = derivativesY;
     }
 
     public double getSpeed() {
@@ -73,11 +65,35 @@ public class AcceleratedParticle extends Particle {
     }
 
     public double getPositionDerivativeX(int order, List<AcceleratedParticle> others) {
-        return derivativeFunctionX.apply(order, this, others);
+        if (order <= 5) {
+            switch (order) {
+                case 0:
+                    return x;
+                case 1:
+                    return vx;
+                case 2:
+                    return accelerationFunctionX.apply(this, others);
+                default:
+                    return furtherDerivativesX[order - 3];
+            }
+        }
+        return 0;
     }
 
     public double getPositionDerivativeY(int order, List<AcceleratedParticle> others) {
-        return derivativeFunctionY.apply(order, this, others);
+        if (order <= 5) {
+            switch (order) {
+                case 0:
+                    return y;
+                case 1:
+                    return vy;
+                case 2:
+                    return accelerationFunctionY.apply(this, others);
+                default:
+                    return furtherDerivativesY[order - 3];
+            }
+        }
+        return 0;
     }
 
     public AcceleratedParticle clone() {
@@ -92,8 +108,10 @@ public class AcceleratedParticle extends Particle {
         vp.setMass(mass);
         vp.setForceX(forceX);
         vp.setForceY(forceY);
-        vp.setDerivativeFunctionX(derivativeFunctionX);
-        vp.setDerivativeFunctionY(derivativeFunctionY);
+        vp.setAccelerationFunctionX(accelerationFunctionX);
+        vp.setAccelerationFunctionY(accelerationFunctionY);
+        vp.setFurtherDerivativesX(furtherDerivativesX);
+        vp.setFurtherDerivativesY(furtherDerivativesY);
 
         return vp;
     }
@@ -103,6 +121,17 @@ public class AcceleratedParticle extends Particle {
     }
 
     ////////////////////////////// Bureaucracy //////////////////////////////
+
+    public ParticleType getType() {
+        return type;
+    }
+    public void setType(ParticleType type) {
+        this.type = type;
+    }
+    public AcceleratedParticle withType(ParticleType type) {
+        setType(type);
+        return this;
+    }
 
     public AcceleratedParticle withId(long id) {
         setId(id);
@@ -176,37 +205,47 @@ public class AcceleratedParticle extends Particle {
         return this;
     }
 
-    public TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> getDerivativeFunctionX() {
-        return derivativeFunctionX;
+    public double[] getFurtherDerivativesX() {
+        return furtherDerivativesX;
     }
-    public void setDerivativeFunctionX(TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionX) {
-        this.derivativeFunctionX = derivativeFunctionX;
+    public void setFurtherDerivativesX(double[] furtherDerivativesX) {
+        System.arraycopy(this.furtherDerivativesX, 0, furtherDerivativesX, 0, MAX_DERIVATIVE_ORDER+1-3);
     }
-    public AcceleratedParticle withDerivativeFunctionX(TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionX) {
-        setDerivativeFunctionX(derivativeFunctionX);
+    public AcceleratedParticle withDerivativesX(double[] derivativesX) {
+        setFurtherDerivativesX(derivativesX);
         return this;
     }
 
-    public TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> getDerivativeFunctionY() {
-        return derivativeFunctionY;
+    public double[] getFurtherDerivativesY() {
+        return furtherDerivativesY;
     }
-    public void setDerivativeFunctionY(TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionY) {
-        this.derivativeFunctionY = derivativeFunctionY;
+    public void setFurtherDerivativesY(double[] furtherDerivativesY) {
+        System.arraycopy(this.furtherDerivativesY, 0, furtherDerivativesY, 0, MAX_DERIVATIVE_ORDER+1-3);
     }
-    public AcceleratedParticle withDerivativeFunctionY(TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> derivativeFunctionY) {
-        setDerivativeFunctionY(derivativeFunctionY);
+    public AcceleratedParticle withDerivativesY(double[] derivativesY) {
+        setFurtherDerivativesY(derivativesY);
         return this;
     }
 
+    public BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> getAccelerationFunctionX() {
+        return accelerationFunctionX;
+    }
+    public void setAccelerationFunctionX(BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX) {
+        this.accelerationFunctionX = accelerationFunctionX;
+    }
+    public AcceleratedParticle withAccelerationFunctionX(BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX) {
+        setAccelerationFunctionX(accelerationFunctionX);
+        return this;
+    }
 
-    public ParticleType getType() {
-        return type;
+    public BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> getAccelerationFunctionY() {
+        return accelerationFunctionY;
     }
-    public void setType(ParticleType type) {
-        this.type = type;
+    public void setAccelerationFunctionY(BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY) {
+        this.accelerationFunctionY = accelerationFunctionY;
     }
-    public AcceleratedParticle withType(ParticleType type) {
-        setType(type);
+    public AcceleratedParticle withAccelerationFunctionY(BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY) {
+        setAccelerationFunctionY(accelerationFunctionY);
         return this;
     }
 

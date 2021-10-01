@@ -1,14 +1,14 @@
 package ar.edu.itba.ss;
 
-import ar.edu.itba.ss.integrations.Integration;
-import ar.edu.itba.ss.models.*;
+import ar.edu.itba.ss.models.AcceleratedParticle;
+import ar.edu.itba.ss.models.ParticleType;
+import ar.edu.itba.ss.models.TriFunction;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MarsSimulation extends AbstractSimulation {
 
@@ -42,77 +42,38 @@ public class MarsSimulation extends AbstractSimulation {
         double initialVelocity  = 8 + orbitalVelocity + earthVelocity;      // km // TODO elegir un momento  para earthVelocity
         double spaceshipMass    = Math.pow(2*10, 5);                        // kg
 
-        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeX = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
-            @Override
-            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
-                double pos = current.getX();
-                double vel = current.getVx();
-                double m = current.getMass();
+        BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX = (current, all) -> {
+            double m = current.getMass();
 
-                final List<AcceleratedParticle> others = removedFromList(all, current);
+            final List<AcceleratedParticle> others = removedFromList(all, current);
 
-                double forceX = 0;
+            double forceX = 0;
 
-                for (AcceleratedParticle other : others) {
-                    double distance = current.distance(other);
-                    double gravityForceNorm = gravityConstant * ((current.getMass()*other.getMass())/(Math.pow(distance, 2)));
+            for (AcceleratedParticle other : others) {
+                double distance = current.distance(other);
+                double gravityForceNorm = gravityConstant * ((current.getMass()*other.getMass())/(Math.pow(distance, 2)));
 
-                    forceX += gravityForceNorm * (current.getX() - other.getX()) / distance; // TODO: Chequear con el profe que |rj - ri| es la norma 2 y que j es la otra partícula y i es la actual
-                }
-
-                switch (order) {
-                    case 0:
-                        return pos;
-                    case 1:
-                        return vel;
-                    case 2:
-                        return forceX/m;
-                    case 3:
-                        return 0.0;
-                    case 4:
-                        return 0.0;
-                    case 5:
-                        return 0.0;
-                }
-                return (double) 0;
+                forceX += gravityForceNorm * (other.getX() - current.getX()) / distance; // TODO: Chequear con el profe que |rj - ri| es la norma 2 y que j es la otra partícula y i es la actual
             }
+
+            return forceX/m;
         };
 
-        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeY = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
-            @Override
-            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
-                double pos = current.getY();
-                double vel = current.getVy();
-                double m = current.getMass();
+        BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY = (current, all) -> {
+            double m = current.getMass();
 
-                final List<AcceleratedParticle> others = removedFromList(all, current);
+            final List<AcceleratedParticle> others = removedFromList(all, current);
 
-                double forceY = 0;
+            double forceY = 0;
 
-                for (AcceleratedParticle other : others) {
-                    double distance = current.distance(other);
-                    double gravityForceNorm = gravityConstant * ((current.getMass()*other.getMass())/(Math.pow(distance, 2)));
+            for (AcceleratedParticle other : others) {
+                double distance = current.distance(other);
+                double gravityForceNorm = gravityConstant * ((current.getMass()*other.getMass())/(Math.pow(distance, 2)));
 
-                    forceY += gravityForceNorm * (current.getY() - other.getY()) / distance; // TODO: Chequear con el profe que |rj - ri| es la norma 2 y que j es la otra partícula y i es la actual
-
-                }
-
-                switch (order) {
-                    case 0:
-                        return pos;
-                    case 1:
-                        return vel;
-                    case 2:
-                        return forceY/m;
-                    case 3:
-                        return 0.0;
-                    case 4:
-                        return 0.0;
-                    case 5:
-                        return 0.0;
-                }
-                return (double) 0;
+                forceY += gravityForceNorm * (other.getY() - current.getY()) / distance; // TODO: Chequear con el profe que |rj - ri| es la norma 2 y que j es la otra partícula y i es la actual
             }
+
+            return forceY/m;
         };
 
         AcceleratedParticle earth, sun, spaceship, mars;
@@ -125,16 +86,12 @@ public class MarsSimulation extends AbstractSimulation {
                 .withVy(earthVy)
                 .withX(earthX)
                 .withY(earthY)
-                .withDerivativeFunctionX(calculateDerivativeX)
-                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         sun = new AcceleratedParticle() // inicia en (0,0)
                 .withType(ParticleType.SUN)
                 .withMass(sunMass)
                 .withRadius(sunRadius)
-                .withDerivativeFunctionX(calculateDerivativeX)
-                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         mars = new AcceleratedParticle()
@@ -145,23 +102,43 @@ public class MarsSimulation extends AbstractSimulation {
                 .withVy(marsVy)
                 .withX(marsX)
                 .withY(marsY)
-                .withDerivativeFunctionX(calculateDerivativeX)
-                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
         spaceship = new AcceleratedParticle()
                 .withType(ParticleType.SPACESHIP)
                 .withMass(spaceshipMass)
-                .withDerivativeFunctionX(calculateDerivativeX)
-                .withDerivativeFunctionY(calculateDerivativeY)
         ;
 
-        return Arrays.asList(earth, sun, mars, spaceship);
-    }
+        final List<AcceleratedParticle> particles = Arrays.asList(earth, sun, mars, spaceship);
 
-    @Override
-    public boolean stop(List<ParticleHistory> histories) {
-        return false;
+        double accX, accY, m;
+
+        for (AcceleratedParticle particle : particles) {
+            m                               = particle.getMass();
+
+            // x
+
+            accX                            = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
+            double[] furtherDerivativesX    = particle.getFurtherDerivativesX();
+            furtherDerivativesX[0]          = 0;
+            furtherDerivativesX[1]          = 0;
+            furtherDerivativesX[2]          = 0;
+            particle.setFurtherDerivativesX(furtherDerivativesX);
+
+            // y
+
+            accY                             = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
+            double[] furtherDerivativesY    = particle.getFurtherDerivativesY();
+            furtherDerivativesY[0]          = 0;
+            furtherDerivativesY[1]          = 0;
+            furtherDerivativesY[2]          = 0;
+            particle.setFurtherDerivativesY(furtherDerivativesY);
+
+            particle.setForceX(m * accX);
+            particle.setForceY(m * accY);
+        }
+
+        return particles;
     }
 
     private static List<AcceleratedParticle> removedFromList(List<AcceleratedParticle> all, AcceleratedParticle particle) {
