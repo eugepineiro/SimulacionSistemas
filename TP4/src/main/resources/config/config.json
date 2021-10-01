@@ -1,11 +1,11 @@
 {
   "seed": 100,
   "system": "mars",
-  "integration": "gear",
-  "dt": 1000,
-  "launch_date": "2021-04-24T00:00:00",
-  "max_time": 2628023,
-  "save_factor": 10,
+  "integration": "verlet_original",
+  "dt": 3600,
+  "launch_date": "2021-09-24 00:00:00",
+  "max_time": 63072000,
+  "save_factor": 24,
   "loading_bar": true,
   "multiple_dates": true
 }

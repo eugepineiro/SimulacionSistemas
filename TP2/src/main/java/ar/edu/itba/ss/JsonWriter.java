@@ -9,8 +9,8 @@ public class JsonWriter {
 
     private static String PATH = "TP2/src/main/resources/postprocessing";
 
-    private ObjectMapper mapper;
-    private String filename;
+    private final ObjectMapper mapper;
+    private final String filename;
     private Object object;
 
     public static void setPath(String path) {

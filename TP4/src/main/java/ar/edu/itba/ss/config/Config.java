@@ -1,18 +1,12 @@
 package ar.edu.itba.ss.config;// https://www.baeldung.com/jackson-yaml
 // https://mkyong.com/java/jackson-how-to-parse-json/
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class Config {
 
-    //@Column(name = "LAUNCH_date")
-    //@DateTimeFormat(iso = DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    @JsonFormat(pattern = "YYYY-MM-ddTHH:mm:ss")
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private LocalDateTime launch_date;
     private Long    seed;
     private String  system;
@@ -60,8 +54,8 @@ public class Config {
         return launch_date;
     }
 
-    public void setLaunch_date(LocalDateTime launch_date) {
-        this.launch_date = launch_date;
+    public void setLaunch_date(String launch_date) {
+        this.launch_date = LocalDateTime.parse(launch_date, formatter);
     }
 
     public Double getMax_time() {

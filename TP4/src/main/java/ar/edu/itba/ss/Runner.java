@@ -6,16 +6,15 @@ import ar.edu.itba.ss.integrations.Beeman;
 import ar.edu.itba.ss.integrations.Gear;
 import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.integrations.VerletOriginal;
-import ar.edu.itba.ss.models.*;
+import ar.edu.itba.ss.models.Frame;
+import ar.edu.itba.ss.models.IntegrationType;
+import ar.edu.itba.ss.models.SystemType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Runner {
 
@@ -212,7 +211,7 @@ public class Runner {
 
         JsonWriter jsonWriter = new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES);
 
-        List<Frame> results;
+        Map<LocalDateTime, List<Frame>> results = new TreeMap<>();
 
         MarsSimulation simulation = new MarsSimulation()
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
@@ -222,14 +221,19 @@ public class Runner {
                 .withStatusBarActivated(false)
                 ;
 
+        long count;
+        LocalDateTime date;
+
         // A partir de launchaDate voy simulando cada un día hasta 2 años (period)
-        for(LocalDateTime date = launchDate; date.isBefore(lastDate); date = date.plusDays(1)) {
+        for(date = launchDate, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
+            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/period, LOADING_BAR_SIZE);
 
             simulation.setLaunchDate(date);
-            results = simulation.simulate();
-            jsonWriter.setObject(results);
-            jsonWriter.write();
+            results.put(date, simulation.simulate());
+
         }
+        jsonWriter.setObject(results);
+        jsonWriter.write();
 
     }
 
