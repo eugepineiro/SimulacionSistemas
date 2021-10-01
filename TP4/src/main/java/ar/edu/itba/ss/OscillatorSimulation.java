@@ -1,5 +1,6 @@
 package ar.edu.itba.ss;
 
+import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.ParticleType;
 
