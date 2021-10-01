@@ -1,6 +1,7 @@
 package ar.edu.itba.ss.integrations;
 import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.TetraFunction;
+
+import java.util.List;
 
 public class Beeman implements Integration {
 
@@ -11,14 +12,14 @@ public class Beeman implements Integration {
     }
 
     @Override
-    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt) {
+    public AcceleratedParticle update(List<AcceleratedParticle> allParticles, AcceleratedParticle current, AcceleratedParticle previous, double dt) {
 
         // Calculate Acceleration
         double mass = current.getMass();
-        double previousAccelerationX    = previous.getPositionDerivativeX(2);
-        double previousAccelerationY    = previous.getPositionDerivativeY(2); //calculateAcceleration.apply(previous.getY(), previous.getVy(), mass);
-        double currentAccelerationX     = current.getPositionDerivativeX(2);
-        double currentAccelerationY     = current.getPositionDerivativeY(2);
+        double previousAccelerationX    = previous.getPositionDerivativeX(2, allParticles);
+        double previousAccelerationY    = previous.getPositionDerivativeY(2, allParticles); //calculateAcceleration.apply(previous.getY(), previous.getVy(), mass);
+        double currentAccelerationX     = current.getPositionDerivativeX(2, allParticles);
+        double currentAccelerationY     = current.getPositionDerivativeY(2, allParticles);
         // Calculate Position
         double nextPositionX            = current.getX() + current.getVx() * dt + (2/3.0) * currentAccelerationX * Math.pow(dt,2) - (1/6.0)* previousAccelerationX * Math.pow(dt,2);  // rx(t+dt)
         double nextPositionY            = current.getY() + current.getVy() * dt + (2/3.0) * currentAccelerationY * Math.pow(dt,2) - (1/6.0)* previousAccelerationY * Math.pow(dt,2);  // ry(t+dt)
@@ -33,8 +34,8 @@ public class Beeman implements Integration {
         nextPredicted.setVx(nextPredictedVelocityX);
         nextPredicted.setVy(nextPredictedVelocityY);
 
-        double nextAccelerationX        = nextPredicted.getPositionDerivativeX(2);//calculateAcceleration.apply(nextPositionX, nextPredictedVelocityX, mass);
-        double nextAccelerationY        = nextPredicted.getPositionDerivativeY(2);
+        double nextAccelerationX        = nextPredicted.getPositionDerivativeX(2, allParticles);//calculateAcceleration.apply(nextPositionX, nextPredictedVelocityX, mass);
+        double nextAccelerationY        = nextPredicted.getPositionDerivativeY(2, allParticles);
 
         double nextCorrectedVelocityX   = current.getVx() + (1/3.0) * nextAccelerationX * dt + (5/6.0) * currentAccelerationX * dt - (1/6.0) * previousAccelerationX * dt;
         double nextCorrectedVelocityY   = current.getVy() + (1/3.0) * nextAccelerationY * dt + (5/6.0) * currentAccelerationY * dt - (1/6.0) * previousAccelerationY * dt;

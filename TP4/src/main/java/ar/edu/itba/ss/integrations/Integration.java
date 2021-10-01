@@ -1,7 +1,8 @@
 package ar.edu.itba.ss.integrations;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.TetraFunction;
+
+import java.util.List;
 
 public interface Integration {
 
@@ -9,6 +10,6 @@ public interface Integration {
         // Do nothing
     }
 
-    AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt);
+    AcceleratedParticle update(List<AcceleratedParticle> allParticles, AcceleratedParticle current, AcceleratedParticle previous, double dt);
 
 }

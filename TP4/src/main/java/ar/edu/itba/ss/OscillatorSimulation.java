@@ -4,9 +4,12 @@ import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.Frame;
 import ar.edu.itba.ss.models.ParticleType;
-import ar.edu.itba.ss.models.TetraFunction;
+import ar.edu.itba.ss.models.TriFunction;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class OscillatorSimulation implements Simulation<List<Frame>> {
 
@@ -32,9 +35,13 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
         double mass     = 70;                   // kg
         double vy       = -gamma/(2*mass);      // m/s
 
-        TetraFunction<Integer, Double, Double, Double, Double> calculateDerivative = new TetraFunction<Integer, Double, Double, Double, Double>() {
+        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeX = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
             @Override
-            public Double apply(Integer order, Double pos, Double vel, Double m) {
+            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
+                double pos = current.getX();
+                double vel = current.getVx();
+                double m = current.getMass();
+
                 switch (order) {
                     case 0:
                         return pos;
@@ -43,11 +50,36 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
                     case 2:
                         return (- k * pos - gamma * vel)/m;
                     case 3:
-                        return (- k * vel - gamma * this.apply(2, pos, vel, m))/m;
+                        return (- k * vel - gamma * this.apply(2, current, all))/m;
                     case 4:
-                        return (- k * this.apply(2, pos, vel, m) - gamma * this.apply(3, pos, vel, m))/m;
+                        return (- k * this.apply(2, current, all) - gamma * this.apply(3, current, all))/m;
                     case 5:
-                        return (- k * this.apply(3, pos, vel, m) - gamma * this.apply(4, pos, vel, m))/m;
+                        return (- k * this.apply(3, current, all) - gamma * this.apply(4, current, all))/m;
+                }
+                return (double) 0;
+            }
+        };
+
+        TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double> calculateDerivativeY = new TriFunction<Integer, AcceleratedParticle, List<AcceleratedParticle>, Double>() {
+            @Override
+            public Double apply(Integer order, AcceleratedParticle current, List<AcceleratedParticle> all) {
+                double pos = current.getY();
+                double vel = current.getVy();
+                double m = current.getMass();
+
+                switch (order) {
+                    case 0:
+                        return pos;
+                    case 1:
+                        return vel;
+                    case 2:
+                        return (- k * pos - gamma * vel)/m;
+                    case 3:
+                        return (- k * vel - gamma * this.apply(2, current, all))/m;
+                    case 4:
+                        return (- k * this.apply(2, current, all) - gamma * this.apply(3, current, all))/m;
+                    case 5:
+                        return (- k * this.apply(3, current, all) - gamma * this.apply(4, current, all))/m;
                 }
                 return (double) 0;
             }
@@ -58,10 +90,11 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
             .withY(r)
             .withVy(vy)
             .withMass(mass)
-            .withForceY(mass*calculateDerivative.apply(2,r,vy,mass))
-            .withDerivativeFunctionX(calculateDerivative)
-            .withDerivativeFunctionY(calculateDerivative)
+            .withDerivativeFunctionX(calculateDerivativeX)
+            .withDerivativeFunctionY(calculateDerivativeY)
             ;
+
+        particle.setForceY(mass*calculateDerivativeY.apply(2, particle, Collections.singletonList(particle)));
 
         List<Frame> frames = new ArrayList<>();
 
@@ -82,7 +115,7 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
                 );
             }
 
-            next = integration.update(current, previous, dt);       //updated particle with ri(t+dt) y vi(t)
+            next = integration.update(Collections.singletonList(current), current, previous, dt);       //updated particle with ri(t+dt) y vi(t)
 
             previous = current;
             current  = next;

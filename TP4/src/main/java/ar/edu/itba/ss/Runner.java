@@ -157,6 +157,10 @@ public class Runner {
 
         Simulation<List<Frame>> simulation = new MarsSimulation()
             .withIntegration(integrationHashMap.get(config.getIntegration()))
+            .withDt(config.getDt())
+            .withSaveFactor(config.getSave_factor())
+            .withMaxTime(config.getMax_time())            // seconds
+            .withStatusBarActivated(false)
             ;
 
         long endTime = System.nanoTime();

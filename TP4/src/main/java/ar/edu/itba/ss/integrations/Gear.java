@@ -1,13 +1,13 @@
 package ar.edu.itba.ss.integrations;
 import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.TetraFunction;
 
+import java.util.List;
 import java.util.stream.LongStream;
 
 public class Gear implements Integration {
 
     @Override
-    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt) {
+    public AcceleratedParticle update(List<AcceleratedParticle> allParticles, AcceleratedParticle current, AcceleratedParticle previous, double dt) {
 
         int order = 2;
         double[] nextPredictedDerivativesX = new double[order+1];
@@ -18,8 +18,8 @@ public class Gear implements Integration {
 
         for(int i = 0; i <= order; i++ ){
             for(int j = i; j <= order; j++){
-                nextPredictedDerivativesX[i] += current.getPositionDerivativeX(j) * taylorCoeffs[j-i];
-                nextPredictedDerivativesY[i] += current.getPositionDerivativeY(j) * taylorCoeffs[j-i];
+                nextPredictedDerivativesX[i] += current.getPositionDerivativeX(j, allParticles) * taylorCoeffs[j-i];
+                nextPredictedDerivativesY[i] += current.getPositionDerivativeY(j, allParticles) * taylorCoeffs[j-i];
             }
         }
 
@@ -33,8 +33,8 @@ public class Gear implements Integration {
         predictedNext.setY(nextPredictedDerivativesY[0]);
         predictedNext.setVy(nextPredictedDerivativesY[1]);
 
-        nextAccelerationWithPredictedX = predictedNext.getPositionDerivativeX(2);  //etPositionDerivativeX(2, nextPredictedDerivativesX[0], nextPredictedDerivativesX[1], mass);
-        nextAccelerationWithPredictedY = predictedNext.getPositionDerivativeY(2); // calculateAcceleration.apply(nextPredictedDerivativesY[0], nextPredictedDerivativesY[1], mass);
+        nextAccelerationWithPredictedX = predictedNext.getPositionDerivativeX(2, allParticles);  //etPositionDerivativeX(2, nextPredictedDerivativesX[0], nextPredictedDerivativesX[1], mass);
+        nextAccelerationWithPredictedY = predictedNext.getPositionDerivativeY(2, allParticles); // calculateAcceleration.apply(nextPredictedDerivativesY[0], nextPredictedDerivativesY[1], mass);
 
         double deltaAccelerationX, deltaAccelerationY;
 

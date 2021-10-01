@@ -2,6 +2,8 @@ package ar.edu.itba.ss.integrations;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
 
+import java.util.List;
+
 public class VerletOriginal implements Integration {
 
     @Override
@@ -11,10 +13,10 @@ public class VerletOriginal implements Integration {
     }
 
     @Override
-    public AcceleratedParticle update(AcceleratedParticle current, AcceleratedParticle previous, double dt) {
+    public AcceleratedParticle update(List<AcceleratedParticle> allParticles, AcceleratedParticle current, AcceleratedParticle previous, double dt) {
         double mass = current.getMass();
-        double currentAccelerationX = current.getPositionDerivativeX(2); // calculateAcceleration.apply(current.getX(), current.getVx(), mass);
-        double currentAccelerationY = current.getPositionDerivativeY(2); //calculateAcceleration.apply(current.getY(), current.getVy(), mass);
+        double currentAccelerationX = current.getPositionDerivativeX(2, allParticles); // calculateAcceleration.apply(current.getX(), current.getVx(), mass);
+        double currentAccelerationY = current.getPositionDerivativeY(2, allParticles); //calculateAcceleration.apply(current.getY(), current.getVy(), mass);
 
         current.setForceX(mass*currentAccelerationX);
         current.setForceY(mass*currentAccelerationY);

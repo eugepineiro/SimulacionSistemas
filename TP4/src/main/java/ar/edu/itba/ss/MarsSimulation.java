@@ -6,6 +6,8 @@ import ar.edu.itba.ss.models.Frame;
 import ar.edu.itba.ss.models.ParticleType;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MarsSimulation implements Simulation<List<Frame>> {
 
@@ -25,32 +27,64 @@ public class MarsSimulation implements Simulation<List<Frame>> {
 
         double gravityConstant = Math.pow(6.693*10, -11); // m³/(kg*s²)   // TODO change units
         /* Earth */
-        double earthRadius = 6378.137; // km
-        double earthMass = Math.pow(5.97219*10, 24); // kg
-        double earthVelocity = 0; // TODO elegir un momento
+        double earthRadius      = 6378.137;                         // km
+        double earthMass        = Math.pow(5.97219*10, 24);         // kg
+        double earthVelocity    = 0;                                // TODO elegir un
+        double earthVx          = Math.pow(-9.322979134387409,-1);  // km/s
+        double earthVy          = Math.pow(2.966365033636722,1);
+        double earthX           = Math.pow(1.500619962348151,8);    // km
+        double earthY           = Math.pow(2.288499248197072,6);
         /* Sun */
-        //double sunRadius = ; // TODO con el archivo
-        //double sunMass = ;
+        double sunRadius        = 696000;                           // km  o va el vol. mean radius ?? 695700
+        double sunMass          = Math.pow(1988500*10, 24);         // kg
         /* Mars */
+        double marsMass         = Math.pow(6.4171*10, 23);          // kg
+        double marsRadius       = 3389.92;                          // km
+        double marsVx           = 4.435907910045917;
+        double marsVy           = Math.pow(-2.190044178514185,1);
+        double marsX            = Math.pow(-2.426617401833969,8);
+        double marsY            = Math.pow(-3.578836154354768,7) ;
 
         /* Spaceship */
-        double stationHeight = 1500; // km
-        double orbitalVelocity = 7.12; // km/s
-        double initialVelocity = 8 + orbitalVelocity + earthVelocity; // km // TODO elegir un momento  para earthVelocity
-        double spaceshipMass = Math.pow(2*10, 5); // kg
-
+        double stationHeight    = 1500; // km
+        double orbitalVelocity  = 7.12; // km/s
+        double initialVelocity  = 8 + orbitalVelocity + earthVelocity; // km // TODO elegir un momento  para earthVelocity
+        double spaceshipMass    = Math.pow(2*10, 5); // kg
 
         earth = new AcceleratedParticle()
                 .withType(ParticleType.EARTH)
+                .withMass(earthMass)
+                .withRadius(earthRadius)
+                .withVx(earthVx)
+                .withVy(earthVy)
+                .withX(earthX)
+                .withY(earthY)
         ;
 
         sun = new AcceleratedParticle() // inicia en (0,0)
                 .withType(ParticleType.SUN)
+                .withMass(sunMass)
+                .withRadius(sunRadius)
         ;
 
         mars = new AcceleratedParticle()
                 .withType(ParticleType.MARS)
+                .withMass(marsMass)
+                .withRadius(marsRadius)
+                .withVx(marsVx)
+                .withVy(marsVy)
+                .withX(marsX)
+                .withY(marsY)
         ;
+
+        spaceship = new AcceleratedParticle()
+                .withType(ParticleType.SPACESHIP)
+                .withMass(spaceshipMass)
+        ;
+
+        List<AcceleratedParticle> particles = Stream.of(earth, sun, mars, spaceship).collect(Collectors.toList());
+
+
 
         return null;
     }
@@ -65,6 +99,39 @@ public class MarsSimulation implements Simulation<List<Frame>> {
     }
     public MarsSimulation withIntegration(Integration integration) {
         setIntegration(integration);
+        return this;
+    }
+
+    public double getDt() {
+        return dt;
+    }
+    public void setDt(double dt) {
+        this.dt = dt;
+    }
+    public MarsSimulation withDt(double dt) {
+        setDt(dt);
+        return this;
+    }
+
+    public double getMaxTime() {
+        return maxTime;
+    }
+    public void setMaxTime(double maxTime) {
+        this.maxTime = maxTime;
+    }
+    public MarsSimulation withMaxTime(double maxTime) {
+        setMaxTime(maxTime);
+        return this;
+    }
+
+    public long getSaveFactor() {
+        return saveFactor;
+    }
+    public void setSaveFactor(long saveFactor) {
+        this.saveFactor = saveFactor;
+    }
+    public MarsSimulation withSaveFactor(long saveFactor) {
+        setSaveFactor(saveFactor);
         return this;
     }
 
