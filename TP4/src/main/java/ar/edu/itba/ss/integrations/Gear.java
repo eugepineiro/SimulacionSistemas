@@ -9,7 +9,7 @@ public class Gear implements Integration {
     @Override
     public AcceleratedParticle update(List<AcceleratedParticle> allParticles, AcceleratedParticle current, AcceleratedParticle previous, double dt) {
 
-        int order = 2;
+        int order = 5;
         double[] nextPredictedDerivativesX = new double[order+1];
         double[] nextPredictedDerivativesY = new double[order+1];
         double[] taylorCoeffs = calculateTaylorPolynomialCoeffs(dt, order);
@@ -51,7 +51,7 @@ public class Gear implements Integration {
         double[] nextCorrectedDerivativesX = new double[order+1];
         double[] nextCorrectedDerivativesY = new double[order+1];
 
-        double[] gearCoeffs = {0, 1, 1};
+        double[] gearCoeffs = {0, 1, 1, 1, 1, 1};
 
         for (int i = 0; i <= order; i++) {
             nextCorrectedDerivativesX[i] = nextPredictedDerivativesX[i] + gearCoeffs[i] * deltaR2X / taylorCoeffs[i];
