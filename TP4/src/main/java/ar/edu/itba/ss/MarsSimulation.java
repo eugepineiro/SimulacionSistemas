@@ -114,6 +114,9 @@ public class MarsSimulation extends AbstractSimulation {
         double accX, accY, m;
 
         for (AcceleratedParticle particle : particles) {
+            particle.withAccelerationFunctionX(accelerationFunctionX);
+            particle.withAccelerationFunctionY(accelerationFunctionY);
+
             m                               = particle.getMass();
 
             // x
