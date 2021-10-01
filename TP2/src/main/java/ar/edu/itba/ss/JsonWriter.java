@@ -28,6 +28,14 @@ public class JsonWriter {
         return this;
     }
 
+    public Object getObject() {
+        return object;
+    }
+
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
     public void write() throws IOException {
         File dir = new File(PATH);
         if (!dir.isDirectory()) {

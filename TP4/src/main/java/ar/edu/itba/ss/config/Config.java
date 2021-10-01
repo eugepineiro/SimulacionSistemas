@@ -1,12 +1,17 @@
 package ar.edu.itba.ss.config;// https://www.baeldung.com/jackson-yaml
 // https://mkyong.com/java/jackson-how-to-parse-json/
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 public class Config {
 
     private Long    seed;
     private String  system;
     private String  integration;
     private Double  dt;
+    private LocalDateTime launchDate;
     private Double  max_time;
     private Long    save_factor;
     private Boolean loading_bar;
@@ -41,6 +46,15 @@ public class Config {
 
     public void setDt(Double dt) {
         this.dt = dt;
+    }
+
+
+    public LocalDateTime getLaunchDate() {
+        return launchDate;
+    }
+
+    public void setLaunchDate(LocalDateTime launchDate) {
+        this.launchDate = launchDate;
     }
 
     public Double getMax_time() {

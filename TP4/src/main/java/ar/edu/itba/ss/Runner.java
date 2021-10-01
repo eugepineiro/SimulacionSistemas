@@ -11,6 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,7 @@ public class Runner {
     private static final String     OVITO_MARS_FILENAME                 = "SdS_TP4_2021Q2G01_mars_output";
     private static final String     OSCILLATOR_POSTPROCESSING_FILENAME  = "SdS_TP4_2021Q2G01_oscillator_results";
     private static final String     MARS_POSTPROCESSING_FILENAME        = "SdS_TP4_2021Q2G01_mars_results";
+    private static final String     MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES        = "SdS_TP4_2021Q2G01_mars_results_with_multiple_dates";
 
     // Main
 
@@ -160,6 +164,7 @@ public class Runner {
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
             .withMaxTime(config.getMax_time())            // seconds
+            .withLaunchDate(config.getLaunchDate())
             .withStatusBarActivated(false)
             ;
 
@@ -190,6 +195,41 @@ public class Runner {
 //            .writeAndClose();
 
         System.out.println("Finished saving " + OVITO_MARS_FILENAME + ".exyz");
+
+    }
+
+    private void runMarsSimulationWithMultipleDates(LocalDateTime launchDate, Integer period, Config config, HashMap<String, Integration> integrationHashMap) throws IOException {
+
+        LocalDateTime lastDate = launchDate.plusSeconds(period);
+
+        JsonWriter jsonWriter = new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES);
+
+        List<Frame> results;
+
+        MarsSimulation simulation = new MarsSimulation()
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withMaxTime(config.getMax_time())
+                .withStatusBarActivated(false)
+                ;
+
+        // A partir de launchaDate voy simulando cada un día hasta 2 años (period)
+        for(LocalDateTime date = launchDate; date.isBefore(lastDate); date = date.plusDays(1)) {
+
+            simulation.setLaunchDate(date);
+            results = simulation.simulate();
+            jsonWriter.setObject(results);
+            jsonWriter.write();
+        }
+
+    }
+
+    private Date addSeconds(Date date, Integer seconds) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.SECOND, seconds);
+        return cal.getTime();
     }
 
 }

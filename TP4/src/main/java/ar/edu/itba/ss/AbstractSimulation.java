@@ -85,20 +85,12 @@ public abstract class AbstractSimulation implements Simulation<List<Frame>> {
     public void setIntegration(Integration integration) {
         this.integration = integration;
     }
-    public <T extends AbstractSimulation> T withIntegration(Integration integration) {
-        setIntegration(integration);
-        return (T) this;
-    }
 
     public double getDt() {
         return dt;
     }
     public void setDt(double dt) {
         this.dt = dt;
-    }
-    public <T extends AbstractSimulation> T withDt(double dt) {
-        setDt(dt);
-        return (T) this;
     }
 
     public double getMaxTime() {
@@ -107,10 +99,6 @@ public abstract class AbstractSimulation implements Simulation<List<Frame>> {
     public void setMaxTime(double maxTime) {
         this.maxTime = maxTime;
     }
-    public <T extends AbstractSimulation> T withMaxTime(double maxTime) {
-        setMaxTime(maxTime);
-        return (T) this;
-    }
 
     public long getSaveFactor() {
         return saveFactor;
@@ -118,20 +106,12 @@ public abstract class AbstractSimulation implements Simulation<List<Frame>> {
     public void setSaveFactor(long saveFactor) {
         this.saveFactor = saveFactor;
     }
-    public <T extends AbstractSimulation> T withSaveFactor(long saveFactor) {
-        setSaveFactor(saveFactor);
-        return (T) this;
-    }
 
     public boolean isStatusBarActivated() {
         return statusBarActivated;
     }
     public void setStatusBarActivated(boolean statusBarActivated) {
         this.statusBarActivated = statusBarActivated;
-    }
-    public <T extends AbstractSimulation> T withStatusBarActivated(boolean statusBarActivated) {
-        setStatusBarActivated(statusBarActivated);
-        return (T) this;
     }
 
 }

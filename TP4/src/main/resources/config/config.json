@@ -3,6 +3,7 @@
   "system": "mars",
   "integration": "gear",
   "dt": 1000,
+  "launch_date": "2021-04-24",
   "max_time": 2628023,
   "save_factor": 10,
   "loading_bar": true
