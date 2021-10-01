@@ -174,7 +174,7 @@ public class Runner {
             .withObj(results)
             .write();
 
-        System.out.println("Finished saving " + OSCILLATOR_POSTPROCESSING_FILENAME + ".json");
+        System.out.println("Finished saving " + MARS_POSTPROCESSING_FILENAME + ".json");
 
         new XYZ_Writer(OVITO_MARS_FILENAME)
             .addAllFrames(results)
