@@ -2,8 +2,8 @@ package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.ParticleType;
-import ar.edu.itba.ss.models.TriFunction;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -47,30 +47,28 @@ public class OscillatorSimulation extends AbstractSimulation {
 
         double velX, accX, velY, accY, m;
 
-        m                               = particle.getMass();
+        m                                       = particle.getMass();
 
         // x
-
-        velX                            = particle.getVx();
-        accX                            = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
-        double[] furtherDerivativesX    = particle.getFurtherDerivativesX();
-        furtherDerivativesX[0]          = (- k * velX - gamma * accX)/m;
-        furtherDerivativesX[1]          = (- k * accX - gamma * furtherDerivativesX[0])/m;
-        furtherDerivativesX[2]          = (- k * furtherDerivativesX[0] - gamma * furtherDerivativesX[1])/m;
+        velX                                    = particle.getVx();
+        accX                                    = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
+        ArrayList<Double> furtherDerivativesX   = particle.getFurtherDerivativesX();
+        furtherDerivativesX.set(0, (- k * velX - gamma * accX)/m);
+        furtherDerivativesX.set(1, (- k * accX - gamma * furtherDerivativesX.get(0))/m);
+        furtherDerivativesX.set(2, (- k * furtherDerivativesX.get(0) - gamma * furtherDerivativesX.get(1))/m);
         particle.setFurtherDerivativesX(furtherDerivativesX);
 
         // y
-
-        velY                            = particle.getVy();
-        accY                             = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
-        double[] furtherDerivativesY    = particle.getFurtherDerivativesY();
-        furtherDerivativesY[0]          = (- k * velY - gamma * accY)/m;
-        furtherDerivativesY[1]          = (- k * accY - gamma * furtherDerivativesY[0])/m;
-        furtherDerivativesY[2]          = (- k * furtherDerivativesY[0] - gamma * furtherDerivativesY[1])/m;
+        velY                                    = particle.getVy();
+        accY                                    = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
+        ArrayList<Double> furtherDerivativesY   = particle.getFurtherDerivativesY();
+        furtherDerivativesY.set(0, (- k * velY - gamma * accY)/m);
+        furtherDerivativesY.set(1, (- k * accY - gamma * furtherDerivativesY.get(0))/m);
+        furtherDerivativesY.set(2, (- k * furtherDerivativesY.get(0) - gamma * furtherDerivativesY.get(1))/m);
         particle.setFurtherDerivativesY(furtherDerivativesY);
 
-        particle.setForceX(mass * accX);
-        particle.setForceY(mass * accY);
+        particle.setForceX(m * accX);
+        particle.setForceY(m * accY);
 
         return Collections.singletonList(particle);
     }

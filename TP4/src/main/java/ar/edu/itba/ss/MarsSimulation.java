@@ -2,8 +2,8 @@ package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
 import ar.edu.itba.ss.models.ParticleType;
-import ar.edu.itba.ss.models.TriFunction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -120,21 +120,19 @@ public class MarsSimulation extends AbstractSimulation {
             m                               = particle.getMass();
 
             // x
-
-            accX                            = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
-            double[] furtherDerivativesX    = particle.getFurtherDerivativesX();
-            furtherDerivativesX[0]          = 0;
-            furtherDerivativesX[1]          = 0;
-            furtherDerivativesX[2]          = 0;
+            accX                                    = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
+            ArrayList<Double> furtherDerivativesX   = particle.getFurtherDerivativesX();
+            furtherDerivativesX.set(0, 0.0);
+            furtherDerivativesX.set(1, 0.0);
+            furtherDerivativesX.set(2, 0.0);
             particle.setFurtherDerivativesX(furtherDerivativesX);
 
             // y
-
-            accY                             = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
-            double[] furtherDerivativesY    = particle.getFurtherDerivativesY();
-            furtherDerivativesY[0]          = 0;
-            furtherDerivativesY[1]          = 0;
-            furtherDerivativesY[2]          = 0;
+            accY                                    = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
+            ArrayList<Double> furtherDerivativesY   = particle.getFurtherDerivativesY();
+            furtherDerivativesY.set(0, 0.0);
+            furtherDerivativesY.set(1, 0.0);
+            furtherDerivativesY.set(2, 0.0);
             particle.setFurtherDerivativesY(furtherDerivativesY);
 
             particle.setForceX(m * accX);

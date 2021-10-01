@@ -3,8 +3,12 @@ package ar.edu.itba.ss.models;
 import ar.edu.itba.ss.Particle;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class AcceleratedParticle extends Particle {
 
@@ -16,8 +20,8 @@ public class AcceleratedParticle extends Particle {
     private                 double                                                              mass;
     private                 double                                                              forceX;
     private                 double                                                              forceY;
-    private                 double[]                                                            furtherDerivativesX;
-    private                 double[]                                                            furtherDerivativesY;
+    private                 ArrayList<Double>                                                   furtherDerivativesX;
+    private                 ArrayList<Double>                                                   furtherDerivativesY;
 
     @JsonIgnore
     private                 BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double>  accelerationFunctionX;
@@ -34,15 +38,15 @@ public class AcceleratedParticle extends Particle {
         this.mass = 0;
         this.forceX = 0;
         this.forceY = 0;
-        this.furtherDerivativesX = new double[MAX_DERIVATIVE_ORDER+1-3];
-        this.furtherDerivativesY = new double[MAX_DERIVATIVE_ORDER+1-3];
+        this.furtherDerivativesX = IntStream.range(0, MAX_DERIVATIVE_ORDER + 1 - 3).mapToObj(i -> (double) 0).collect(Collectors.toCollection(ArrayList::new));
+        this.furtherDerivativesY = IntStream.range(0, MAX_DERIVATIVE_ORDER + 1 - 3).mapToObj(i -> (double) 0).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public AcceleratedParticle(ParticleType type, Particle particle, double vx, double vy, double mass, double forceX, double forceY, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY, double[] derivativesX, double[] derivativesY) {
+    public AcceleratedParticle(ParticleType type, Particle particle, double vx, double vy, double mass, double forceX, double forceY, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY, ArrayList<Double> derivativesX, ArrayList<Double> derivativesY) {
         this(type, particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), vx, vy, mass, forceX, forceY, accelerationFunctionX, accelerationFunctionY, derivativesX, derivativesY);
     }
 
-    public AcceleratedParticle(ParticleType type, long id, double x, double y, double radius, double vx, double vy, double mass, double forceX, double forceY, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY, double[] derivativesX, double[] derivativesY) {
+    public AcceleratedParticle(ParticleType type, long id, double x, double y, double radius, double vx, double vy, double mass, double forceX, double forceY, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionX, BiFunction<AcceleratedParticle, List<AcceleratedParticle>, Double> accelerationFunctionY, ArrayList<Double> derivativesX, ArrayList<Double> derivativesY) {
         super(id, x, y, radius);
         this.type = type;
         this.vx = vx;
@@ -65,7 +69,7 @@ public class AcceleratedParticle extends Particle {
     }
 
     public double getPositionDerivativeX(int order, List<AcceleratedParticle> others) {
-        if (order <= 5) {
+        if (order <= MAX_DERIVATIVE_ORDER) {
             switch (order) {
                 case 0:
                     return x;
@@ -74,14 +78,33 @@ public class AcceleratedParticle extends Particle {
                 case 2:
                     return accelerationFunctionX.apply(this, others);
                 default:
-                    return furtherDerivativesX[order - 3];
+                    return furtherDerivativesX.get(order - 3);
             }
         }
         return 0;
     }
 
+    public void setPositionDerivativeX(int order, Double value) {
+        if (order <= MAX_DERIVATIVE_ORDER) {
+            switch (order) {
+                case 0:
+                    this.x = value;
+                    break;
+                case 1:
+                    this.vx = value;
+                    break;
+                case 2:
+                    // Se calcula sola cada vez
+                    break;
+                default:
+                    furtherDerivativesX.set(order - 3, value);
+                    break;
+            }
+        }
+    }
+
     public double getPositionDerivativeY(int order, List<AcceleratedParticle> others) {
-        if (order <= 5) {
+        if (order <= MAX_DERIVATIVE_ORDER) {
             switch (order) {
                 case 0:
                     return y;
@@ -90,10 +113,29 @@ public class AcceleratedParticle extends Particle {
                 case 2:
                     return accelerationFunctionY.apply(this, others);
                 default:
-                    return furtherDerivativesY[order - 3];
+                    return furtherDerivativesY.get(order - 3);
             }
         }
         return 0;
+    }
+
+    public void setPositionDerivativeY(int order, Double value) {
+        if (order <= MAX_DERIVATIVE_ORDER) {
+            switch (order) {
+                case 0:
+                    this.y = value;
+                    break;
+                case 1:
+                    this.vy = value;
+                    break;
+                case 2:
+                    // Se calcula sola cada vez
+                    break;
+                default:
+                    furtherDerivativesY.set(order - 3, value);
+                    break;
+            }
+        }
     }
 
     public AcceleratedParticle clone() {
@@ -205,24 +247,24 @@ public class AcceleratedParticle extends Particle {
         return this;
     }
 
-    public double[] getFurtherDerivativesX() {
+    public ArrayList<Double> getFurtherDerivativesX() {
         return furtherDerivativesX;
     }
-    public void setFurtherDerivativesX(double[] furtherDerivativesX) {
-        System.arraycopy(this.furtherDerivativesX, 0, furtherDerivativesX, 0, MAX_DERIVATIVE_ORDER+1-3);
+    public void setFurtherDerivativesX(ArrayList<Double> furtherDerivativesX) {
+        this.furtherDerivativesX = new ArrayList<>(furtherDerivativesX);
     }
-    public AcceleratedParticle withDerivativesX(double[] derivativesX) {
+    public AcceleratedParticle withFurtherDerivativesX(ArrayList<Double> derivativesX) {
         setFurtherDerivativesX(derivativesX);
         return this;
     }
 
-    public double[] getFurtherDerivativesY() {
+    public ArrayList<Double> getFurtherDerivativesY() {
         return furtherDerivativesY;
     }
-    public void setFurtherDerivativesY(double[] furtherDerivativesY) {
-        System.arraycopy(this.furtherDerivativesY, 0, furtherDerivativesY, 0, MAX_DERIVATIVE_ORDER+1-3);
+    public void setFurtherDerivativesY(ArrayList<Double> furtherDerivativesY) {
+        this.furtherDerivativesY = new ArrayList<>(furtherDerivativesY);
     }
-    public AcceleratedParticle withDerivativesY(double[] derivativesY) {
+    public AcceleratedParticle withFurtherDerivativesY(ArrayList<Double> derivativesY) {
         setFurtherDerivativesY(derivativesY);
         return this;
     }

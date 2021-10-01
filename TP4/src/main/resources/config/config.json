@@ -4,6 +4,6 @@
   "integration": "verlet_original",
   "dt": 0.001,
   "max_time": 5,
-  "save_factor": 1,
+  "save_factor": 10,
   "loading_bar": true
 }
