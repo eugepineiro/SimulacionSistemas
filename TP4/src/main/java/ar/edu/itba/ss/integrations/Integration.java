@@ -1,12 +1,13 @@
 package ar.edu.itba.ss.integrations;
 
 import ar.edu.itba.ss.models.AcceleratedParticle;
+import ar.edu.itba.ss.models.ParticleHistory;
 
 import java.util.List;
 
 public interface Integration {
 
-    default void setup(AcceleratedParticle previous, AcceleratedParticle current, AcceleratedParticle next, double dt) {
+    default void setup(ParticleHistory history, double dt) {
         // Do nothing
     }
 

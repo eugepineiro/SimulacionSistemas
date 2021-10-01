@@ -1,10 +1,7 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.integrations.Integration;
-import ar.edu.itba.ss.models.AcceleratedParticle;
-import ar.edu.itba.ss.models.Frame;
-import ar.edu.itba.ss.models.ParticleType;
-import ar.edu.itba.ss.models.TriFunction;
+import ar.edu.itba.ss.models.*;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -98,11 +95,12 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
 
         List<Frame> frames = new ArrayList<>();
 
-        AcceleratedParticle previous    = particle;                    // (t-dt)
-        AcceleratedParticle current     = previous.clone();            // (t)
-        AcceleratedParticle next        = null;                        // (t+dt)
+        ParticleHistory history = new ParticleHistory()
+                .withPast(particle)
+                .withPresent(particle.clone())
+                ;
 
-        integration.setup(previous, current, next, dt);
+        integration.setup(history, dt);
 
         long count = 0;
         for (double time = 0; time <= maxTime; time += dt) {   // currentTime
@@ -110,15 +108,15 @@ public class OscillatorSimulation implements Simulation<List<Frame>> {
 
             if (count % saveFactor == 0) {
                 frames.add(new Frame()
-                    .withParticles(Collections.singletonList(current.clone()))
+                    .withParticles(Collections.singletonList(history.getPresent().clone()))
                     .withTime(time)
                 );
             }
 
-            next = integration.update(Collections.singletonList(current), current, previous, dt);       //updated particle with ri(t+dt) y vi(t)
+            history.setFuture(integration.update(Collections.singletonList(history.getPresent()), history.getPresent(), history.getPast(), dt));       //updated particle with ri(t+dt) y vi(t)
 
-            previous = current;
-            current  = next;
+            history.setPast(history.getPresent());
+            history.setPresent(history.getFuture());
 
             count++;
         }

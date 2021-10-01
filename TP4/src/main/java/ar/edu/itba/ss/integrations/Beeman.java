@@ -1,14 +1,17 @@
 package ar.edu.itba.ss.integrations;
 import ar.edu.itba.ss.models.AcceleratedParticle;
+import ar.edu.itba.ss.models.ParticleHistory;
 
 import java.util.List;
 
 public class Beeman implements Integration {
 
     @Override
-    public void setup(AcceleratedParticle previous, AcceleratedParticle current, AcceleratedParticle next, double dt) {
-        previous.setX(current.getX() - dt * current.getVx() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceX()); // rx(t)
-        previous.setY(current.getY() - dt * current.getVy() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceY()); // ry(t)
+    public void setup(ParticleHistory history, double dt) {
+        AcceleratedParticle previous = history.getPast();
+        AcceleratedParticle current = history.getPresent();
+        previous.setX(current.getX() - dt * history.getPresent().getVx() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceX()); // rx(t)
+        previous.setY(current.getY() - dt * current.getVy() + (Math.pow(dt,2)/(2*current.getMass()))*current.getForceY());              // ry(t)
     }
 
     @Override
