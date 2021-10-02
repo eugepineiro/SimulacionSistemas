@@ -68,7 +68,14 @@ public abstract class AbstractSimulation implements Simulation<List<Frame>> {
 
             // Update particles
             for (ParticleHistory h : histories) {
-                h.setFuture(integration.update(Collections.singletonList(h.getPresent()), h.getPresent(), h.getPast(), dt));       //updated particle with ri(t+dt) y vi(t)
+                h.setFuture(integration.update(
+                    histories.stream()
+                        .map(ParticleHistory::getPresent)
+                        .collect(Collectors.toList()),
+                    h.getPresent(),
+                    h.getPast(),
+                    dt
+                ));       //updated particle with ri(t+dt) y vi(t)
 
                 h.setPast(h.getPresent());
                 h.setPresent(h.getFuture());

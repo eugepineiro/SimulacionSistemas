@@ -226,7 +226,7 @@ public class Runner {
 
         // A partir de launchaDate voy simulando cada un día hasta 2 años (period)
         for(date = launchDate, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
-            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/3600), LOADING_BAR_SIZE);
+            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
 
             simulation.setLaunchDate(date);
             results.put(date, simulation.simulate());

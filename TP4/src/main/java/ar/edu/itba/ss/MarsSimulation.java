@@ -21,7 +21,7 @@ public class MarsSimulation extends AbstractSimulation {
     public List<AcceleratedParticle> getParticles() {
 
 //        double gravityConstant  = Math.pow(6.693*10, -11);                // m³/(kg*s²)   // TODO change units
-        double gravityConstant      = Math.pow(6.693*10, -20);                  // km³/(kg*s²)
+        double gravityConstant      = 6.693 * Math.pow(10, -20);                  // km³/(kg*s²)
         /* Earth */
         double earthRadius          = 6378.137;                                 // km
         double earthMass            = 5.97219 * Math.pow(10, 24);               // kg
@@ -46,7 +46,7 @@ public class MarsSimulation extends AbstractSimulation {
         double earthInitialAngle    = getAngle(earthX, earthY);
         double orbitalVelocity      = 7.12;                                     // km/s
         double initialVelocity      = 8 + orbitalVelocity + earthVelocity;      // km // TODO elegir un momento  para earthVelocity
-        double spaceshipMass        = Math.pow(2*10, 5);                        // kg
+        double spaceshipMass        = 2 * Math.pow(10, 5);                        // kg
         double spaceshipVx          = 0;
         double spaceshipVy          = 0;
         double spaceshipX           = earthX + (earthRadius + stationHeight) * Math.cos(earthInitialAngle);
@@ -123,7 +123,8 @@ public class MarsSimulation extends AbstractSimulation {
                 .withY(spaceshipY)
         ;
 
-        final List<AcceleratedParticle> particles = Arrays.asList(earth, sun, mars, spaceship);
+//        final List<AcceleratedParticle> particles = Arrays.asList(earth, sun, mars, spaceship); // TODO: add spaceship
+        final List<AcceleratedParticle> particles = Arrays.asList(earth, sun, mars);
 
         double accX, accY, m;
 
@@ -131,10 +132,10 @@ public class MarsSimulation extends AbstractSimulation {
             particle.withAccelerationFunctionX(accelerationFunctionX);
             particle.withAccelerationFunctionY(accelerationFunctionY);
 
-            m                               = particle.getMass();
+            m                                       = particle.getMass();
 
             // x
-            accX                                    = particle.getPositionDerivativeX(2, Collections.singletonList(particle));
+            accX                                    = particle.getPositionDerivativeX(2, particles);
             ArrayList<Double> furtherDerivativesX   = particle.getFurtherDerivativesX();
             furtherDerivativesX.set(0, 0.0);
             furtherDerivativesX.set(1, 0.0);
@@ -142,7 +143,7 @@ public class MarsSimulation extends AbstractSimulation {
             particle.setFurtherDerivativesX(furtherDerivativesX);
 
             // y
-            accY                                    = particle.getPositionDerivativeY(2, Collections.singletonList(particle));
+            accY                                    = particle.getPositionDerivativeY(2, particles);
             ArrayList<Double> furtherDerivativesY   = particle.getFurtherDerivativesY();
             furtherDerivativesY.set(0, 0.0);
             furtherDerivativesY.set(1, 0.0);
@@ -169,14 +170,14 @@ public class MarsSimulation extends AbstractSimulation {
 //            d = Math.atan(y/x);
 //        }
 
-        double d = x == 0 ? (y > 0 ? Math.PI : 3.0/2 * Math.PI) : Math.atan(y/x);
+        double d = x == 0 ? (y > 0 ? Math.PI/2 : 3*Math.PI/2) : Math.atan(y/x);
         d = (d < 0) ? d + 2*Math.PI : d;
         return d;
     }
 
     private static List<AcceleratedParticle> removedFromList(List<AcceleratedParticle> all, AcceleratedParticle particle) {
         return all.stream()
-            .filter(p -> !(p.getType().equals(particle.getType()) || p.getId() == particle.getId()))
+            .filter(p -> !p.getType().equals(particle.getType()))
             .collect(Collectors.toList());
     }
 
