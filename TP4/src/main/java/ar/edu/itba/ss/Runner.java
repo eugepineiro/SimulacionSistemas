@@ -46,7 +46,6 @@ public class Runner {
             if (seed == 0) {
                 curr = System.currentTimeMillis();
                 System.out.printf("Current seed: %d\n", curr);
-                random = new Random(curr);
             }
             else
                 random = new Random(seed);

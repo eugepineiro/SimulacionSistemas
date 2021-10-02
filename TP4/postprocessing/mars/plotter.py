@@ -24,13 +24,13 @@ def plot_distance_per_date(min_distances):
 
     fig.show()
 
-def plot_spaceship_velocity_per_frame(velocities, frames): 
+def plot_spaceship_velocity_per_frame(velocities, times): 
 
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
         x=velocities,
-        y=frames,
+        y=times,
         mode='lines', 
     ))
     
