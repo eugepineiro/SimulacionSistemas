@@ -8,7 +8,6 @@ with open("../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_mars_result
 
 with open("../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_mars_results.json") as f:
     mars_results = json.load(f)
- 
 
 
 dates = list(mars_results_with_multiple_dates.keys()) 
@@ -26,10 +25,10 @@ spaceship_positions_by_date = {}
 # EJ 1.a 
 
 for date in dates:
-    frames = list(map(lambda f: f['particles'], mars_results_with_multiple_dates[date]))
+    frames_particles = list(map(lambda f: f['particles'], mars_results_with_multiple_dates[date]))
     mars_frames = list(map(
         lambda f: list(filter(lambda p: p['type'] == 'MARS', f))[0], 
-        frames
+        frames_particles
     ))
     mars_positions = list(map(
         lambda p: {'x': p['x'], 'y': p['y']},
@@ -38,7 +37,7 @@ for date in dates:
     mars_positions_by_date[date] = mars_positions
     spaceship_frames = list(map(
         lambda f: list(filter(lambda p: p['type'] == 'SPACESHIP', f))[0], 
-        frames
+        frames_particles
     ))
     spaceship_positions = list(map(
         lambda p: {'x': p['x'], 'y': p['y']},
@@ -55,16 +54,16 @@ plot_distance_per_date(min_distances)
 
 # EJ 1.b 
  
-frames = list(map(lambda f: f['particles'], mars_results))
-spaceship_frames = list(map(
-        lambda f: list(filter(lambda p: p['type'] == 'SPACESHIP', f))[0], 
-        frames
-    ))
-spaceship_velocities = list(map(
-    lambda p: math.sqrt(math.pow(p['vx'], 2) + math.pow(p['vy'], 2)),
-    spaceship_frames
-)) 
+# frames = list(map(lambda f: f['particles'], mars_results))
+# spaceship_frames = list(map(
+#         lambda f: list(filter(lambda p: p['type'] == 'SPACESHIP', f))[0], 
+#         frames
+#     ))
+# spaceship_velocities = list(map(
+#     lambda p: math.sqrt(math.pow(p['vx'], 2) + math.pow(p['vy'], 2)),
+#     spaceship_frames
+# )) 
 
-times = list(map(lambda f: f['time'], spaceship_frames))
+# times = list(map(lambda f: f['time'], spaceship_frames))
 
-plot_spaceship_velocity_per_frame(spaceship_velocities, times)
+# plot_spaceship_velocity_per_frame(spaceship_velocities, times)

@@ -26,7 +26,8 @@ def get_min_distances(mars_positions_by_date, spaceship_positions_by_date): # po
             if distance < min_distance:
                 min_distance = distance
 
-        print(mars_positions, spaceship_positions)
         min_distances_by_date[date] = min_distance
+
+        # print(date, min_distances_by_date[date])
 
     return min_distances_by_date

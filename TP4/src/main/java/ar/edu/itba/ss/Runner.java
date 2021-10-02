@@ -6,27 +6,29 @@ import ar.edu.itba.ss.integrations.Beeman;
 import ar.edu.itba.ss.integrations.Gear;
 import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.integrations.VerletOriginal;
-import ar.edu.itba.ss.models.Frame;
-import ar.edu.itba.ss.models.IntegrationType;
-import ar.edu.itba.ss.models.SystemType;
+import ar.edu.itba.ss.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class Runner {
 
-    private static final String     CONFIG_PATH                         = "TP4/src/main/resources/config/config.json";
-    private static final String     JSON_WRITER_PATH                    = "TP4/src/main/resources/postprocessing";
-    private static final String     XYZ_WRITER_PATH                     = "TP4/src/main/resources/ovito";
-    private static final String     OVITO_OSCILLATOR_VERLET_FILENAME    = "SdS_TP4_2021Q2G01_oscillator_verlet_output";
-    private static final String     OVITO_OSCILLATOR_BEEMAN_FILENAME    = "SdS_TP4_2021Q2G01_oscillator_beeman_output";
-    private static final String     OVITO_MARS_FILENAME                 = "SdS_TP4_2021Q2G01_mars_output";
-    private static final String     OSCILLATOR_POSTPROCESSING_FILENAME  = "SdS_TP4_2021Q2G01_oscillator_results";
-    private static final String     MARS_POSTPROCESSING_FILENAME        = "SdS_TP4_2021Q2G01_mars_results";
-    private static final String     MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES        = "SdS_TP4_2021Q2G01_mars_results_with_multiple_dates";
+    private static final String         CONFIG_PATH                                 = "TP4/src/main/resources/config/config.json";
+    private static final String         JSON_WRITER_PATH                            = "TP4/src/main/resources/postprocessing";
+    private static final String         XYZ_WRITER_PATH                             = "TP4/src/main/resources/ovito";
+    private static final String         OVITO_OSCILLATOR_VERLET_FILENAME            = "SdS_TP4_2021Q2G01_oscillator_verlet_output";
+    private static final String         OVITO_OSCILLATOR_BEEMAN_FILENAME            = "SdS_TP4_2021Q2G01_oscillator_beeman_output";
+    private static final String         OVITO_MARS_FILENAME                         = "SdS_TP4_2021Q2G01_mars_output";
+    private static final String         OSCILLATOR_POSTPROCESSING_FILENAME          = "SdS_TP4_2021Q2G01_oscillator_results";
+    private static final String         MARS_POSTPROCESSING_FILENAME                = "SdS_TP4_2021Q2G01_mars_results";
+    private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES = "SdS_TP4_2021Q2G01_mars_results_with_multiple_dates";
+
+    private static final LocalDateTime  DATA_START_DATE                             = LocalDateTime.of(2021, Month.SEPTEMBER, 24, 0, 0, 0);
 
     // Main
 
@@ -161,21 +163,45 @@ public class Runner {
     }
 
     private static void runMarsSimulation(Config config, HashMap<String, Integration> integrationHashMap) throws IOException {
-        long startTime = System.nanoTime();
 
-        Simulation<List<Frame>> simulation = new MarsSimulation()
+        LocalDateTime launchDate = config.getLaunch_date();
+
+        MarsSimulation simulation = new MarsSimulation()
             .withIntegration(integrationHashMap.get(config.getIntegration()))
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
-            .withMaxTime(config.getMax_time())            // seconds
-            .withLaunchDate(config.getLaunch_date())
             .withStatusBarActivated(false)
             ;
 
-        long endTime = System.nanoTime();
-        long timeElapsed = endTime - startTime;
+        // Simulate until date
+        long secondsUntilLaunch = DATA_START_DATE.until(launchDate, ChronoUnit.SECONDS);
+        simulation.setMaxTime(secondsUntilLaunch);
+        simulation.setSpaceshipPresent(false);
+        List<Frame> simulated = simulation.simulate();
+        Frame lastFrame = simulated.get(simulated.size()-1);
+        AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
+        AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
+        AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
+
+        simulation = new MarsSimulation()
+            .withIntegration(integrationHashMap.get(config.getIntegration()))
+            .withDt(config.getDt())
+            .withSaveFactor(config.getSave_factor())
+            .withStatusBarActivated(false)
+        ;
+
+        simulation.setEarth(earth);
+        simulation.setMars(mars);
+        simulation.setSun(sun);
+        simulation.setSpaceshipPresent(true);
+        simulation.setMaxTime(config.getMax_time());
+
+        long startTime = System.nanoTime();
 
         List<Frame> results = simulation.simulate();
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
 
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
@@ -203,10 +229,9 @@ public class Runner {
     }
 
     private static void runMarsSimulationWithMultipleDates(Config config, HashMap<String, Integration> integrationHashMap) throws IOException {
-        LocalDateTime launchDate = config.getLaunch_date();
         double period = config.getMax_time();
 
-        LocalDateTime lastDate = launchDate.plusSeconds((long) period);
+        LocalDateTime lastDate = DATA_START_DATE.plusSeconds((long) period);
 
         JsonWriter jsonWriter = new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES);
 
@@ -216,20 +241,46 @@ public class Runner {
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
                 .withDt(config.getDt())
                 .withSaveFactor(config.getSave_factor())
-                .withMaxTime(config.getMax_time())
                 .withStatusBarActivated(false)
                 ;
 
         long count;
         LocalDateTime date;
 
+        LocalDateTime debugDate = LocalDateTime.of(2022, Month.SEPTEMBER, 16, 0, 0, 0);
+
         // A partir de launchaDate voy simulando cada un día hasta 2 años (period)
-        for(date = launchDate, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
+        for(date = DATA_START_DATE, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
             if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
 
-            simulation.setLaunchDate(date);
-            results.put(date, simulation.simulate());
+            // Simulate until date
+            long secondsUntilLaunch = DATA_START_DATE.until(date, ChronoUnit.SECONDS);
+            simulation.setMaxTime(secondsUntilLaunch);
+            simulation.setSpaceshipPresent(false);
+            List<Frame> simulated = simulation.simulate();
+            Frame lastFrame = simulated.get(simulated.size()-1);
+            AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
+            AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
+            AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
 
+            if (date.equals(debugDate)) {
+                break;
+            }
+
+            simulation = new MarsSimulation()
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withStatusBarActivated(false)
+            ;
+
+            simulation.setEarth(earth);
+            simulation.setMars(mars);
+            simulation.setSun(sun);
+            simulation.setSpaceshipPresent(true);
+            simulation.setMaxTime(period);
+
+            results.put(date, simulation.simulate());
         }
         jsonWriter.setObject(results);
         jsonWriter.write();
