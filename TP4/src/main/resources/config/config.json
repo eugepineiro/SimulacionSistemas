@@ -9,6 +9,7 @@
   "loading_bar": true,
   "multiple_dates": true,
   "multiple_velocities": {
+    "activated": false,
     "min": 7.5,
     "max": 9
   }
