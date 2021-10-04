@@ -29,8 +29,8 @@ def plot_spaceship_velocity_per_frame(velocities, times):
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
-        x=velocities,
-        y=times,
+        x=times,
+        y=velocities,
         mode='lines', 
     ))
     
@@ -43,3 +43,5 @@ def plot_spaceship_velocity_per_frame(velocities, times):
             size=28, 
         )
     )
+
+    fig.show()
