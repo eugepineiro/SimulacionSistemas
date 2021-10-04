@@ -3,9 +3,9 @@
   "system": "mars",
   "integration": "verlet_original",
   "dt": 3600,
-  "launch_date": "2022-09-16 00:00:00",
+  "launch_date": "2022-10-22 00:00:00",
   "max_time": 63072000,
-  "save_factor": 24,
+  "save_factor": 6,
   "loading_bar": true,
-  "multiple_dates": false
+  "multiple_dates": true
 }

@@ -232,29 +232,31 @@ public class Runner {
         double period = config.getMax_time();
 
         LocalDateTime lastDate = DATA_START_DATE.plusSeconds((long) period);
+        System.out.println(lastDate);
 
         JsonWriter jsonWriter = new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES);
 
         Map<LocalDateTime, List<Frame>> results = new TreeMap<>();
 
-        MarsSimulation simulation = new MarsSimulation()
+        MarsSimulation simulation;
+
+        long count, secondsUntilLaunch;
+        LocalDateTime date;
+
+
+        // A partir de launchaDate voy simulando cada un día hasta 2 años (period)
+        for(date = DATA_START_DATE, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
+            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
+
+             simulation = new MarsSimulation()
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
                 .withDt(config.getDt())
                 .withSaveFactor(config.getSave_factor())
                 .withStatusBarActivated(false)
                 ;
 
-        long count;
-        LocalDateTime date;
-
-        LocalDateTime debugDate = LocalDateTime.of(2022, Month.SEPTEMBER, 16, 0, 0, 0);
-
-        // A partir de launchaDate voy simulando cada un día hasta 2 años (period)
-        for(date = DATA_START_DATE, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
-            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
-
             // Simulate until date
-            long secondsUntilLaunch = DATA_START_DATE.until(date, ChronoUnit.SECONDS);
+            secondsUntilLaunch = DATA_START_DATE.until(date, ChronoUnit.SECONDS);
             simulation.setMaxTime(secondsUntilLaunch);
             simulation.setSpaceshipPresent(false);
             List<Frame> simulated = simulation.simulate();
@@ -262,10 +264,6 @@ public class Runner {
             AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
             AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
             AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
-
-            if (date.equals(debugDate)) {
-                break;
-            }
 
             simulation = new MarsSimulation()
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
@@ -282,8 +280,11 @@ public class Runner {
 
             results.put(date, simulation.simulate());
         }
+        if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
+
         jsonWriter.setObject(results);
         jsonWriter.write();
+
 
     }
 
