@@ -7,5 +7,9 @@
   "max_time": 63072000,
   "save_factor": 6,
   "loading_bar": true,
-  "multiple_dates": true
+  "multiple_dates": true,
+  "multiple_velocities": {
+    "min": 7.5,
+    "max": 9
+  }
 }
