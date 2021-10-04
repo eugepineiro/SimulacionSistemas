@@ -78,12 +78,18 @@ public class Runner {
 
             else if (system.equals(SystemType.MARS.name().toLowerCase())) {
 
+                boolean multipleRuns = false;
+
                 if(config.getMultiple_velocities().isActivated()) {
+                    multipleRuns = true;
                     final MultipleVelocities mult = config.getMultiple_velocities();
                     runMarsSimulationWithMultipleVelocities(mult.getMin(), mult.getMax(), mult.getIncrement(), config, integrationHashMap);
-                } else if(config.getMultiple_dates()){
+                }
+                if(config.getMultiple_dates()){
+                    multipleRuns = true;
                     runMarsSimulationWithMultipleDates(config, integrationHashMap);
-                } else {
+                }
+                if (!multipleRuns) {
                     runMarsSimulation(config, integrationHashMap);
                 }
 
@@ -316,7 +322,10 @@ public class Runner {
 
         long startTime = System.nanoTime();
 
-        for (double initialSpeed = minSpeed; initialSpeed < maxSpeed; initialSpeed += inc) {
+        double initialSpeed;
+        for (initialSpeed = minSpeed; initialSpeed < maxSpeed; initialSpeed += inc) {
+            if (config.getLoading_bar()) Utils.printLoadingBar(initialSpeed/(maxSpeed - minSpeed + 1), LOADING_BAR_SIZE);
+
             simulation = new MarsSimulation()
                     .withIntegration(integrationHashMap.get(config.getIntegration()))
                     .withDt(config.getDt())
@@ -332,6 +341,7 @@ public class Runner {
 
             results.put(initialSpeed, simulation.simulate());
         }
+        if (config.getLoading_bar()) Utils.printLoadingBar(initialSpeed/(maxSpeed - minSpeed + 1), LOADING_BAR_SIZE);
 
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
@@ -342,7 +352,7 @@ public class Runner {
                 .withObj(results)
                 .write();
 
-        System.out.println("Finished saving " + MARS_POSTPROCESSING_FILENAME + ".json");
+        System.out.println("Finished saving " + MARS_POSTPROCESSING_FILENAME_MULTIPLE_VEL + ".json");
     }
 
     private Date addSeconds(Date date, Integer seconds) {

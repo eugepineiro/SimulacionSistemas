@@ -13,6 +13,9 @@ with open("../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_mars_result
 with open("../../src/main/resources/config/config.json") as f:
     config = json.load(f)
 
+with open("../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_mars_results_with_multiple_velocities.json") as f:
+    mars_results_with_multiple_velocities = json.load(f)
+
 ############# EJ 1.a ############# 
 
 dates = list(mars_results_with_multiple_dates.keys()) 

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public class MarsSimulation extends AbstractSimulation {
 
     private boolean spaceshipPresent;
+    private double spaceshipInitialSpeed = 8;
     private AcceleratedParticle earth, sun, spaceship, mars;
 
     @Override
@@ -51,7 +52,7 @@ public class MarsSimulation extends AbstractSimulation {
         double spaceshipY           = earthY + (earthRadius + stationHeight) * Math.sin(earthInitialAngle);
         double tanAngle             = (earthInitialAngle + (Math.PI/2)) % (2*Math.PI);
         double orbitalVelocity      = 7.12;                                                                     // km/s
-        double initSpeed            = 8;
+        double initSpeed            = spaceshipInitialSpeed;
         double initialVelocity      = initSpeed + orbitalVelocity + earthVelocity;                              // km // TODO elegir un momento  para earthVelocity
         double spaceshipMass        = 2 * Math.pow(10, 5);                                                      // kg
         double spaceshipVx          = initialVelocity * Math.cos(tanAngle);
@@ -235,6 +236,10 @@ public class MarsSimulation extends AbstractSimulation {
     public MarsSimulation withSpaceshipPresent(boolean spaceshipPresent) {
         setSpaceshipPresent(spaceshipPresent);
         return this;
+    }
+
+    public void setSpaceshipInitialSpeed(double initialSpeed) {
+        this.spaceshipInitialSpeed = initialSpeed;
     }
 
     public void setEarth(AcceleratedParticle earth) {
