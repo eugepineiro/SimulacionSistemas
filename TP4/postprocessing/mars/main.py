@@ -1,5 +1,5 @@
 import json, math
-from re import A
+from re import A 
 
 from plotter import plot_distance_per_date, plot_spaceship_velocity_per_frame
 from utils import get_min_distances, calculate_distance
@@ -100,8 +100,11 @@ print(f'Distancia entre marte y la nave: {min_distance - mars_radius}')
 
 ##############  EJ 1.c #############
 
-mars_at_arrival = mars_positions_by_date[best_launch_date][idx]
-spaceship_at_arrival = mars_positions_by_date[best_launch_date][idx]
+for particle in  mars_results_with_multiple_dates[best_launch_date][idx]['particles']:
+    if particle['type'] == 'SPACESHIP': 
+        spaceship_at_arrival = particle
+    elif particle['type'] == 'MARS':
+        mars_at_arrival = particle
 
 vr_x = spaceship_at_arrival['vx'] - mars_at_arrival['vx']
 vr_y = spaceship_at_arrival['vy'] - mars_at_arrival['vy']
