@@ -1,6 +1,7 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.config.Config;
+import ar.edu.itba.ss.config.MultipleVelocities;
 import ar.edu.itba.ss.dto.IntegrationResults;
 import ar.edu.itba.ss.integrations.Beeman;
 import ar.edu.itba.ss.integrations.Gear;
@@ -27,6 +28,7 @@ public class Runner {
     private static final String         OSCILLATOR_POSTPROCESSING_FILENAME          = "SdS_TP4_2021Q2G01_oscillator_results";
     private static final String         MARS_POSTPROCESSING_FILENAME                = "SdS_TP4_2021Q2G01_mars_results";
     private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES = "SdS_TP4_2021Q2G01_mars_results_with_multiple_dates";
+    private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_VEL   = "SdS_TP4_2021Q2G01_mars_results_with_multiple_velocities";
 
     private static final LocalDateTime  DATA_START_DATE                             = LocalDateTime.of(2021, Month.SEPTEMBER, 24, 0, 0, 0);
 
@@ -76,7 +78,10 @@ public class Runner {
 
             else if (system.equals(SystemType.MARS.name().toLowerCase())) {
 
-                if(config.getMultiple_dates()){
+                if(config.getMultiple_velocities().isActivated()) {
+                    final MultipleVelocities mult = config.getMultiple_velocities();
+                    runMarsSimulationWithMultipleVelocities(mult.getMin(), mult.getMax(), mult.getIncrement(), config, integrationHashMap);
+                } else if(config.getMultiple_dates()){
                     runMarsSimulationWithMultipleDates(config, integrationHashMap);
                 } else {
                     runMarsSimulation(config, integrationHashMap);
@@ -284,8 +289,60 @@ public class Runner {
 
         jsonWriter.setObject(results);
         jsonWriter.write();
+    }
 
+    private static void runMarsSimulationWithMultipleVelocities(double minSpeed, double maxSpeed, double inc, Config config, HashMap<String, Integration> integrationHashMap) throws IOException {
 
+        LocalDateTime launchDate = config.getLaunch_date();
+
+        MarsSimulation simulation = new MarsSimulation()
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withStatusBarActivated(false)
+                ;
+
+        // Simulate until date
+        long secondsUntilLaunch = DATA_START_DATE.until(launchDate, ChronoUnit.SECONDS);
+        simulation.setMaxTime(secondsUntilLaunch);
+        simulation.setSpaceshipPresent(false);
+        List<Frame> simulated = simulation.simulate();
+        Frame lastFrame = simulated.get(simulated.size()-1);
+        AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
+        AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
+        AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
+
+        Map<Double, List<Frame>> results = new HashMap<>();
+
+        long startTime = System.nanoTime();
+
+        for (double initialSpeed = minSpeed; initialSpeed < maxSpeed; initialSpeed += inc) {
+            simulation = new MarsSimulation()
+                    .withIntegration(integrationHashMap.get(config.getIntegration()))
+                    .withDt(config.getDt())
+                    .withSaveFactor(config.getSave_factor())
+                    .withStatusBarActivated(false)
+            ;
+
+            simulation.setEarth(earth);
+            simulation.setMars(mars);
+            simulation.setSun(sun);
+            simulation.setSpaceshipPresent(true);
+            simulation.setMaxTime(config.getMax_time());
+
+            results.put(initialSpeed, simulation.simulate());
+        }
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
+
+        new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_VEL)
+                .withObj(results)
+                .write();
+
+        System.out.println("Finished saving " + MARS_POSTPROCESSING_FILENAME + ".json");
     }
 
     private Date addSeconds(Date date, Integer seconds) {

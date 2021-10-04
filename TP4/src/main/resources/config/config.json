@@ -11,6 +11,7 @@
   "multiple_velocities": {
     "activated": false,
     "min": 7.5,
-    "max": 9
+    "max": 9,
+    "increment": 0.1
   }
 }

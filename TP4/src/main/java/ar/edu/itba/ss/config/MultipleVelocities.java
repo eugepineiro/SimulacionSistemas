@@ -4,6 +4,7 @@ public class MultipleVelocities {
     private boolean activated;
     private double min;
     private double max;
+    private double increment;
 
     public boolean isActivated() {
         return activated;
@@ -27,5 +28,13 @@ public class MultipleVelocities {
 
     public void setMax(double max) {
         this.max = max;
+    }
+
+    public double getIncrement() {
+        return increment;
+    }
+
+    public void setIncrement(double increment) {
+        this.increment = increment;
     }
 }
