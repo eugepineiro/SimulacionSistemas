@@ -1,8 +1,8 @@
 import json, math
 from re import A 
 
-from plotter import plot_distance_per_date, plot_spaceship_velocity_per_frame
-from utils import get_min_distances, calculate_distance
+from plotter import plot_distance_per_date, plot_spaceship_velocity_per_frame, plot_spaceship_arrival_time_per_velocity
+from utils import get_min_distances, calculate_distance, get_arrival_time, get_planet_and_spaceship_positions_by_key
 
 with open("../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_mars_results_with_multiple_dates.json") as f:
     mars_results_with_multiple_dates = json.load(f)
@@ -14,35 +14,13 @@ with open("../../src/main/resources/config/config.json") as f:
     config = json.load(f)
 
 with open("../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_mars_results_with_multiple_velocities.json") as f:
-    mars_results_with_multiple_velocities = json.load(f)
+    mars_results_with_multiple_velocities_wrapper = json.load(f)
 
 ############# EJ 1.a ############# 
 
 dates = list(mars_results_with_multiple_dates.keys()) 
-
-mars_positions_by_date = {}
-spaceship_positions_by_date = {}
-
-for date in dates:
-    frames_particles = list(map(lambda f: f['particles'], mars_results_with_multiple_dates[date]))
-    mars_frames = list(map(
-        lambda f: list(filter(lambda p: p['type'] == 'MARS', f))[0], 
-        frames_particles
-    ))
-    mars_positions = list(map(
-        lambda p: {'x': p['x'], 'y': p['y']},
-        mars_frames
-    ))
-    mars_positions_by_date[date] = mars_positions
-    spaceship_frames = list(map(
-        lambda f: list(filter(lambda p: p['type'] == 'SPACESHIP', f))[0], 
-        frames_particles
-    ))
-    spaceship_positions = list(map(
-        lambda p: {'x': p['x'], 'y': p['y']},
-        spaceship_frames
-    ))
-    spaceship_positions_by_date[date] = spaceship_positions
+ 
+mars_positions_by_date, spaceship_positions_by_date =  get_planet_and_spaceship_positions_by_key(dates, mars_results_with_multiple_dates, 'MARS')
 
 min_distances_by_date = get_min_distances(mars_positions_by_date, spaceship_positions_by_date)  
 
@@ -50,8 +28,6 @@ plot_distance_per_date(min_distances_by_date, config['dt'])
 
 ##############  EJ 1.b ############# 
  
-
-
 best_launch_date = None
 min_distance = 0
 
@@ -92,11 +68,11 @@ while idx < len(best_date_mars_positions):
 arrival_time = mars_results_with_multiple_dates[best_launch_date][idx]['time']
 print(f'{arrival_time} segundos')
 
-print(min_distance)
+print(f'Minima distancia: {min_distance}')
 
 mars_radius = 3389.92 # km
 
-print(mars_radius)
+print(f'Radio de marte: {mars_radius}')
 
 print(f'Distancia entre marte y la nave: {min_distance - mars_radius}')
 
@@ -114,3 +90,21 @@ vr_y = spaceship_at_arrival['vy'] - mars_at_arrival['vy']
 
 print(f'Velocidad relativa en x: {vr_x} km/s, Velocidad relativa en y: {vr_y} km/s')
 print(f'Modulo de la velocidad relativa: {math.sqrt(vr_x**2 + vr_y**2)}')
+
+##############  EJ 2 #############
+mars_results_with_multiple_velocities = mars_results_with_multiple_velocities_wrapper['map']
+velocities = list(mars_results_with_multiple_velocities.keys())
+
+mars_positions_by_velocity, spaceship_positions_by_velocity =  get_planet_and_spaceship_positions_by_key(velocities, mars_results_with_multiple_velocities, 'MARS')
+
+min_distances_by_velocity = get_min_distances(mars_positions_by_velocity, spaceship_positions_by_velocity)  
+
+arrival_times = []
+
+for vel in velocities: 
+    arrival_time = get_arrival_time(mars_positions_by_velocity[vel], spaceship_positions_by_velocity[vel], mars_results_with_multiple_velocities[vel], min_distances_by_velocity[vel])
+    arrival_times.append(arrival_time)
+
+double_velocities = list(map(lambda s: float(s), velocities))
+
+plot_spaceship_arrival_time_per_velocity(double_velocities, arrival_times, mars_results_with_multiple_velocities_wrapper['date'], config['dt'], config['dt']*config['save_factor'])

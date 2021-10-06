@@ -15,6 +15,7 @@ public class Config {
     private Double  max_time;
     private Long    save_factor;
     private Boolean loading_bar;
+    private MultipleDt multiple_dt;
     private Boolean multiple_dates;
     private MultipleVelocities multiple_velocities;
 
@@ -81,6 +82,14 @@ public class Config {
 
     public void setLoading_bar(Boolean loading_bar) {
         this.loading_bar = loading_bar;
+    }
+
+    public MultipleDt getMultiple_dt() {
+        return multiple_dt;
+    }
+
+    public void setMultiple_dt(MultipleDt multiple_dt) {
+        this.multiple_dt = multiple_dt;
     }
 
     public Boolean getMultiple_dates() {

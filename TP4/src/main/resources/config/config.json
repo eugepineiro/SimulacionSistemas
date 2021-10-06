@@ -2,14 +2,20 @@
   "seed": 100,
   "system": "mars",
   "integration": "verlet_original",
-  "dt": 3600,
-  "launch_date": "2022-10-22 00:00:00",
-  "max_time": 63072000,
-  "save_factor": 24,
+  "dt": 600,
+  "launch_date": "2022-09-15 00:00:00",
+  "max_time": 31536000,
+  "save_factor": 6,
   "loading_bar": true,
+  "multiple_dt": {
+    "activated": false,
+    "min_exp": -5,
+    "max_exp": 0,
+    "increment": 1
+  },
   "multiple_dates": false,
   "multiple_velocities": {
-    "activated": true,
+    "activated": false,
     "min": 7.5,
     "max": 9,
     "increment": 0.1

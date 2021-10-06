@@ -49,3 +49,27 @@ def plot_spaceship_velocity_per_frame(velocities, times, launch_date, dt):
     fig['data'][0]['showlegend']=True
     
     fig.show()
+
+def plot_spaceship_arrival_time_per_velocity(velocities, times, launch_date, dt, save_dt): 
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=velocities,
+        y=times,
+        mode='markers', 
+    ))
+    
+    fig.update_layout(
+        title="Variación de V0 ",
+        xaxis_title="Velocidad Inicial de la Nave (km/s)",
+        yaxis_title="Tiempo de llegada (s)",
+        legend_title=f"<b>Referencias</b><br> Fecha de salida {launch_date} <br> Paso Temporal {dt}s <br> Paso Temporal Guardado {save_dt}s",
+        font=dict( 
+            size=28, 
+        )
+    )
+
+    fig['data'][0]['showlegend']=True
+    
+    fig.show()
