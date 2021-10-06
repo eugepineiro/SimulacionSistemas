@@ -37,7 +37,7 @@ public abstract class AbstractSimulation implements Simulation<List<Frame>> {
         List<ParticleHistory> histories = particles.stream()
             .map(p -> {
                 final ParticleHistory history = new ParticleHistory()
-                    .withPast(p)
+                    .withPast(p.clone())
                     .withPresent(p.clone())
                     ;
 

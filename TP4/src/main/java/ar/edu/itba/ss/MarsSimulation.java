@@ -2,6 +2,7 @@ package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.integrations.Integration;
 import ar.edu.itba.ss.models.AcceleratedParticle;
+import ar.edu.itba.ss.models.ParticleHistory;
 import ar.edu.itba.ss.models.ParticleType;
 
 import java.util.ArrayList;
@@ -13,9 +14,29 @@ import java.util.stream.Stream;
 
 public class MarsSimulation extends AbstractSimulation {
 
+    static final private double MAX_DISTANCE_FROM_SUN       = 227.9 * Math.pow(10, 6);  // TODO: Check landing planet orbit
+    static final private double MAX_PLANET_ORBIT_TOLERANCE  = 10;                       // TODO: find a real one
+
     private boolean spaceshipPresent;
     private double spaceshipInitialSpeed = 8;
     private AcceleratedParticle earth, sun, spaceship, mars;
+
+    @Override
+    public boolean stop(List<ParticleHistory> histories) {
+        final AcceleratedParticle currentSpaceship = histories.stream()
+            .map(ParticleHistory::getPresent)
+            .filter(p -> p.getType().equals(ParticleType.SPACESHIP))
+            .findAny()
+            .orElse(null);
+
+        if (currentSpaceship == null) {
+            return false;
+        }
+        else {
+            final double distance = sun.distance(currentSpaceship);
+            return distance > MAX_DISTANCE_FROM_SUN + mars.getRadius() + MAX_PLANET_ORBIT_TOLERANCE;
+        }
+    }
 
     @Override
     public List<AcceleratedParticle> getParticles() {
