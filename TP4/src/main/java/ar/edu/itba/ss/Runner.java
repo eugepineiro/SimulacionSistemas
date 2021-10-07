@@ -35,6 +35,7 @@ public class Runner {
     private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_VEL       = "SdS_TP4_2021Q2G01_mars_results_with_multiple_velocities";
     private static final String         JUPITER_POSTPROCESSING_FILENAME                 = "SdS_TP4_2021Q2G01_jupiter_results";
     private static final String         JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_DATES  = "SdS_TP4_2021Q2G01_jupiter_results_with_multiple_dates";
+    private static final String         JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_VEL    = "SdS_TP4_2021Q2G01_jupiter_results_with_multiple_velocities";
 
     private static final LocalDateTime  DATA_START_DATE                                 = LocalDateTime.of(2021, Month.SEPTEMBER, 24, 0, 0, 0);
 
@@ -104,11 +105,11 @@ public class Runner {
 
                 boolean multipleRuns = false;
 
-//                if (config.getMultiple_velocities().isActivated()) {
-//                    multipleRuns = true;
-//                    final MultipleVelocities mul = config.getMultiple_velocities();
-//                    runMarsSimulationWithMultipleVelocities(mul.getMin(), mul.getMax(), mul.getIncrement(), config);
-//                }
+                if (config.getMultiple_velocities().isActivated()) {
+                    multipleRuns = true;
+                    final MultipleVelocities mul = config.getMultiple_velocities();
+                    runJupiterSimulationWithMultipleVelocities(mul.getMin(), mul.getMax(), mul.getIncrement(), config);
+                }
                 if (config.getMultiple_dates()) {
                     multipleRuns = true;
                     runJupiterSimulationWithMultipleDates(config);
@@ -580,6 +581,71 @@ public class Runner {
                 .write();
 
         System.out.println("Finished saving " + JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_DATES + ".json");
+    }
+
+    private static void runJupiterSimulationWithMultipleVelocities(double minSpeed, double maxSpeed, double increment, Config config) throws IOException {
+
+        LocalDateTime launchDate = config.getLaunch_date();
+
+        System.out.printf("Running mars simulation with multiple velocities between %.2g and %.2g with increment %.2g on launch date %s\n", minSpeed, maxSpeed, increment, launchDate);
+
+        JupiterSimulation simulation = new JupiterSimulation()
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withStatusBarActivated(false)
+                ;
+
+        // Simulate until date
+        long secondsUntilLaunch = DATA_START_DATE.until(launchDate, ChronoUnit.SECONDS);
+        simulation.setMaxTime(secondsUntilLaunch);
+        simulation.setSpaceshipPresent(false);
+        List<Frame> simulated = simulation.simulate();
+        Frame lastFrame = simulated.get(simulated.size()-1);
+        AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
+        AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
+        AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
+        AcceleratedParticle jupiter = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.JUPITER).findAny().orElse(null);
+
+        Map<Double, List<Frame>> results = new HashMap<>();
+
+        long startTime = System.nanoTime();
+
+        double initialSpeed;
+        for (initialSpeed = minSpeed; initialSpeed < maxSpeed; initialSpeed += increment) {
+            if (config.getLoading_bar()) Utils.printLoadingBar((initialSpeed - minSpeed)/(maxSpeed - minSpeed), LOADING_BAR_SIZE);
+
+            simulation = new JupiterSimulation()
+                    .withIntegration(integrationHashMap.get(config.getIntegration()))
+                    .withDt(config.getDt())
+                    .withSaveFactor(config.getSave_factor())
+                    .withStatusBarActivated(false)
+            ;
+
+            simulation.setEarth(earth);
+            simulation.setMars(mars);
+            simulation.setSun(sun);
+            simulation.setJupiter(jupiter);
+            simulation.setSpaceshipPresent(true);
+            simulation.setSpaceshipInitialSpeed(initialSpeed);
+            simulation.setMaxTime(config.getMax_time());
+
+            results.put(initialSpeed, simulation.simulate());
+        }
+        if (config.getLoading_bar()) Utils.printLoadingBar((initialSpeed - minSpeed)/(maxSpeed - minSpeed), LOADING_BAR_SIZE);
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
+
+        new JsonWriter(JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_VEL)
+                .withObj(new DatedMap<Double, List<Frame>>()
+                        .withMap(results)
+                        .withDate(launchDate))
+                .write();
+
+        System.out.println("Finished saving " + JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_VEL + ".json");
     }
 
 }

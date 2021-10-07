@@ -13,9 +13,9 @@
     "max_exp": 0,
     "increment": 1
   },
-  "multiple_dates": true,
+  "multiple_dates": false,
   "multiple_velocities": {
-    "activated": false,
+    "activated": true,
     "min": 7.5,
     "max": 9,
     "increment": 0.1
