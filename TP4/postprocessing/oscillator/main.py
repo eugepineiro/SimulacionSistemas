@@ -1,7 +1,7 @@
-import json, math
+import json, math, os
 import numpy as np
 
-from plotter import plot_oscillator_position_by_time
+from plotter import plot_oscillator_position_by_time, plot_oscillator_error_by_dt
 
 def analytic_solution(integrations_times):
     # Analytic Solution 
@@ -45,3 +45,29 @@ mses = list(map(
 
 print(names)
 print(mses)
+
+# ============ ej 1.3 ======================
+PATH = "../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_oscillator_results_with_multiple_dt.json"
+if(os.path.exists(PATH)):
+    with open(PATH) as f:
+        multiple_dt = json.load(f)
+
+    dts = []
+    errors = {
+        "beeman": [],
+        "verlet_original": [],
+        "gear": []
+    }
+
+    for dt in sorted(multiple_dt, reverse=True):
+        dts.append(dt)
+        times = list(map(lambda t: t['time'], multiple_dt[dt][0]['results']))
+        analytical = analytic_solution(times)
+
+        for osc in multiple_dt[dt]:
+            positions = list(map(lambda p: p["particles"][0]["y"], osc["results"]))
+            # print(positions)
+            errors[osc["integration"]].append(mse(positions, analytical))
+
+    print(dts, errors)
+    plot_oscillator_error_by_dt(dts, errors)
