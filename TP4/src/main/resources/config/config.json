@@ -15,7 +15,7 @@
   },
   "multiple_dates": true,
   "multiple_velocities": {
-    "activated": true,
+    "activated": false,
     "min": 7.5,
     "max": 9,
     "increment": 0.1
