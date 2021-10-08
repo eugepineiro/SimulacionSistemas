@@ -1,21 +1,21 @@
 {
   "seed": 100,
-  "system": "jupiter",
+  "system": "oscillator",
   "integration": "verlet_original",
-  "dt": 600,
+  "dt": 0.001,
   "launch_date": "2022-09-15 00:00:00",
-  "max_time": 31536000,
-  "save_factor": 6,
+  "max_time": 10,
+  "save_factor": 5,
   "loading_bar": true,
   "multiple_dt": {
-    "activated": false,
+    "activated": true,
     "min_exp": -5,
-    "max_exp": 0,
+    "max_exp": -1,
     "increment": 1
   },
   "multiple_dates": false,
   "multiple_velocities": {
-    "activated": true,
+    "activated": false,
     "min": 7.5,
     "max": 9,
     "increment": 0.1

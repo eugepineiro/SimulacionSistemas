@@ -51,6 +51,7 @@ PATH = "../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_oscillator_res
 if(os.path.exists(PATH)):
     with open(PATH) as f:
         multiple_dt = json.load(f)
+        multiple_dt = { float(k): v for k, v in multiple_dt.items() }
 
     dts = []
     errors = {
@@ -59,7 +60,8 @@ if(os.path.exists(PATH)):
         "gear": []
     }
 
-    for dt in sorted(multiple_dt, reverse=True):
+
+    for dt in sorted(multiple_dt):
         dts.append(dt)
         times = list(map(lambda t: t['time'], multiple_dt[dt][0]['results']))
         analytical = analytic_solution(times)

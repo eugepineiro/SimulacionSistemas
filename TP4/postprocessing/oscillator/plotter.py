@@ -1,5 +1,4 @@
 import plotly.graph_objects as go
-import math
 import numpy as np
 
 def plot_oscillator_position_by_time(integrations_positions, analytical_y, integrations_times, integrations_names):
@@ -42,20 +41,21 @@ def plot_oscillator_error_by_dt(dts, errors):
         fig.add_trace(go.Scatter( 
             x=dts, 
             y=errors[intg], 
-            mode='lines',
-            name=f'{intg}'
+            mode='lines+markers',
+            name=' '.join(list(map(lambda w: w.capitalize(), intg.split('_'))))
         ))
 
     fig.update_layout(
-        title="MSE en función del dt",
-        xaxis_title="dt",
-        yaxis_title="mse",
+        title="MSE en función del paso temporal",
+        xaxis_title="Paso temporal (s)",
+        yaxis_title="MSE (km<sup>2</sup>)",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=28, 
         )
     )
 
-    fig.update_yaxes(type="log")
+    fig.update_yaxes(type="log", exponentformat='power')
+    fig.update_xaxes(type="log", exponentformat='power', dtick=1)
 
     fig.show()
