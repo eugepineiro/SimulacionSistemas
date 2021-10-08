@@ -8,7 +8,6 @@ public class Config {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private LocalDateTime launch_date;
-    private Long    seed;
     private String  system;
     private String  integration;
     private Double  dt;
@@ -18,14 +17,6 @@ public class Config {
     private MultipleDt multiple_dt;
     private MultipleDates multiple_dates;
     private MultipleVelocities multiple_velocities;
-
-    public Long getSeed() {
-        return seed;
-    }
-
-    public void setSeed(Long seed) {
-        this.seed = seed;
-    }
 
     public String getSystem() {
         return system;
@@ -111,8 +102,7 @@ public class Config {
     @Override
     public String toString() {
         return "Config{" +
-            "seed=" + seed +
-            ", system='" + system + '\'' +
+            "system='" + system + '\'' +
             ", integration='" + integration + '\'' +
             ", dt=" + dt +
             ", max_time=" + max_time +

@@ -1,5 +1,4 @@
 {
-  "seed": 100,
   "system": "mars",
   "integration": "verlet_original",
   "dt": 600,
