@@ -1,5 +1,4 @@
 {
-  "seed": 100,
   "system": "oscillator",
   "integration": "verlet_original",
   "dt": 0.001,
