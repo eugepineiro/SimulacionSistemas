@@ -3,7 +3,7 @@
   "system": "mars",
   "integration": "verlet_original",
   "dt": 600,
-  "launch_date": "2022-09-15 00:00:00",
+  "launch_date": "2022-09-15 01:10:00",
   "max_time": 31536000,
   "save_factor": 1,
   "loading_bar": true,
@@ -14,10 +14,10 @@
     "increment": 1
   },
   "multiple_dates": {
-    "activated": true,
-    "min": "2022-10-04 00:00:00",
-    "max": "2022-10-10 00:00:00",
-    "increment": 1800
+    "activated": false,
+    "min": "2022-09-14 12:00:00",
+    "max": "2022-09-15 12:00:00",
+    "increment": 600
   },
   "multiple_velocities": {
     "activated": false,

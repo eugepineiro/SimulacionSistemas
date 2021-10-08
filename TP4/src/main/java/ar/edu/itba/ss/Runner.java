@@ -308,7 +308,23 @@ public class Runner {
 
         System.out.println("Finished saving " + MARS_POSTPROCESSING_FILENAME + ".json");
 
+        AcceleratedParticle spaceship = results.get(0).getParticles().stream().filter(p -> p.getType().equals(ParticleType.SPACESHIP)).findAny().orElse(null);
+
+        simulated.forEach(frame -> {
+            final AcceleratedParticle earthF = frame.getParticles().stream().filter(p -> p.getType().equals(ParticleType.EARTH)).findAny().orElse(null);
+
+            if (earthF != null && spaceship != null) {
+                final AcceleratedParticle spaceshipF = spaceship.clone()
+                    .withX(earthF.getX())
+                    .withY(earthF.getY())
+                    ;
+
+                frame.getParticles().add(spaceshipF);
+            }
+        });
+
         new XYZ_Writer(OVITO_MARS_FILENAME)
+            .addAllFrames(simulated)
             .addAllFrames(results)
             .writeAndClose();
 
@@ -502,7 +518,23 @@ public class Runner {
 
         System.out.println("Finished saving " + JUPITER_POSTPROCESSING_FILENAME + ".json");
 
+        AcceleratedParticle spaceship = results.get(0).getParticles().stream().filter(p -> p.getType().equals(ParticleType.SPACESHIP)).findAny().orElse(null);
+
+        simulated.forEach(frame -> {
+            final AcceleratedParticle earthF = frame.getParticles().stream().filter(p -> p.getType().equals(ParticleType.EARTH)).findAny().orElse(null);
+
+            if (earthF != null && spaceship != null) {
+                final AcceleratedParticle spaceshipF = spaceship.clone()
+                    .withX(earthF.getX())
+                    .withY(earthF.getY())
+                    ;
+
+                frame.getParticles().add(spaceshipF);
+            }
+        });
+
         new XYZ_Writer(OVITO_JUPITER_FILENAME)
+            .addAllFrames(simulated)
             .addAllFrames(results)
             .writeAndClose();
 

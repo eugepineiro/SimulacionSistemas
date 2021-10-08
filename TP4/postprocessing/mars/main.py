@@ -75,7 +75,8 @@ while idx < len(best_date_planet_positions):
     idx += 1
 
 arrival_time = results_with_multiple_dates[best_launch_date][idx]['time']
-print(f'{arrival_time} segundos')
+print(f'Fecha de salida: {best_launch_date}')
+print(f'Tiempo de arribo: {arrival_time} segundos ({(1.0 * arrival_time / 3600):.2f} hours - {(1.0 * arrival_time / (3600*24)):.2f} days)')
 
 print(f'Minima distancia: {min_distance}')
 
@@ -83,7 +84,7 @@ planet_radius = 3389.92 # km
 
 print(f'Radio de marte: {planet_radius}')
 
-print(f'Distancia entre marte y la nave: {min_distance - planet_radius}')
+print(f'Distancia entre marte y la nave: {min_distance - planet_radius if (min_distance - planet_radius > 0) else "Nave dentro de marte"}')
 
 
 ##############  EJ 1.c #############

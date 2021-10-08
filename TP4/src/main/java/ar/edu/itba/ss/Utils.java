@@ -6,9 +6,14 @@ public class Utils {
         StringBuilder loadingBar = new StringBuilder("[");
         for (int h = 0; h < loadingBarSize; h++) {
             if (h < Math.ceil(percentage * loadingBarSize) - 1)
-                loadingBar.append("=");
-            else if (h < Math.ceil(percentage * loadingBarSize))
-                loadingBar.append(">");
+                loadingBar.append("█");
+            else if (h < Math.ceil(percentage * loadingBarSize)) {
+                if (h < percentage * loadingBarSize - 0.5) {
+                    loadingBar.append("█");
+                } else {
+                    loadingBar.append("▄");
+                }
+            }
             else
                 loadingBar.append(" ");
         }
