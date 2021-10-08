@@ -10,7 +10,7 @@ import java.util.List;
 public class MarsSimulation extends PlanetsSimulation {
 
     static final private double MAX_DISTANCE_FROM_SUN       = 227.9 * Math.pow(10, 6);      // TODO: Check landing planet orbit
-    static final private double MAX_PLANET_ORBIT_TOLERANCE  = 10;                           // TODO: find a real one
+    static final private double MAX_PLANET_ORBIT_TOLERANCE  = 1000;                         // TODO: find a real one
 
     protected AcceleratedParticle mars;
 

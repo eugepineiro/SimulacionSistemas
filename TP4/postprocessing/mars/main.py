@@ -4,10 +4,18 @@ from re import A
 from plotter import plot_distance_per_date, plot_spaceship_velocity_per_frame, plot_spaceship_arrival_time_per_velocity
 from utils import get_min_distances, calculate_distance, get_arrival_time, get_planet_and_spaceship_positions_by_key
 
+MARS_RADIUS = 3389.92 # km
+MAX_MARS_ORBIT_TOLERANCE = 1000
+
+JUPITER_RADIUS = 69911 # km
+MAX_JUPITER_ORBIT_TOLERANCE = 1000
+
 planet_name = input("Enter Planet Name (mars/jupiter): ")
 planet_name = planet_name.lower()
 if planet_name != 'mars' and planet_name != 'jupiter': 
-    planet_name = 'mars'
+    planet_name = 'mars' 
+planet_radius = MARS_RADIUS if planet_name == 'mars' else JUPITER_RADIUS
+max_planet_orbit_tolerance = MAX_MARS_ORBIT_TOLERANCE if planet_name == 'mars' else MAX_JUPITER_ORBIT_TOLERANCE
 
 print(f"Runnning {planet_name} Postprocessing")
 
@@ -75,17 +83,13 @@ while idx < len(best_date_planet_positions):
     idx += 1
 
 arrival_time = results_with_multiple_dates[best_launch_date][idx]['time']
-print(f'Fecha de salida: {best_launch_date}')
-print(f'Tiempo de arribo: {arrival_time} segundos ({(1.0 * arrival_time / 3600):.2f} hours - {(1.0 * arrival_time / (3600*24)):.2f} days)')
 
 print(f'Minima distancia: {min_distance}')
 
-planet_radius = 3389.92 # km
-
-print(f'Radio de marte: {planet_radius}')
-
 print(f'Distancia entre marte y la nave: {min_distance - planet_radius if (min_distance - planet_radius > 0) else "Nave dentro de marte"}')
 
+print(f'Fecha de salida: {best_launch_date}')
+print(f'Tiempo de arribo: {arrival_time} segundos ({(1.0 * arrival_time / 3600):.2f} hours - {(1.0 * arrival_time / (3600*24)):.2f} days)')
 
 ##############  EJ 1.c #############
 
@@ -111,10 +115,17 @@ min_distances_by_velocity = get_min_distances(planet_positions_by_velocity, spac
 
 arrival_times = []
 
-for vel in velocities: 
-    arrival_time = get_arrival_time(planet_positions_by_velocity[vel], spaceship_positions_by_velocity[vel], planet_results_with_multiple_velocities[vel], min_distances_by_velocity[vel])
-    arrival_times.append(arrival_time)
+max_dist_to_consider = planet_radius + max_planet_orbit_tolerance
 
-double_velocities = list(map(lambda s: float(s), velocities))
+double_velocities = sorted(list(map(lambda s: float(s), velocities)))
+filtered_velocities = []
 
-plot_spaceship_arrival_time_per_velocity(double_velocities, arrival_times, results_with_multiple_velocities_wrapper['date'], config['dt'], config['dt']*config['save_factor'])
+for vel_n in double_velocities:
+    vel = str(vel_n)
+    print(f'{vel} -> {min_distances_by_velocity[vel]} comparing to {max_dist_to_consider}')
+    if min_distances_by_velocity[vel] <= max_dist_to_consider:
+        arrival_time = get_arrival_time(planet_positions_by_velocity[vel], spaceship_positions_by_velocity[vel], planet_results_with_multiple_velocities[vel], min_distances_by_velocity[vel])
+        arrival_times.append(arrival_time)
+        filtered_velocities.append(vel_n)
+
+plot_spaceship_arrival_time_per_velocity(filtered_velocities, arrival_times, results_with_multiple_velocities_wrapper['date'], config['dt'], config['dt']*config['save_factor'])

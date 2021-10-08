@@ -16,12 +16,12 @@
     "activated": false,
     "min": "2022-09-14 12:00:00",
     "max": "2022-09-15 12:00:00",
-    "increment": 600
+    "increment": 3600
   },
   "multiple_velocities": {
-    "activated": false,
+    "activated": true,
     "min": 7.5,
     "max": 9,
-    "increment": 0.1
+    "increment": 0.001
   }
 }
