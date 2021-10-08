@@ -8,7 +8,7 @@ MARS_RADIUS = 3389.92 # km
 MAX_MARS_ORBIT_TOLERANCE = 1000
 
 JUPITER_RADIUS = 69911 # km
-MAX_JUPITER_ORBIT_TOLERANCE = 1000
+MAX_JUPITER_ORBIT_TOLERANCE = 10000
 
 planet_name = input("Enter Planet Name (mars/jupiter): ")
 planet_name = planet_name.lower()
@@ -21,9 +21,6 @@ print(f"Runnning {planet_name} Postprocessing")
 
 with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results_with_multiple_dates.json") as f:
     results_with_multiple_dates = json.load(f)
-
-with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results.json") as f:
-    planet_results = json.load(f)
 
 with open("../../src/main/resources/config/config.json") as f:
     config = json.load(f)

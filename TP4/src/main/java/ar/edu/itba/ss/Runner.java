@@ -553,7 +553,6 @@ public class Runner {
 
     private static void runJupiterSimulationWithMultipleDates(LocalDateTime minLaunchDate, LocalDateTime maxLaunchDate, long increment, Config config) throws IOException {
         double period = config.getMax_time();
-        LocalDateTime lastDate = DATA_START_DATE.plusSeconds((long) period);
 
         System.out.printf("Running jupiter simulation with multiple launch dates between %s and %s with an increment of %d seconds\n", minLaunchDate, maxLaunchDate, increment);
 
@@ -621,7 +620,7 @@ public class Runner {
 
         LocalDateTime launchDate = config.getLaunch_date();
 
-        System.out.printf("Running mars simulation with multiple velocities between %.2g and %.2g with increment %.2g on launch date %s\n", minSpeed, maxSpeed, increment, launchDate);
+        System.out.printf("Running jupiter simulation with multiple velocities between %.2g and %.2g with increment %.2g on launch date %s\n", minSpeed, maxSpeed, increment, launchDate);
 
         JupiterSimulation simulation = new JupiterSimulation()
                 .withIntegration(integrationHashMap.get(config.getIntegration()))

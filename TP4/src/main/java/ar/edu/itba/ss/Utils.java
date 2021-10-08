@@ -9,9 +9,9 @@ public class Utils {
                 loadingBar.append("█");
             else if (h < Math.ceil(percentage * loadingBarSize)) {
                 if (h < percentage * loadingBarSize - 0.5) {
-                    loadingBar.append("█");
-                } else {
                     loadingBar.append("▄");
+                } else {
+                    loadingBar.append(" ");
                 }
             }
             else

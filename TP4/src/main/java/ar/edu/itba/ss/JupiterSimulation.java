@@ -9,8 +9,8 @@ import java.util.List;
 
 public class JupiterSimulation extends MarsSimulation {
 
-    static final private double MAX_DISTANCE_FROM_SUN       = 227.9 * Math.pow(10, 6);      // TODO: Check landing planet orbit
-    static final private double MAX_PLANET_ORBIT_TOLERANCE  = 10;                           // TODO: find a real one
+    static final private double MAX_DISTANCE_FROM_SUN       = 778.5 * Math.pow(10, 6);      // TODO: Check landing planet orbit
+    static final private double MAX_PLANET_ORBIT_TOLERANCE  = 10000;                       // TODO: find a real one
 
     private AcceleratedParticle jupiter;
 
