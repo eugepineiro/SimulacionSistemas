@@ -17,7 +17,7 @@ if planet_name != 'mars' and planet_name != 'jupiter':
 planet_radius = MARS_RADIUS if planet_name == 'mars' else JUPITER_RADIUS
 max_planet_orbit_tolerance = MAX_MARS_ORBIT_TOLERANCE if planet_name == 'mars' else MAX_JUPITER_ORBIT_TOLERANCE
 
-print(f"Runnning {planet_name} Postprocessing")
+print(f"Runnning {planet_name.capitalize()} Postprocessing")
 
 with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results_with_multiple_dates.json") as f:
     results_with_multiple_dates = json.load(f)
@@ -119,7 +119,7 @@ filtered_velocities = []
 
 for vel_n in double_velocities:
     vel = str(vel_n)
-    print(f'{vel} -> {min_distances_by_velocity[vel]} comparing to {max_dist_to_consider}')
+    # print(f'{vel} -> {min_distances_by_velocity[vel]} comparing to {max_dist_to_consider}')
     if min_distances_by_velocity[vel] <= max_dist_to_consider:
         arrival_time = get_arrival_time(planet_positions_by_velocity[vel], spaceship_positions_by_velocity[vel], planet_results_with_multiple_velocities[vel], min_distances_by_velocity[vel])
         arrival_times.append(arrival_time)

@@ -22,10 +22,18 @@ public class MarsSimulation extends PlanetsSimulation {
             .findAny()
             .orElse(null);
 
-        if (currentSpaceship == null) {
+        final AcceleratedParticle currentJupiter = histories.stream()
+            .map(ParticleHistory::getPresent)
+            .filter(p -> p.getType().equals(ParticleType.JUPITER))
+            .findAny()
+            .orElse(null);
+
+        if (currentSpaceship == null || currentJupiter == null) {
             return false;
         }
         else {
+            final double distanceToPlanet = currentJupiter.distance(currentSpaceship);
+            if (distanceToPlanet <= currentJupiter.getRadius()) return true;
             final double distance = sun.distance(currentSpaceship);
             return distance > MAX_DISTANCE_FROM_SUN + mars.getRadius() + MAX_PLANET_ORBIT_TOLERANCE;
         }

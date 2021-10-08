@@ -486,9 +486,10 @@ public class Runner {
         simulation.setSpaceshipPresent(false);
         List<Frame> simulated = simulation.simulate();
         Frame lastFrame = simulated.get(simulated.size()-1);
-        AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
-        AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
-        AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
+        AcceleratedParticle earth   = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
+        AcceleratedParticle sun     = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
+        AcceleratedParticle mars    = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
+        AcceleratedParticle jupiter = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.JUPITER).findAny().orElse(null);
 
         simulation = new JupiterSimulation()
             .withIntegration(integrationHashMap.get(config.getIntegration()))
@@ -500,6 +501,7 @@ public class Runner {
         simulation.setEarth(earth);
         simulation.setMars(mars);
         simulation.setSun(sun);
+        simulation.setJupiter(jupiter);
         simulation.setSpaceshipPresent(true);
         simulation.setMaxTime(config.getMax_time());
 
