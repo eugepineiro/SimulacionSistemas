@@ -16,7 +16,7 @@ public class Config {
     private Long    save_factor;
     private Boolean loading_bar;
     private MultipleDt multiple_dt;
-    private Boolean multiple_dates;
+    private MultipleDates multiple_dates;
     private MultipleVelocities multiple_velocities;
 
     public Long getSeed() {
@@ -92,11 +92,11 @@ public class Config {
         this.multiple_dt = multiple_dt;
     }
 
-    public Boolean getMultiple_dates() {
+    public MultipleDates getMultiple_dates() {
         return multiple_dates;
     }
 
-    public void setMultiple_dates(Boolean multiple_dates) {
+    public void setMultiple_dates(MultipleDates multiple_dates) {
         this.multiple_dates = multiple_dates;
     }
 

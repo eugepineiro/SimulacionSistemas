@@ -1,19 +1,24 @@
 {
   "seed": 100,
-  "system": "oscillator",
+  "system": "mars",
   "integration": "verlet_original",
-  "dt": 0.001,
+  "dt": 600,
   "launch_date": "2022-09-15 00:00:00",
-  "max_time": 10,
-  "save_factor": 5,
+  "max_time": 31536000,
+  "save_factor": 1,
   "loading_bar": true,
   "multiple_dt": {
-    "activated": true,
+    "activated": false,
     "min_exp": -5,
     "max_exp": -1,
     "increment": 1
   },
-  "multiple_dates": false,
+  "multiple_dates": {
+    "activated": true,
+    "min": "2022-10-04 00:00:00",
+    "max": "2022-10-10 00:00:00",
+    "increment": 1800
+  },
   "multiple_velocities": {
     "activated": false,
     "min": 7.5,

@@ -1,6 +1,7 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.config.Config;
+import ar.edu.itba.ss.config.MultipleDates;
 import ar.edu.itba.ss.config.MultipleDt;
 import ar.edu.itba.ss.config.MultipleVelocities;
 import ar.edu.itba.ss.dto.DatedMap;
@@ -89,9 +90,10 @@ public class Runner {
                     final MultipleVelocities mul = config.getMultiple_velocities();
                     runMarsSimulationWithMultipleVelocities(mul.getMin(), mul.getMax(), mul.getIncrement(), config);
                 }
-                if (config.getMultiple_dates()) {
+                if (config.getMultiple_dates().isActivated()) {
                     multipleRuns = true;
-                    runMarsSimulationWithMultipleDates(config);
+                    final MultipleDates mul = config.getMultiple_dates();
+                    runMarsSimulationWithMultipleDates(mul.getMin(), mul.getMax(), mul.getIncrement(), config);
                 }
                 if (!multipleRuns) {
                     runMarsSimulation(config);
@@ -110,9 +112,10 @@ public class Runner {
                     final MultipleVelocities mul = config.getMultiple_velocities();
                     runJupiterSimulationWithMultipleVelocities(mul.getMin(), mul.getMax(), mul.getIncrement(), config);
                 }
-                if (config.getMultiple_dates()) {
+                if (config.getMultiple_dates().isActivated()) {
                     multipleRuns = true;
-                    runJupiterSimulationWithMultipleDates(config);
+                    final MultipleDates mul = config.getMultiple_dates();
+                    runJupiterSimulationWithMultipleDates(mul.getMin(), mul.getMax(), mul.getIncrement(), config);
                 }
                 if (!multipleRuns) {
                     runJupiterSimulation(config);
@@ -322,23 +325,22 @@ public class Runner {
 
     }
 
-    private static void runMarsSimulationWithMultipleDates(Config config) throws IOException {
+    private static void runMarsSimulationWithMultipleDates(LocalDateTime minLaunchDate, LocalDateTime maxLaunchDate, long increment, Config config) throws IOException {
         double period = config.getMax_time();
-        LocalDateTime lastDate = DATA_START_DATE.plusSeconds((long) period);
 
-        System.out.printf("Running mars simulation with multiple launch dates between %s and %s\n", DATA_START_DATE, lastDate);
+        System.out.printf("Running mars simulation with multiple launch dates between %s and %s with an increment of %d seconds\n", minLaunchDate, maxLaunchDate, increment);
 
         Map<LocalDateTime, List<Frame>> results = new TreeMap<>();
         MarsSimulation simulation;
 
         long startTime = System.nanoTime();
 
-        long count, secondsUntilLaunch;
+        long secondsUntilLaunch;
         LocalDateTime date;
 
         // A partir de launchDate voy simulando cada un día hasta 2 años (period)
-        for(date = DATA_START_DATE, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
-            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
+        for(date = minLaunchDate; date.isBefore(maxLaunchDate); date = date.plusSeconds(increment)) {
+            if (config.getLoading_bar()) Utils.printLoadingBar(1.0*minLaunchDate.until(date, ChronoUnit.SECONDS)/minLaunchDate.until(maxLaunchDate, ChronoUnit.SECONDS), LOADING_BAR_SIZE);
 
              simulation = new MarsSimulation()
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
@@ -372,7 +374,7 @@ public class Runner {
 
             results.put(date, simulation.simulate());
         }
-        if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
+        if (config.getLoading_bar()) Utils.printLoadingBar(1.0*minLaunchDate.until(date, ChronoUnit.SECONDS)/minLaunchDate.until(maxLaunchDate, ChronoUnit.SECONDS), LOADING_BAR_SIZE);
 
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
@@ -517,23 +519,23 @@ public class Runner {
 
     }
 
-    private static void runJupiterSimulationWithMultipleDates(Config config) throws IOException {
+    private static void runJupiterSimulationWithMultipleDates(LocalDateTime minLaunchDate, LocalDateTime maxLaunchDate, long increment, Config config) throws IOException {
         double period = config.getMax_time();
         LocalDateTime lastDate = DATA_START_DATE.plusSeconds((long) period);
 
-        System.out.printf("Running Jupiter simulation with multiple launch dates between %s and %s\n", DATA_START_DATE, lastDate);
+        System.out.printf("Running jupiter simulation with multiple launch dates between %s and %s with an increment of %d seconds\n", minLaunchDate, maxLaunchDate, increment);
 
         Map<LocalDateTime, List<Frame>> results = new TreeMap<>();
         JupiterSimulation simulation;
 
         long startTime = System.nanoTime();
 
-        long count, secondsUntilLaunch;
+        long secondsUntilLaunch;
         LocalDateTime date;
 
         // A partir de launchDate voy simulando cada un día hasta 2 años (period)
-        for(date = DATA_START_DATE, count = 0; date.isBefore(lastDate); date = date.plusDays(1), count++) {
-            if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
+        for(date = minLaunchDate; date.isBefore(maxLaunchDate); date = date.plusSeconds(increment)) {
+            if (config.getLoading_bar()) Utils.printLoadingBar(1.0*minLaunchDate.until(date, ChronoUnit.SECONDS)/minLaunchDate.until(maxLaunchDate, ChronoUnit.SECONDS), LOADING_BAR_SIZE);
 
             simulation = new JupiterSimulation()
                     .withIntegration(integrationHashMap.get(config.getIntegration()))
@@ -569,7 +571,7 @@ public class Runner {
 
             results.put(date, simulation.simulate());
         }
-        if (config.getLoading_bar()) Utils.printLoadingBar((1.0 * count)/(period/(3600*24)), LOADING_BAR_SIZE);
+        if (config.getLoading_bar()) Utils.printLoadingBar(1.0*minLaunchDate.until(date, ChronoUnit.SECONDS)/minLaunchDate.until(maxLaunchDate, ChronoUnit.SECONDS), LOADING_BAR_SIZE);
 
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
