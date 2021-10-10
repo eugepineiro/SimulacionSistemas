@@ -91,6 +91,11 @@ public class JupiterSimulation extends MarsSimulation {
         return this;
     }
 
+    public JupiterSimulation withSpaceshipInitialSpeed(double initialSpeed) {
+        setSpaceshipInitialSpeed(initialSpeed);
+        return this;
+    }
+
     public void setJupiter(AcceleratedParticle jupiter) {
         this.jupiter = jupiter;
     }

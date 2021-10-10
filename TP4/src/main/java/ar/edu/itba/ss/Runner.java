@@ -267,6 +267,7 @@ public class Runner {
             .withIntegration(integrationHashMap.get(config.getIntegration()))
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
+            .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
             .withStatusBarActivated(false)
             ;
 
@@ -284,6 +285,7 @@ public class Runner {
             .withIntegration(integrationHashMap.get(config.getIntegration()))
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
+            .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
             .withStatusBarActivated(false)
         ;
 
@@ -362,6 +364,7 @@ public class Runner {
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
                 .withDt(config.getDt())
                 .withSaveFactor(config.getSave_factor())
+                .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
                 .withStatusBarActivated(false)
                 ;
 
@@ -379,6 +382,7 @@ public class Runner {
                 .withIntegration(integrationHashMap.get(config.getIntegration()))
                 .withDt(config.getDt())
                 .withSaveFactor(config.getSave_factor())
+                .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
                 .withStatusBarActivated(false)
             ;
 
@@ -411,11 +415,12 @@ public class Runner {
         System.out.printf("Running mars simulation with multiple velocities between %.2g and %.2g with increment %.2g on launch date %s\n", minSpeed, maxSpeed, increment, launchDate);
 
         MarsSimulation simulation = new MarsSimulation()
-                .withIntegration(integrationHashMap.get(config.getIntegration()))
-                .withDt(config.getDt())
-                .withSaveFactor(config.getSave_factor())
-                .withStatusBarActivated(false)
-                ;
+            .withIntegration(integrationHashMap.get(config.getIntegration()))
+            .withDt(config.getDt())
+            .withSaveFactor(config.getSave_factor())
+            .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
+            .withStatusBarActivated(false)
+            ;
 
         // Simulate until date
         long secondsUntilLaunch = DATA_START_DATE.until(launchDate, ChronoUnit.SECONDS);
@@ -436,17 +441,17 @@ public class Runner {
             if (config.getLoading_bar()) Utils.printLoadingBar((initialSpeed - minSpeed)/(maxSpeed - minSpeed), LOADING_BAR_SIZE);
 
             simulation = new MarsSimulation()
-                    .withIntegration(integrationHashMap.get(config.getIntegration()))
-                    .withDt(config.getDt())
-                    .withSaveFactor(config.getSave_factor())
-                    .withStatusBarActivated(false)
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withSpaceshipInitialSpeed(initialSpeed)
+                .withStatusBarActivated(false)
             ;
 
             simulation.setEarth(earth);
             simulation.setMars(mars);
             simulation.setSun(sun);
             simulation.setSpaceshipPresent(true);
-            simulation.setSpaceshipInitialSpeed(initialSpeed);
             simulation.setMaxTime(config.getMax_time());
 
             results.put(initialSpeed, simulation.simulate());
@@ -477,6 +482,7 @@ public class Runner {
             .withIntegration(integrationHashMap.get(config.getIntegration()))
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
+            .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
             .withStatusBarActivated(false)
             ;
 
@@ -495,6 +501,7 @@ public class Runner {
             .withIntegration(integrationHashMap.get(config.getIntegration()))
             .withDt(config.getDt())
             .withSaveFactor(config.getSave_factor())
+            .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
             .withStatusBarActivated(false)
         ;
 
@@ -571,10 +578,11 @@ public class Runner {
             if (config.getLoading_bar()) Utils.printLoadingBar(1.0*minLaunchDate.until(date, ChronoUnit.SECONDS)/minLaunchDate.until(maxLaunchDate, ChronoUnit.SECONDS), LOADING_BAR_SIZE);
 
             simulation = new JupiterSimulation()
-                    .withIntegration(integrationHashMap.get(config.getIntegration()))
-                    .withDt(config.getDt())
-                    .withSaveFactor(config.getSave_factor())
-                    .withStatusBarActivated(false)
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
+                .withStatusBarActivated(false)
             ;
 
             // Simulate until date
@@ -589,10 +597,11 @@ public class Runner {
             AcceleratedParticle jupiter = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.JUPITER).findAny().orElse(null);
 
             simulation = new JupiterSimulation()
-                    .withIntegration(integrationHashMap.get(config.getIntegration()))
-                    .withDt(config.getDt())
-                    .withSaveFactor(config.getSave_factor())
-                    .withStatusBarActivated(false)
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
+                .withStatusBarActivated(false)
             ;
 
             simulation.setEarth(earth);
@@ -612,8 +621,8 @@ public class Runner {
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
         new JsonWriter(JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_DATES)
-                .withObj(results)
-                .write();
+            .withObj(results)
+            .write();
 
         System.out.println("Finished saving " + JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_DATES + ".json");
     }
@@ -625,11 +634,12 @@ public class Runner {
         System.out.printf("Running jupiter simulation with multiple velocities between %.2g and %.2g with increment %.2g on launch date %s\n", minSpeed, maxSpeed, increment, launchDate);
 
         JupiterSimulation simulation = new JupiterSimulation()
-                .withIntegration(integrationHashMap.get(config.getIntegration()))
-                .withDt(config.getDt())
-                .withSaveFactor(config.getSave_factor())
-                .withStatusBarActivated(false)
-                ;
+            .withIntegration(integrationHashMap.get(config.getIntegration()))
+            .withDt(config.getDt())
+            .withSaveFactor(config.getSave_factor())
+            .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
+            .withStatusBarActivated(false)
+            ;
 
         // Simulate until date
         long secondsUntilLaunch = DATA_START_DATE.until(launchDate, ChronoUnit.SECONDS);
@@ -651,10 +661,11 @@ public class Runner {
             if (config.getLoading_bar()) Utils.printLoadingBar((initialSpeed - minSpeed)/(maxSpeed - minSpeed), LOADING_BAR_SIZE);
 
             simulation = new JupiterSimulation()
-                    .withIntegration(integrationHashMap.get(config.getIntegration()))
-                    .withDt(config.getDt())
-                    .withSaveFactor(config.getSave_factor())
-                    .withStatusBarActivated(false)
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(config.getDt())
+                .withSaveFactor(config.getSave_factor())
+                .withSpaceshipInitialSpeed(initialSpeed)
+                .withStatusBarActivated(false)
             ;
 
             simulation.setEarth(earth);
@@ -662,7 +673,6 @@ public class Runner {
             simulation.setSun(sun);
             simulation.setJupiter(jupiter);
             simulation.setSpaceshipPresent(true);
-            simulation.setSpaceshipInitialSpeed(initialSpeed);
             simulation.setMaxTime(config.getMax_time());
 
             results.put(initialSpeed, simulation.simulate());
@@ -675,10 +685,10 @@ public class Runner {
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
         new JsonWriter(JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_VEL)
-                .withObj(new DatedMap<Double, List<Frame>>()
-                        .withMap(results)
-                        .withDate(launchDate))
-                .write();
+            .withObj(new DatedMap<Double, List<Frame>>()
+                .withMap(results)
+                .withDate(launchDate))
+            .write();
 
         System.out.println("Finished saving " + JUPITER_POSTPROCESSING_FILENAME_MULTIPLE_VEL + ".json");
     }

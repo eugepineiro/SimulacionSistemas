@@ -92,6 +92,11 @@ public class MarsSimulation extends PlanetsSimulation {
         return this;
     }
 
+    public MarsSimulation withSpaceshipInitialSpeed(double initialSpeed) {
+        setSpaceshipInitialSpeed(initialSpeed);
+        return this;
+    }
+
     public void setMars(AcceleratedParticle mars) {
         this.mars = mars;
     }

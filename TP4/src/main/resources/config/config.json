@@ -5,6 +5,7 @@
   "launch_date": "2022-09-15 01:10:00",
   "max_time": 31536000,
   "save_factor": 144,
+  "spaceship_initial_speed": 8,
   "loading_bar": true,
   "multiple_dt": {
     "activated": false,
@@ -19,7 +20,7 @@
     "increment": 86400
   },
   "multiple_velocities": {
-    "activated": true,
+    "activated": false,
     "min": 8,
     "max": 8.01,
     "increment": 0.001

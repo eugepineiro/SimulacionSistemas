@@ -13,6 +13,7 @@ public class Config {
     private Double  dt;
     private Double  max_time;
     private Long    save_factor;
+    private Double  spaceship_initial_speed;
     private Boolean loading_bar;
     private MultipleDt multiple_dt;
     private MultipleDates multiple_dates;
@@ -65,6 +66,14 @@ public class Config {
 
     public void setSave_factor(Long dt2_factor) {
         this.save_factor = dt2_factor;
+    }
+
+    public Double getSpaceship_initial_speed() {
+        return spaceship_initial_speed;
+    }
+
+    public void setSpaceship_initial_speed(Double spaceship_initial_speed) {
+        this.spaceship_initial_speed = spaceship_initial_speed;
     }
 
     public Boolean getLoading_bar() {

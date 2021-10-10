@@ -224,8 +224,15 @@ public class PlanetsSimulation extends AbstractSimulation {
         return this;
     }
 
+    public double getSpaceshipInitialSpeed() {
+        return spaceshipInitialSpeed;
+    }
     public void setSpaceshipInitialSpeed(double initialSpeed) {
         this.spaceshipInitialSpeed = initialSpeed;
+    }
+    public PlanetsSimulation withSpaceshipInitialSpeed(double initialSpeed) {
+        setSpaceshipInitialSpeed(initialSpeed);
+        return this;
     }
 
     public void setEarth(AcceleratedParticle earth) {
