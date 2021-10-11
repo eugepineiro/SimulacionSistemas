@@ -2,6 +2,30 @@ import plotly.graph_objects as go
 import math
 import numpy as np
 
+def plot_energies_per_time(times_by_dt, energies_by_dt): 
+
+    fig = go.Figure()
+
+    for dt in times_by_dt:
+        fig.add_trace(go.Scatter(
+            x=times_by_dt[dt],
+            y=energies_by_dt[dt],
+            mode='lines', 
+            name=f'dt = {dt}'
+        ))
+    
+    fig.update_layout(
+        title="Energía del sistema en función del tiempo",
+        xaxis_title="Tiempo (s)",
+        yaxis_title="Energía (K)",
+        legend_title=f"<b>Referencias</b> <br>",
+        font=dict( 
+            size=28, 
+        )
+    )
+
+    fig.show()
+
 def plot_distance_per_date(min_distances, dt): 
 
     fig = go.Figure()

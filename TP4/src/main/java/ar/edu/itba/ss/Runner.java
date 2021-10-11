@@ -32,6 +32,7 @@ public class Runner {
     private static final String         OSCILLATOR_POSTPROCESSING_FILENAME              = "SdS_TP4_2021Q2G01_oscillator_results";
     private static final String         OSCILLATOR_POSTPROCESSING_FILENAME_MULTIPLE_DT  = "SdS_TP4_2021Q2G01_oscillator_results_with_multiple_dt";
     private static final String         MARS_POSTPROCESSING_FILENAME                    = "SdS_TP4_2021Q2G01_mars_results";
+    private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_DT        = "SdS_TP4_2021Q2G01_mars_results_with_multiple_dt";
     private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_DATES     = "SdS_TP4_2021Q2G01_mars_results_with_multiple_dates";
     private static final String         MARS_POSTPROCESSING_FILENAME_MULTIPLE_VEL       = "SdS_TP4_2021Q2G01_mars_results_with_multiple_velocities";
     private static final String         JUPITER_POSTPROCESSING_FILENAME                 = "SdS_TP4_2021Q2G01_jupiter_results";
@@ -85,6 +86,11 @@ public class Runner {
 
                 boolean multipleRuns = false;
 
+                if (config.getMultiple_dt().isActivated()) {
+                    multipleRuns = true;
+                    final MultipleDt mul = config.getMultiple_dt();
+                    runMarsSimulationWithMultipleDt(mul.getMin_exp(), mul.getMax_exp(), mul.getIncrement(), config);
+                }
                 if (config.getMultiple_velocities().isActivated()) {
                     multipleRuns = true;
                     final MultipleVelocities mul = config.getMultiple_velocities();
@@ -216,9 +222,13 @@ public class Runner {
         long totalIntegrations = integrationHashMap.keySet().size() * (long) (((maxExp - minExp)/increment) - increment);
         long interationNumber = 0;
 
+        double defaultSavingEach = config.getDt()* config.getSave_factor();
+        long saveFactor;
+
         double exp, dt;
         for (exp = minExp; exp < maxExp; exp += increment) {
             dt = Math.pow(10, exp);
+            saveFactor = (long) Math.ceil(defaultSavingEach/dt);
 
             List<IntegrationResults> dtResults = new ArrayList<>();
 
@@ -228,7 +238,7 @@ public class Runner {
                 simulation = new OscillatorSimulation()
                     .withIntegration(entry.getValue())
                     .withDt(dt)
-                    .withSaveFactor(config.getSave_factor())
+                    .withSaveFactor(saveFactor)
                     .withMaxTime(config.getMax_time())            // seconds
                     .withStatusBarActivated(false)
                 ;
@@ -341,6 +351,75 @@ public class Runner {
 
         System.out.println("Finished saving " + OVITO_MARS_FILENAME + ".exyz");
 
+    }
+
+    private static void runMarsSimulationWithMultipleDt(double minExp, double maxExp, double increment, Config config) throws IOException {
+
+        LocalDateTime launchDate = config.getLaunch_date();
+
+        System.out.printf("Running mars simulation with multiple dt between exponent %.2g and %.2g with an increment of %.2g\n", minExp, maxExp, increment);
+
+        long startTime = System.nanoTime();
+
+        Map<Double, List<Frame>> results = new HashMap<>();
+
+        double defaultSavingEach = config.getDt()* config.getSave_factor();
+        long saveFactor;
+
+        double exp, dt;
+        for (exp = minExp; exp < maxExp; exp += increment) {
+            dt = Math.pow(10, exp);
+            saveFactor = (long) Math.ceil(defaultSavingEach/dt);
+
+            if (config.getLoading_bar()) Utils.printLoadingBar((exp - minExp)/(maxExp - minExp), LOADING_BAR_SIZE);
+
+            MarsSimulation simulation = new MarsSimulation()
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(dt)
+                .withSaveFactor(saveFactor)
+                .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
+                .withStatusBarActivated(false)
+                ;
+
+            // Simulate until date
+            long secondsUntilLaunch = DATA_START_DATE.until(launchDate, ChronoUnit.SECONDS);
+            simulation.setMaxTime(secondsUntilLaunch);
+            simulation.setSpaceshipPresent(false);
+            List<Frame> simulated = simulation.simulate();
+            Frame lastFrame = simulated.get(simulated.size()-1);
+            AcceleratedParticle earth = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.EARTH).findAny().orElse(null);
+            AcceleratedParticle sun = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.SUN).findAny().orElse(null);
+            AcceleratedParticle mars = lastFrame.getParticles().stream().filter(p -> p.getType() == ParticleType.MARS).findAny().orElse(null);
+
+            simulation = new MarsSimulation()
+                .withIntegration(integrationHashMap.get(config.getIntegration()))
+                .withDt(dt)
+                .withSaveFactor(saveFactor)
+                .withSpaceshipInitialSpeed(config.getSpaceship_initial_speed())
+                .withStatusBarActivated(false)
+            ;
+
+            simulation.setEarth(earth);
+            simulation.setMars(mars);
+            simulation.setSun(sun);
+            simulation.setSpaceshipPresent(true);
+            simulation.setMaxTime(config.getMax_time());
+
+
+            results.put(dt, simulation.simulate());
+        }
+        if (config.getLoading_bar()) Utils.printLoadingBar(1, LOADING_BAR_SIZE);
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
+
+        new JsonWriter(MARS_POSTPROCESSING_FILENAME_MULTIPLE_DT)
+            .withObj(results)
+            .write();
+
+        System.out.println("Finished saving " + MARS_POSTPROCESSING_FILENAME_MULTIPLE_DT + ".json");
     }
 
     private static void runMarsSimulationWithMultipleDates(LocalDateTime minLaunchDate, LocalDateTime maxLaunchDate, long increment, Config config) throws IOException {
