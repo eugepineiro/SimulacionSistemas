@@ -11,9 +11,13 @@ def plot_energies_per_time(times_by_dt, energies_by_dt):
             x=times_by_dt[dt],
             y=energies_by_dt[dt],
             mode='lines', 
-            name=f'dt = {dt}'
+            name=f'dt = {dt}s'
         ))
-    
+        
+        variation = energies_by_dt[dt][-1] - energies_by_dt[dt][0]
+        perc_variation = variation / energies_by_dt[dt][0]
+        print(f'dt: {dt} => Variación: {variation}, Variacion percentual: {perc_variation}')
+
     fig.update_layout(
         title="Energía del sistema en función del tiempo",
         xaxis_title="Tiempo (s)",
@@ -23,6 +27,8 @@ def plot_energies_per_time(times_by_dt, energies_by_dt):
             size=28, 
         )
     )
+
+    #fig.update_yaxes(type="log")
 
     fig.show()
 

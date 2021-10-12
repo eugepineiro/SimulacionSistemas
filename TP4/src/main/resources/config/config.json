@@ -1,16 +1,16 @@
 {
-  "system": "mars",
+  "system": "jupiter",
   "integration": "verlet_original",
   "dt": 600,
-  "launch_date": "2022-09-15 01:10:00",
+  "launch_date": "2021-09-24 00:00:00",
   "max_time": 31536000,
   "save_factor": 1,
   "spaceship_initial_speed": 8,
   "loading_bar": true,
   "multiple_dt": {
     "activated": true,
-    "min_exp": 1,
-    "max_exp": 5,
+    "min_exp": 150,
+    "max_exp": 3800,
     "increment": 1
   },
   "multiple_dates": {
