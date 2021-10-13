@@ -1,8 +1,10 @@
 import json, math
-from re import A 
+from re import A
 
-from plotter import plot_distance_per_date, plot_spaceship_velocity_per_frame, plot_spaceship_arrival_time_per_velocity
+from plotter import plot_energies_per_time, plot_distance_per_date, plot_spaceship_velocity_per_frame, plot_spaceship_arrival_time_per_velocity, plot_vp_per_dt
 from utils import get_min_distances, calculate_distance, get_arrival_time, get_planet_and_spaceship_positions_by_key
+
+GRAVITY_CONSTANT = 6.693 * (10**(-20))
 
 MARS_RADIUS = 3389.92 # km
 MAX_MARS_ORBIT_TOLERANCE = 1000
@@ -19,16 +21,57 @@ max_planet_orbit_tolerance = MAX_MARS_ORBIT_TOLERANCE if planet_name == 'mars' e
 
 print(f"Runnning {planet_name.capitalize()} Postprocessing")
 
-with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results_with_multiple_dates.json") as f:
-    results_with_multiple_dates = json.load(f)
-
 with open("../../src/main/resources/config/config.json") as f:
     config = json.load(f)
+
+with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results_with_multiple_dt.json") as f:
+    results_with_multiple_dt = json.load(f)
+
+with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results_with_multiple_dates.json") as f:
+    results_with_multiple_dates = json.load(f)
 
 with open(f"../../src/main/resources/postprocessing/SdS_TP4_2021Q2G01_{planet_name}_results_with_multiple_velocities.json") as f:
     results_with_multiple_velocities_wrapper = json.load(f)
 
 planet_name = planet_name.upper()
+
+############# Energy Variation Check #############
+
+def kinetic_energy(particles):
+    e = 0
+    for p in particles:
+        e += (1.0/2) * p['mass'] * (p['vx']**2 + p['vy']**2)  # 1/2 m * v^2
+    return e
+
+def potential_energy(particles):
+    e = 0
+    for i in range(len(particles)):
+        p_i = particles[i]
+        for j in range(i+1, len(particles)):
+            p_j = particles[j]
+            e += - GRAVITY_CONSTANT * (p_i['mass'] * p_j['mass']) / calculate_distance(p_i, p_j)
+    return e
+
+times_by_dt = {}
+energies_by_dt = {}
+
+for dt in results_with_multiple_dt:
+    times_by_dt[dt]       = list(map(lambda f: f['time'], results_with_multiple_dt[dt]))
+    energies_by_dt[dt]    = list(map(lambda f: kinetic_energy(f['particles']) + potential_energy(f['particles']), results_with_multiple_dt[dt]))
+
+sorted_dt = sorted(list(map(lambda s: float(s), times_by_dt.keys())))
+last_time = times_by_dt[str(sorted_dt[-1])][-1]
+
+for key in energies_by_dt.keys(): 
+    max_dt_len = 0
+    for i, t in enumerate(times_by_dt[key]):
+        if t < last_time:
+            max_dt_len = i
+    energies_by_dt[key] = energies_by_dt[key][:max_dt_len]
+    times_by_dt[key] = times_by_dt[key][:max_dt_len]
+
+#plot_energies_per_time(times_by_dt, energies_by_dt)
+plot_vp_per_dt(list(map(lambda s: str(s), sorted_dt)), energies_by_dt)
 
 ############# EJ 1.a ############# 
 

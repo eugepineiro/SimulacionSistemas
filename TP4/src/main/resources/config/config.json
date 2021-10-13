@@ -2,22 +2,22 @@
   "system": "mars",
   "integration": "verlet_original",
   "dt": 600,
-  "launch_date": "2022-09-15 01:10:00",
+  "launch_date": "2021-09-24 00:00:00",
   "max_time": 31536000,
-  "save_factor": 144,
+  "save_factor": 1,
   "spaceship_initial_speed": 8,
   "loading_bar": true,
   "multiple_dt": {
-    "activated": false,
-    "min_exp": -5,
-    "max_exp": -1,
-    "increment": 1
+    "activated": true,
+    "min_exp": 600,
+    "max_exp": 601,
+    "increment": 20
   },
   "multiple_dates": {
-    "activated": true,
-    "min": "2021-09-24 00:00:00",
-    "max": "2023-09-24 00:00:00",
-    "increment": 86400
+    "activated": false,
+    "min": "2022-09-15 00:00:00",
+    "max": "2022-09-15 02:00:00",
+    "increment": 600
   },
   "multiple_velocities": {
     "activated": false,
