@@ -1,11 +1,9 @@
 # SimulacionSistemas
 
-## Dinámica Molecular Dirigida por Paso Temporal
-### Oscilador Puntual Amortiguado y Viaje a otro Planeta
+## Dinámica Molecular Dirigida por Eventos
+### Movimiento Browniano
 
-Implementación en Java de un oscilador puntual amortiguado utilizando distintos métodos de integración (Verlet, Beeman y Gear Predictor-Corrector de orden 5).
-
-Luego, se simuló un sistema gravitatorio para evaluar la interacción de distintas partículas que interactúan mediante fuerzas que dependen de la distancia. El mismo consiste en el despegue de una nave espacial con destino a Marte o a Júpiter, observando la fecha óptima de salida, el tiempo óptimo de llegada y la rapidez inicial de la nave para impactar en cada planeta.    
+Implementación en Java de Movimiento Browniano utilizado para entender y predecir  las propiedades de los sistemas físicos como la dinámica microscópica de gases, medios granulares, entre otros.
 
 
 ### 0. Integrantes 
@@ -16,7 +14,7 @@ Luego, se simuló un sistema gravitatorio para evaluar la interacción de distin
 
 ### 1. Configuración
 
-Para configurar la simulación se utiliza un archivo de configuración (`/TP4/src/main/resources/config/config.json`). 
+Para configurar la simulación se utiliza un archivo de configuración (`/TP3/src/main/resources/config/config.json`). 
 
 #### 1.1 Parámetros
 
@@ -44,31 +42,27 @@ Para configurar la simulación se utiliza un archivo de configuración (`/TP4/sr
 
 ```json
 {
-  "system": "mars",
-  "integration": "verlet_original",
-  "dt": 600,
-  "launch_date": "2021-09-24 00:00:00",
-  "max_time": 31536000,
-  "save_factor": 1,
-  "spaceship_initial_speed": 8,
-  "loading_bar": true,
-  "multiple_dt": {
+  "seed": 100,
+  "n_number_of_particles": 140,
+  "l_grid_side": 6,
+  "max_events": 200000,
+  "min_speed": 0,
+  "max_speed": 2,
+  "multiple_n": {
     "activated": true,
-    "min_exp": 600,
-    "max_exp": 601,
-    "increment": 20
+    "values": [110, 125, 140]
   },
-  "multiple_dates": {
+  "multiple_temperatures": {
     "activated": false,
-    "min": "2022-09-15 00:00:00",
-    "max": "2022-09-15 02:00:00",
-    "increment": 600
+    "speeds_ranges": [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ]
   },
-  "multiple_velocities": {
+  "multiple_simulations": {
     "activated": false,
-    "min": 8,
-    "max": 8.01,
-    "increment": 0.001
+    "seeds": [100, 200, 300, 400, 500]
   }
 }
 ```
