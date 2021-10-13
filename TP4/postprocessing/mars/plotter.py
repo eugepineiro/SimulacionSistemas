@@ -32,6 +32,44 @@ def plot_energies_per_time(times_by_dt, energies_by_dt):
 
     fig.show()
 
+def plot_vp_per_dt(dt_array, energies_by_dt): 
+
+    fig = go.Figure()
+
+    vp_array = []
+
+    for dt in dt_array:
+        variation = energies_by_dt[dt][-1] - energies_by_dt[dt][0]
+        # energies_after  = np.array(energies_by_dt[dt][1:])
+        # energies_before = np.array(energies_by_dt[dt][:-1])
+        # variation = sum(abs(energies_after - energies_before))
+        
+        perc_variation = variation / energies_by_dt[dt][0]
+        vp_array.append(abs(perc_variation))
+        print(f'dt: {dt} => Variación: {variation}, Variacion percentual: {perc_variation}')
+  
+    fig.add_trace(go.Scatter(
+        x=dt_array,
+        y=vp_array,
+        mode='lines', 
+        name=f'dt = {dt}s'
+    ))    
+        
+    fig.update_layout(
+        title="Variación Porcentual de la energía en función del Paso Temporal",
+        xaxis_title="dt",
+        yaxis_title="Variación Porcentual de la Energía (%)",
+        legend_title=f"<b>Referencias</b> <br>",
+        font=dict( 
+            size=28, 
+        )
+    )
+
+    fig.update_yaxes(type="log", exponentformat='power')
+    fig.update_xaxes(type="log", exponentformat='power')
+
+    fig.show()
+
 def plot_distance_per_date(min_distances, dt): 
 
     fig = go.Figure()

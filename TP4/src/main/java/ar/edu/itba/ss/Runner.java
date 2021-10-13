@@ -372,7 +372,7 @@ public class Runner {
         long saveFactor;
 
         double exp, dt;
-        for (exp = minExp; exp < maxExp; exp *= 2) {
+        for (exp = minExp; exp < maxExp; exp += increment) {
             //dt = Math.pow(10, exp);
             dt = exp;
             saveFactor = (long) Math.ceil(defaultSavingEach/dt);
@@ -792,7 +792,7 @@ public class Runner {
         long saveFactor;
 
         double exp, dt;
-        for (exp = minExp; exp < maxExp; exp *= 2) {
+        for (exp = minExp; exp < maxExp; exp += increment) {
             //dt = Math.pow(10, exp);
             dt = exp;
             saveFactor = (long) Math.ceil(defaultSavingEach/dt);

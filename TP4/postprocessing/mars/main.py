@@ -1,7 +1,7 @@
 import json, math
 from re import A
 
-from plotter import plot_energies_per_time, plot_distance_per_date, plot_spaceship_velocity_per_frame, plot_spaceship_arrival_time_per_velocity
+from plotter import plot_energies_per_time, plot_distance_per_date, plot_spaceship_velocity_per_frame, plot_spaceship_arrival_time_per_velocity, plot_vp_per_dt
 from utils import get_min_distances, calculate_distance, get_arrival_time, get_planet_and_spaceship_positions_by_key
 
 GRAVITY_CONSTANT = 6.693 * (10**(-20))
@@ -59,17 +59,19 @@ for dt in results_with_multiple_dt:
     times_by_dt[dt]       = list(map(lambda f: f['time'], results_with_multiple_dt[dt]))
     energies_by_dt[dt]    = list(map(lambda f: kinetic_energy(f['particles']) + potential_energy(f['particles']), results_with_multiple_dt[dt]))
 
-last_time = times_by_dt['2400.0'][-1]
+sorted_dt = sorted(list(map(lambda s: float(s), times_by_dt.keys())))
+last_time = times_by_dt[str(sorted_dt[-1])][-1]
 
 for key in energies_by_dt.keys(): 
     max_dt_len = 0
     for i, t in enumerate(times_by_dt[key]):
         if t < last_time:
             max_dt_len = i
-    energies_by_dt[key] =  energies_by_dt[key][:max_dt_len]
+    energies_by_dt[key] = energies_by_dt[key][:max_dt_len]
     times_by_dt[key] = times_by_dt[key][:max_dt_len]
 
-plot_energies_per_time(times_by_dt, energies_by_dt)
+#plot_energies_per_time(times_by_dt, energies_by_dt)
+plot_vp_per_dt(list(map(lambda s: str(s), sorted_dt)), energies_by_dt)
 
 ############# EJ 1.a ############# 
 

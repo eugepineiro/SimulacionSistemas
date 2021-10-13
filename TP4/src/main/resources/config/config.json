@@ -1,5 +1,5 @@
 {
-  "system": "jupiter",
+  "system": "mars",
   "integration": "verlet_original",
   "dt": 600,
   "launch_date": "2021-09-24 00:00:00",
@@ -9,9 +9,9 @@
   "loading_bar": true,
   "multiple_dt": {
     "activated": true,
-    "min_exp": 150,
-    "max_exp": 3800,
-    "increment": 1
+    "min_exp": 600,
+    "max_exp": 601,
+    "increment": 20
   },
   "multiple_dates": {
     "activated": false,
