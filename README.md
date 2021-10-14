@@ -22,22 +22,28 @@ Para configurar la simulación se utiliza un archivo de configuración (`/TP4/sr
 
 | Parámetro| Descripción                    | Opciones|
 | ------------- | ------------------------------ | ------------- |
-|"seed"     |  Semilla para la generación random de partículas  | número entero |
-|"n_number_of_particles"     |  Cantidad de partículas a generar  | número entero |
-|"l_grid_side"     |  Longitud del lado de la grilla  | número entero |
-|"max_events"     |  Cantidad de eventos máxima para finalizar la ejecución del programa en caso de que la partícula grande aún no haya colisionado con una pared   | número entero |
-|"min_speed"     |  Mínima velocidad absoluta de las partículas  | número entero |
-|"max_speed"     |  Màxima velocidad absoluta de las partículas  | número entero |
-|"record_small_particles_positions"     |  postprocesamiento   |  |
-|   "multiple_n"  |   Simular con distintos números de partículas   |  |
+|"system"     |  Sistema a simular  | 'oscillator', 'mars', 'jupiter' |
+|"integration"     |  Integrador  | 'verlet_original', 'beeman', 'gear' |
+|"dt"     |  Paso temporal en segundos  | número entero |
+|"launch_date"     |  Fecha de despegue de la nave   | "YYYY-MM-DD HH:MM:SS" |
+|"save_factor"     |  Paso Temporal para guardar los datos en archivos usados en el postprocessing  | número entero |
+|"spaceship_initial_speed"     |  Rapidez inicial de la nave espacial  | número decimal |
+|"loading_bar"     |  mostrar barra de carga   | booleano  |
+|   "multiple_dt"  |   Simular con distintos pasos temporales   |  |
 |   "activated"  |   utilizar   | booleano |
-|   "values"  |  números de partículas   | [número entero, número entero, ...] |
-|   "multiple_temperatures"  |   Simular con distintos valores de temperatura   |  |
+|   "min_exp"  | mínimo exponente   | número decimal |
+|   "max_exp"  | máximo exponente   | número decimal |
+|   "increment"  | incremento del paso temporal | número entero |
+|   "multiple_dates"  |   Simular con distintos valores de fecha de despegue de la nave   |  |
 |   "activated"  |   utilizar   | booleano |
-|   "speeds_ranges"   |   Rango de velocidades absolutas a utilizar   | [[entero, entero]] |
-|   "multiple_simulations":   |   Hacer múltiples simulaciones   |  |
-|   "activated"   |  utilizar   | booleano |
-|   "seeds"   |  Semillas a utilizar   | [número entero, número entero, ...] | 
+|   "min"  | mínima fecha | "YYYY-MM-DD HH:MM:SS" |
+|   "max"  | máxima fecha | "YYYY-MM-DD HH:MM:SS" |
+|   "increment"  | incremento de fechas | número decimal en segundos |
+|   "multiple_velocities":   |   Hacer múltiples simulaciones con distintas velocidades   |  |
+|   "activated"   |  utilizar   | booleano | 
+|   "min"  | mínima velocidad | "YYYY-MM-DD HH:MM:SS" |
+|   "max"  | máxima velocidad | "YYYY-MM-DD HH:MM:SS" |
+|   "increment"  | incremento entre velocidades | número decimal |
 
 
 #### 1.2 Ejemplo
@@ -83,19 +89,19 @@ $> mvn clean install
 
 ### 4. ar.edu.itba.ss.Postprocessing
 
-Al configurar el `config.json` activando el postprocesamiento, se obtendrá como output el archivo `/TP3/src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results.json` que luego será postprocesado:
+Al configurar el `config.json` activando el postprocesamiento, se obtendrá como output el archivo `/TP4/src/main/resources/postprocessing/SdS_TP3_2021Q2G01_results.json` que luego será postprocesado:
 
 ```json
   ...
-  "multiple_n": {
+  "multiple_dt": {
     "activated": true,
     ...
   }
-  "multiple_temperatures": {
+  "multiple_dates": {
     "activated": true,
     ...
   }
-  "multiple_simulations": {
+  "multiple_velocities": {
     "activated": true,
     ...
   }
@@ -106,20 +112,20 @@ $> python3 ./TP3/postprocessing/main.py
 ```
 
 ### 5. Animaciones 
-Al configurar el `config.json` desactivando el postprocesamiento, se obtendrá como output el archivo `/TP3/src/main/resources/ovito/SdS_TP3_2021Q2G01_output.xyz` que luego podrá abrirse con Ovito seteando la configuración `/TP3/src/main/resources/config/ovitoconfig.ovito`:
+Al configurar el `config.json` desactivando el postprocesamiento, se obtendrá como output el archivo `/TP4/src/main/resources/ovito/SdS_TP4_2021Q2G01_output.xyz` que luego podrá abrirse con Ovito seteando la configuración `/TP4/src/main/resources/config/ovitoconfig.ovito`:
 
 ```json
   ...
-  "multiple_n": {
-    "activated": false,
+  "multiple_dt": {
+    "activated": true,
     ...
   }
-  "multiple_temperatures": {
-    "activated": false,
+  "multiple_dates": {
+    "activated": true,
     ...
   }
-  "multiple_simulations": {
-    "activated": false,
+  "multiple_velocities": {
+    "activated": true,
     ...
   }
 ``` 
