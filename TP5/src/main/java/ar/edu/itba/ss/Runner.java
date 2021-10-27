@@ -95,7 +95,7 @@ public class Runner {
             .withParticles          (particles)
             ;
 
-        final List<Frame<ContractileParticle>> results = simulation.simulate();
+        final EscapeRoomSimulation.Results results = simulation.simulate();
 
         // Save results
 
@@ -106,12 +106,12 @@ public class Runner {
             .withTargetWidth        (config.getTarget_width())
             .withOuterTargetDistance(config.getOuter_target_dist())
             .withOuterTargetWidth   (config.getOuter_target_width())
-            .addAllFrames           (results)
+            .addAllFrames           (results.getFrames())
             .writeAndClose();
 
         System.out.println("Finished saving " + OVITO_FILENAME + ".exyz");
 
-//        final List<Frame<ContractileParticleDto>> minimalResults = results.stream()
+//        final List<Frame<ContractileParticleDto>> minimalResults = results.getFrames().stream()
 //            .map(f -> new Frame<ContractileParticleDto>()
 //                .withParticles(f.getParticles().stream().map(ContractileParticleDto::new).collect(Collectors.toList()))
 //                .withTime     (f.getTime())
