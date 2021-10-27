@@ -1,6 +1,7 @@
 package ar.edu.itba.ss;
 
 import ar.edu.itba.ss.config.Config;
+import ar.edu.itba.ss.dto.ContractileParticleDto;
 import ar.edu.itba.ss.models.ContractileParticle;
 import ar.edu.itba.ss.models.Frame;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Runner {
 
@@ -79,8 +81,6 @@ public class Runner {
 
         final double dt = config.getMin_radius() / (2 * Math.max(config.getMax_desired_velocity(), config.getEscape_velocity()));
 
-        System.out.println(dt);
-
         final EscapeRoomSimulation simulation = new EscapeRoomSimulation()
             .withRandom             (r)
             .withDt                 (dt)
@@ -91,18 +91,33 @@ public class Runner {
             .withRoomWidth          (config.getRoom_width())
             .withTargetWidth        (config.getTarget_width())
             .withOuterTargetDistance(config.getOuter_target_dist())
-            .withOuterTargetWidth   (config.getTarget_width())
+            .withOuterTargetWidth   (config.getOuter_target_width())
             .withParticles          (particles)
             ;
 
-        final List<Frame> results = simulation.simulate();
+        final List<Frame<ContractileParticle>> results = simulation.simulate();
 
         // Save results
 
         // Ovito
-        new XYZ_Writer(OVITO_FILENAME).addAllFrames(results).writeAndClose();
+        new XYZ_Writer(OVITO_FILENAME)
+            .withRoomHeight         (config.getRoom_height())
+            .withRoomWidth          (config.getRoom_width())
+            .withTargetWidth        (config.getTarget_width())
+            .withOuterTargetDistance(config.getOuter_target_dist())
+            .withOuterTargetWidth   (config.getOuter_target_width())
+            .addAllFrames           (results)
+            .writeAndClose();
 
         System.out.println("Finished saving " + OVITO_FILENAME + ".exyz");
+
+//        final List<Frame<ContractileParticleDto>> minimalResults = results.stream()
+//            .map(f -> new Frame<ContractileParticleDto>()
+//                .withParticles(f.getParticles().stream().map(ContractileParticleDto::new).collect(Collectors.toList()))
+//                .withTime     (f.getTime())
+//            )
+//            .collect(Collectors.toList());
+//            ;
     }
 
     private static final int LOADING_BAR_SIZE = 20;

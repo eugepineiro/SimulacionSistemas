@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class EscapeRoomSimulation implements Simulation<List<Frame>> {
+public class EscapeRoomSimulation {
 
     // Status bar
     protected final int                         STATUS_BAR_SIZE         = 31;
@@ -30,18 +30,19 @@ public class EscapeRoomSimulation implements Simulation<List<Frame>> {
     protected       List<ContractileParticle>   particles;
 
     public boolean stop(List<ContractileParticle> particles) {
-        return false;
+        return particles.stream().allMatch(particle -> (particle.getY() + particle.getRadius()) < 0);
     }
 
     public void printStatusBar(double time) {
         if (statusBarActivated) Utils.printLoadingBar(time/maxTime, STATUS_BAR_SIZE);
     }
 
-    public List<Frame> simulate() {
+    public List<Frame<ContractileParticle>> simulate() {
         List<ContractileParticle> currentParticles = particles;
         List<ContractileParticle> nextParticles    = new LinkedList<>();
+        List<ContractileParticle> aux;
 
-        List<Frame> frames = new ArrayList<>();
+        List<Frame<ContractileParticle>> frames = new ArrayList<>();
 
         long count;
         double time;
@@ -52,7 +53,7 @@ public class EscapeRoomSimulation implements Simulation<List<Frame>> {
 
             // Save particles
             if (count % saveFactor == 0) {
-                frames.add(new Frame()
+                frames.add(new Frame<ContractileParticle>()
                     .withParticles(currentParticles.stream()
                         .map(ContractileParticle::clone)
                         .collect(Collectors.toList())
@@ -67,9 +68,15 @@ public class EscapeRoomSimulation implements Simulation<List<Frame>> {
                 nextParticles.add(CPM.getNextParticle(p, currentParticles.stream().filter(other -> other != p).collect(Collectors.toList()), roomHeight, roomWidth, targetWidth, outerTargetDistance, outerTargetWidth, dt, random));
             }
 
-            System.out.println(currentParticles);
+            aux = currentParticles;
             currentParticles = nextParticles;
+            nextParticles = aux;
+            nextParticles.clear();
         }
+
+        // Status bar
+        printStatusBar(maxTime+0.01);
+        System.out.println();
 
         return frames;
     }
@@ -183,7 +190,7 @@ public class EscapeRoomSimulation implements Simulation<List<Frame>> {
         this.outerTargetWidth = outerTargetWidth;
     }
     public EscapeRoomSimulation withOuterTargetWidth(double outerTargetWidth) {
-        setOuterTargetDistance(outerTargetWidth);
+        setOuterTargetWidth(outerTargetWidth);
         return this;
     }
 
