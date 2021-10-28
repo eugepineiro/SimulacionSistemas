@@ -53,8 +53,9 @@ public abstract class EscapeRoomSimulation {
 
         long count;
         double time;
+        boolean stopped = false;
 
-        for (time = 0, count = 0; time <= maxTime && !stop(currentParticles); time += dt, count++) {
+        for (time = 0, count = 0; time <= maxTime && !(stopped = stop(currentParticles)); time += dt, count++) {
             // Status bar
             printStatusBar(time);
 
@@ -84,6 +85,16 @@ public abstract class EscapeRoomSimulation {
             currentParticles = nextParticles;
             nextParticles = aux;
             nextParticles.clear();
+        }
+
+        if (stopped) {
+            frames.add(new Frame<ContractileParticle>()
+                .withParticles(currentParticles.stream()
+                    .map(ContractileParticle::clone)
+                    .collect(Collectors.toList())
+                )
+                .withTime(time)
+            );
         }
 
         // Status bar

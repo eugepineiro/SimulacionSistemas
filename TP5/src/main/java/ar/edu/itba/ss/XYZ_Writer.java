@@ -64,28 +64,25 @@ public class XYZ_Writer {
         this.frames = new ArrayList<>();
     }
 
-    private static final double wallPointsSeparation = 0.2;
-    private static final double wallDepth            = 0.20;
+    private static final double wallPointsSeparation = 0.1;
+    private static final double wallDepth            = 0.1;
     private List<PCoords> walls                      = null;
 
     private void initWalls(long maxParticleId) {
         long startingId = maxParticleId;
         walls = new LinkedList<>();
 
-        double inc;
+        final double inc = wallPointsSeparation;;
 
-        // Left and right wallç
-        inc = wallPointsSeparation;
-//        inc = roomHeight/wallPointsSeparation;
-        for (double y = 0; y <= roomHeight; y+=inc) {
+        // Left and right wall
+        for (double y = 0; y <= roomHeight + wallPointsSeparation/4; y+=inc) {
             walls.add(new PCoords(PType.WALL, startingId++, 0     , y, 0, 0, wallDepth/2));
             walls.add(new PCoords(PType.WALL, startingId++, roomWidth, y, 0, 0, wallDepth/2));
         }
 
-//        inc = roomWidth/wallPointsSeparation;
         double leftUpperCornerX  = (roomWidth/2) - (targetWidth/2);
         double rightUpperCornerX = (roomWidth/2) + (targetWidth/2);
-        for (double x = 0; x <= roomWidth; x+=inc) {
+        for (double x = 0; x <= roomWidth + wallPointsSeparation/4; x+=inc) {
             // Top wall
             walls.add(new PCoords(PType.WALL, startingId++, x, roomHeight, 0, 0, wallDepth/2));
 
@@ -101,17 +98,15 @@ public class XYZ_Writer {
         }
 
         // Hall left and right walls
-//        inc = outerTargetDistance/wallPointsSeparation;
         double leftBottomCornerX  = (roomWidth/2) - (outerTargetWidth/2);
         double rightBottomCornerX = (roomWidth/2) + (outerTargetWidth/2);
-        for (double y = -outerTargetDistance; y <= 0; y+=inc) {
-            walls.add(new PCoords(PType.HALL_WALL, startingId++, leftBottomCornerX , y, 0, 0, wallDepth/2));
-            walls.add(new PCoords(PType.HALL_WALL, startingId++, rightBottomCornerX, y, 0, 0, wallDepth/2));
-        }
+//        for (double y = -outerTargetDistance; y <= 0; y+=inc) {
+//            walls.add(new PCoords(PType.HALL_WALL, startingId++, leftBottomCornerX , y, 0, 0, wallDepth/2));
+//            walls.add(new PCoords(PType.HALL_WALL, startingId++, rightBottomCornerX, y, 0, 0, wallDepth/2));
+//        }
 
         // Bottom Target
-//        inc = outerTargetWidth/wallPointsSeparation;
-        for (double x = leftBottomCornerX; x <= leftBottomCornerX + outerTargetWidth; x+=inc) {
+        for (double x = leftBottomCornerX; x <= rightBottomCornerX + wallPointsSeparation/4; x+=inc) {
             walls.add(new PCoords(PType.OUTER_TARGET, startingId++, x, -outerTargetDistance, 0, 0, wallDepth/2));
         }
 
