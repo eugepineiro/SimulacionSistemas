@@ -14,5 +14,9 @@
   "tau": 0.5,
   "escape_velocity": 2,
   "max_desired_velocity": 2,
-  "loading_bar": true
+  "loading_bar": true,
+  "multiple_simulations": {
+    "activated": true,
+    "seeds": [100, 200, 300, 400, 500]
+  }
 }
