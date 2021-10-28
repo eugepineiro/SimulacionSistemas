@@ -4,6 +4,7 @@ import static ar.edu.itba.ss.Utils.printLoadingBar;
 
 import ar.edu.itba.ss.algorithms.CPMEscapeRoomSimulation;
 import ar.edu.itba.ss.config.Config;
+import ar.edu.itba.ss.dto.ExtendedEscapeSimulationsResult;
 import ar.edu.itba.ss.models.ContractileParticle;
 import ar.edu.itba.ss.models.EscapeRoomSimulationResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,7 +136,7 @@ public class Runner {
 
     static void simulatewithMultipleSimulations(Config config, List<Long> seeds) throws IOException {
 
-        List<EscapeRoomSimulationResult> simulationsResults = new LinkedList<>();
+        List<ExtendedEscapeSimulationsResult> simulationsResults = new LinkedList<>();
 
         Random r;
         List<ContractileParticle> particles;
@@ -186,7 +187,10 @@ public class Runner {
 
             results = simulation.simulate();
 
-            simulationsResults.add(results);
+            simulationsResults.add(ExtendedEscapeSimulationsResult.extendResult(results)
+                .withSeed(seed)
+                .withNumberOfParticles(config.getNumber_of_particles())
+            );
         }
 
         printLoadingBar(1.0, LOADING_BAR_SIZE);
