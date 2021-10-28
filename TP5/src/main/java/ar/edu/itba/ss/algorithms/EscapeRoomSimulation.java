@@ -92,7 +92,7 @@ public abstract class EscapeRoomSimulation {
         return new EscapeRoomSimulationResult()
             .withSimulationUsed(this)
             .withFrames(frames)
-            .withEscapeTimes(new LinkedList<>(escapeTimes.values()))
+            .withEscapeTimes(escapeTimes.values().stream().sorted().collect(Collectors.toList()))
             ;
     }
 
