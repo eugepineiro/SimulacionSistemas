@@ -22,6 +22,8 @@ public class ExtendedEscapeSimulationsResult extends EscapeRoomSimulationResult 
         ret.setTau                (result.getTau());
         ret.setEscapeSpeed        (result.getEscapeSpeed());
         ret.setMaxDesiredSpeed    (result.getMaxDesiredSpeed());
+        ret.setEscapeTimes        (result.getEscapeTimes());
+        ret.setFrames             (result.getFrames());
         return ret;
     }
 
