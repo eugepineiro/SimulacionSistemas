@@ -106,7 +106,15 @@ public class Runner {
             .withParticles          (particles)
             ;
 
+        long startTime = System.nanoTime();
+
         final EscapeRoomSimulationResult results = simulation.simulate();
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println();
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
         // Save results
 
@@ -135,7 +143,8 @@ public class Runner {
 
         long startTime = System.nanoTime();
 
-        for (int iter = 0; iter < seeds.size(); iter++) {
+        int iter;
+        for (iter = 0; iter < seeds.size(); iter++) {
             Long seed = seeds.get(iter);
 
             r = new Random(seed + iter);
@@ -160,7 +169,6 @@ public class Runner {
                 .withDt                 (dt)
                 .withSaveFactor         (config.getSave_factor())
                 .withMaxTime            (config.getMax_time())
-                .withStatusBarActivated (config.getLoading_bar())
                 .withMinRadius          (config.getMin_radius())
                 .withMaxRadius          (config.getMax_radius())
                 .withEscapeSpeed        (config.getEscape_velocity())
@@ -173,6 +181,7 @@ public class Runner {
                 .withOuterTargetDistance(config.getOuter_target_dist())
                 .withOuterTargetWidth   (config.getOuter_target_width())
                 .withParticles          (particles)
+                .withStatusBarActivated (false)
                 ;
 
             results = simulation.simulate();
@@ -180,9 +189,12 @@ public class Runner {
             simulationsResults.add(results);
         }
 
+        printLoadingBar(1.0, LOADING_BAR_SIZE);
+
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
 
+        System.out.println();
         System.out.println("Time in ms: " + timeElapsed / 1000000.0);
 
         new JsonWriter(POSTPROCESSING_MULTIPLE_SIMULATIONS_FILENAME)

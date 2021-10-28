@@ -88,7 +88,6 @@ public abstract class EscapeRoomSimulation {
 
         // Status bar
         printStatusBar(maxTime+0.01);
-        System.out.println();
 
         return new EscapeRoomSimulationResult()
             .withSimulationUsed(this)

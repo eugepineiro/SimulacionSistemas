@@ -5,7 +5,7 @@ public class Utils {
     public static void printLoadingBar(double percentage, int loadingBarSize) {
         StringBuilder loadingBar = new StringBuilder("[");
         for (int h = 0; h < loadingBarSize; h++) {
-            if (h < Math.ceil(percentage * loadingBarSize) - 1)
+            if (h <= Math.ceil(percentage * loadingBarSize) - 1)
                 loadingBar.append("█");
             else if (h < Math.ceil(percentage * loadingBarSize)) {
                 if (h < percentage * loadingBarSize - 0.5) {
