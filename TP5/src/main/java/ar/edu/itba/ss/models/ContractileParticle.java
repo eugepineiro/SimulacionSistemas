@@ -1,18 +1,11 @@
 package ar.edu.itba.ss.models;
 
 import ar.edu.itba.ss.Particle;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ContractileParticle extends Particle {
 
     private double vx;
     private double vy;
-    private double minRadius;
-    private double maxRadius;
-    private double escapeSpeed;
-    private double maxDesiredSpeed;
-    private double beta;
-    private double tau;
 
     public ContractileParticle() {
         this.id = 0;
@@ -21,28 +14,16 @@ public class ContractileParticle extends Particle {
         this.radius = 0;
         this.vx = 0;
         this.vy = 0;
-        this.minRadius = 0;
-        this.maxRadius = 0;
-        this.escapeSpeed = 0;
-        this.maxDesiredSpeed = 0;
-        this.beta = 0;
-        this.tau = 0;
     }
 
-    public ContractileParticle(Particle particle, double speed, double angle, double minRadius, double maxRadius, double escapeSpeed, double maxDesiredSpeed, double beta, double tau) {
-        this(particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), speed, angle, minRadius, maxRadius, escapeSpeed, maxDesiredSpeed, beta, tau);
+    public ContractileParticle(Particle particle, double speed, double angle) {
+        this(particle.getId(), particle.getX(), particle.getY(), particle.getRadius(), speed, angle);
     }
 
-    public ContractileParticle(long id, double x, double y, double radius, double speed, double angle,  double minRadius, double maxRadius, double escapeSpeed, double maxDesiredSpeed, double beta, double tau) {
+    public ContractileParticle(long id, double x, double y, double radius, double speed, double angle) {
         super(id, x, y, radius);
         this.vx = speed * Math.cos(angle);
         this.vy = speed * Math.sin(angle);
-        this.minRadius = minRadius;
-        this.maxRadius = maxRadius;
-        this.escapeSpeed = escapeSpeed;
-        this.maxDesiredSpeed = maxDesiredSpeed;
-        this.beta = beta;
-        this.tau = tau;
     }
 
     public double getSpeed() {
@@ -61,12 +42,6 @@ public class ContractileParticle extends Particle {
             .withRadius(radius)
             .withVx(vx)
             .withVy(vy)
-            .withMinRadius(minRadius)
-            .withMaxRadius(maxRadius)
-            .withEscapeSpeed(escapeSpeed)
-            .withMaxDesiredSpeed(maxDesiredSpeed)
-            .withBeta(beta)
-            .withTau(tau)
             ;
     }
 
@@ -131,72 +106,6 @@ public class ContractileParticle extends Particle {
         return this;
     }
 
-    public double getMinRadius() {
-        return minRadius;
-    }
-    public void setMinRadius(double minRadius) {
-        this.minRadius = minRadius;
-    }
-    public ContractileParticle withMinRadius(double minRadius) {
-        setMinRadius(minRadius);
-        return this;
-    }
-
-    public double getMaxRadius() {
-        return maxRadius;
-    }
-    public void setMaxRadius(double maxRadius) {
-        this.maxRadius = maxRadius;
-    }
-    public ContractileParticle withMaxRadius(double maxRadius) {
-        setMaxRadius(maxRadius);
-        return this;
-    }
-
-    public double getEscapeSpeed() {
-        return escapeSpeed;
-    }
-    public void setEscapeSpeed(double escapeSpeed) {
-        this.escapeSpeed = escapeSpeed;
-    }
-    public ContractileParticle withEscapeSpeed(double escapeSpeed) {
-        setEscapeSpeed(escapeSpeed);
-        return this;
-    }
-
-    public double getMaxDesiredSpeed() {
-        return maxDesiredSpeed;
-    }
-    public void setMaxDesiredSpeed(double maxDesiredSpeed) {
-        this.maxDesiredSpeed = maxDesiredSpeed;
-    }
-    public ContractileParticle withMaxDesiredSpeed(double maxDesiredSpeed) {
-        setMaxDesiredSpeed(maxDesiredSpeed);
-        return this;
-    }
-
-    public double getBeta() {
-        return beta;
-    }
-    public void setBeta(double beta) {
-        this.beta = beta;
-    }
-    public ContractileParticle withBeta(double beta) {
-        setBeta(beta);
-        return this;
-    }
-
-    public double getTau() {
-        return tau;
-    }
-    public void setTau(double tau) {
-        this.tau = tau;
-    }
-    public ContractileParticle withTau(double tau) {
-        setTau(tau);
-        return this;
-    }
-
     @Override
     public String toString() {
         return "ContractileParticle{" +
@@ -206,12 +115,6 @@ public class ContractileParticle extends Particle {
             ", radius=" + radius +
             ", vx=" + vx +
             ", vy=" + vy +
-            ", minRadius=" + minRadius +
-            ", maxRadius=" + maxRadius +
-            ", escapeSpeed=" + escapeSpeed +
-            ", maxDesiredSpeed=" + maxDesiredSpeed +
-            ", beta=" + beta +
-            ", tau=" + tau +
             '}';
     }
 }

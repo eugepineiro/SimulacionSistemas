@@ -10,11 +10,11 @@ import java.util.function.BiPredicate;
 
 public class ContractileParticlesGenerator {
 
-    public static List<ContractileParticle> generateRandomParticles(Random r, long N, double roomHeight, double roomWidth, Double minRadius, double maxRadius, double escapeSpeed, double maxDesiredSpeed, double beta, double tau) {
-        return generateRandomParticles(Collections.emptyList(), r, N, roomHeight, roomWidth, minRadius, maxRadius, escapeSpeed, maxDesiredSpeed, beta, tau);
+    public static List<ContractileParticle> generateRandomParticles(Random r, long N, double roomHeight, double roomWidth, Double minRadius, double maxRadius) {
+        return generateRandomParticles(Collections.emptyList(), r, N, roomHeight, roomWidth, minRadius, maxRadius);
     }
 
-    public static List<ContractileParticle> generateRandomParticles(List<ContractileParticle> particles, Random r, long N, double roomHeight, double roomWidth, Double minRadius, double maxRadius, double escapeSpeed, double maxDesiredSpeed, double beta, double tau){
+    public static List<ContractileParticle> generateRandomParticles(List<ContractileParticle> particles, Random r, long N, double roomHeight, double roomWidth, Double minRadius, double maxRadius){
         List<ContractileParticle> generated = new ArrayList<>(particles);
 
         double x, y, angle, newSpeed;
@@ -28,10 +28,10 @@ public class ContractileParticlesGenerator {
                 newParticle = new Particle(i+1, x, y, radius);
             } while (!allTestTrue(generated, newParticle, new ParticleCollision().negate()));
 
-            angle = 0;      // TODO: Preguntar valor inicial
+            angle    = 0;   // TODO: Preguntar valor inicial
             newSpeed = 0;   // TODO: Preguntar valor inicial
 
-            generated.add(new ContractileParticle(newParticle, newSpeed, angle, minRadius, maxRadius, escapeSpeed, maxDesiredSpeed, beta, tau));
+            generated.add(new ContractileParticle(newParticle, newSpeed, angle));
         }
 
         return generated;

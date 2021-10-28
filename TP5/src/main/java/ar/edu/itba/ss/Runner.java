@@ -1,24 +1,28 @@
 package ar.edu.itba.ss;
 
+import static ar.edu.itba.ss.Utils.printLoadingBar;
+
+import ar.edu.itba.ss.algorithms.CPMEscapeRoomSimulation;
 import ar.edu.itba.ss.config.Config;
-import ar.edu.itba.ss.dto.ContractileParticleDto;
 import ar.edu.itba.ss.models.ContractileParticle;
-import ar.edu.itba.ss.models.Frame;
+import ar.edu.itba.ss.models.EscapeRoomSimulationResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class Runner {
 
-    private static final String    CONFIG_PATH         = "TP5/src/main/resources/config/config.json";
-    private static final String    JSON_WRITER_PATH    = "TP5/src/main/resources/postprocessing";
-    private static final String    XYZ_WRITER_PATH     = "TP5/src/main/resources/ovito";
+    private static final String    CONFIG_PATH                                  = "TP5/src/main/resources/config/config.json";
+    private static final String    JSON_WRITER_PATH                             = "TP5/src/main/resources/postprocessing";
+    private static final String    XYZ_WRITER_PATH                              = "TP5/src/main/resources/ovito";
 
-    private static final String    OVITO_FILENAME      = "SdS_TP5_2021Q2G01_output";
+    private static final String    OVITO_FILENAME                               = "SdS_TP5_2021Q2G01_output";
+    private static final String    POSTPROCESSING_FILENAME                      = "SdS_TP5_2021Q2G01_results";
+    private static final String    POSTPROCESSING_MULTIPLE_SIMULATIONS_FILENAME = "SdS_TP5_2021Q2G01_multiple_simulations_results";
 
     // Main
 
@@ -36,6 +40,11 @@ public class Runner {
             // Simulation
 
             boolean multipleRuns = false;
+
+            if (config.getMultiple_simulations().isActivated()) {
+                simulatewithMultipleSimulations(config, config.getMultiple_simulations().getSeeds());
+                multipleRuns = true;
+            }
 
             if (!multipleRuns) {
                 runSimulation(config);
@@ -70,23 +79,25 @@ public class Runner {
             config.getRoom_height(),
             config.getRoom_width(),
             config.getMin_radius(),
-            config.getMax_radius(),
-            config.getEscape_velocity(),
-            config.getMax_desired_velocity(),
-            config.getBeta(),
-            config.getTau()
+            config.getMax_radius()
         );
 
         // Simulate
 
         final double dt = config.getMin_radius() / (2 * Math.max(config.getMax_desired_velocity(), config.getEscape_velocity()));
 
-        final EscapeRoomSimulation simulation = new EscapeRoomSimulation()
+        final CPMEscapeRoomSimulation simulation = new CPMEscapeRoomSimulation()
             .withRandom             (r)
             .withDt                 (dt)
             .withSaveFactor         (config.getSave_factor())
             .withMaxTime            (config.getMax_time())
             .withStatusBarActivated (config.getLoading_bar())
+            .withMinRadius          (config.getMin_radius())
+            .withMaxRadius          (config.getMax_radius())
+            .withEscapeSpeed        (config.getEscape_velocity())
+            .withMaxDesiredSpeed    (config.getMax_desired_velocity())
+            .withBeta               (config.getBeta())
+            .withTau                (config.getTau())
             .withRoomHeight         (config.getRoom_height())
             .withRoomWidth          (config.getRoom_width())
             .withTargetWidth        (config.getTarget_width())
@@ -95,7 +106,7 @@ public class Runner {
             .withParticles          (particles)
             ;
 
-        final EscapeRoomSimulation.Results results = simulation.simulate();
+        final EscapeRoomSimulationResult results = simulation.simulate();
 
         // Save results
 
@@ -110,17 +121,75 @@ public class Runner {
             .writeAndClose();
 
         System.out.println("Finished saving " + OVITO_FILENAME + ".exyz");
-
-//        final List<Frame<ContractileParticleDto>> minimalResults = results.getFrames().stream()
-//            .map(f -> new Frame<ContractileParticleDto>()
-//                .withParticles(f.getParticles().stream().map(ContractileParticleDto::new).collect(Collectors.toList()))
-//                .withTime     (f.getTime())
-//            )
-//            .collect(Collectors.toList());
-//            ;
     }
 
     private static final int LOADING_BAR_SIZE = 20;
 
+    static void simulatewithMultipleSimulations(Config config, List<Long> seeds) throws IOException {
+
+        List<EscapeRoomSimulationResult> simulationsResults = new LinkedList<>();
+
+        Random r;
+        List<ContractileParticle> particles;
+        EscapeRoomSimulationResult results;
+
+        long startTime = System.nanoTime();
+
+        for (int iter = 0; iter < seeds.size(); iter++) {
+            Long seed = seeds.get(iter);
+
+            r = new Random(seed + iter);
+
+            printLoadingBar(1.0 * iter / seeds.size(), LOADING_BAR_SIZE);
+
+            // Generate particles
+
+             particles = ContractileParticlesGenerator.generateRandomParticles(
+                r,
+                config.getNumber_of_particles(),
+                config.getRoom_height(),
+                config.getRoom_width(),
+                config.getMin_radius(),
+                config.getMax_radius()
+            );
+
+            final double dt = config.getMin_radius() / (2 * Math.max(config.getMax_desired_velocity(), config.getEscape_velocity()));
+
+            final CPMEscapeRoomSimulation simulation = new CPMEscapeRoomSimulation()
+                .withRandom             (r)
+                .withDt                 (dt)
+                .withSaveFactor         (config.getSave_factor())
+                .withMaxTime            (config.getMax_time())
+                .withStatusBarActivated (config.getLoading_bar())
+                .withMinRadius          (config.getMin_radius())
+                .withMaxRadius          (config.getMax_radius())
+                .withEscapeSpeed        (config.getEscape_velocity())
+                .withMaxDesiredSpeed    (config.getMax_desired_velocity())
+                .withBeta               (config.getBeta())
+                .withTau                (config.getTau())
+                .withRoomHeight         (config.getRoom_height())
+                .withRoomWidth          (config.getRoom_width())
+                .withTargetWidth        (config.getTarget_width())
+                .withOuterTargetDistance(config.getOuter_target_dist())
+                .withOuterTargetWidth   (config.getOuter_target_width())
+                .withParticles          (particles)
+                ;
+
+            results = simulation.simulate();
+
+            simulationsResults.add(results);
+        }
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+
+        System.out.println("Time in ms: " + timeElapsed / 1000000.0);
+
+        new JsonWriter(POSTPROCESSING_MULTIPLE_SIMULATIONS_FILENAME)
+            .withObj(simulationsResults)
+            .write();
+
+        System.out.println("Finished saving " + POSTPROCESSING_MULTIPLE_SIMULATIONS_FILENAME);
+    }
 
 }

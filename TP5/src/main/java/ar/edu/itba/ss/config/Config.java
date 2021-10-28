@@ -22,6 +22,7 @@ public class Config {
     private Double  escape_velocity;
     private Double  max_desired_velocity;
     private Boolean loading_bar;
+    private MultipleSimulations multiple_simulations;
 
     public Long getSeed() {
         return seed;
@@ -151,6 +152,13 @@ public class Config {
         this.max_desired_velocity = max_desired_velocity;
     }
 
+    public MultipleSimulations getMultiple_simulations() {
+        return multiple_simulations;
+    }
+
+    public void setMultiple_simulations(MultipleSimulations multiple_simulations) {
+        this.multiple_simulations = multiple_simulations;
+    }
     @Override
     public String toString() {
         return "Config{" +
@@ -170,6 +178,7 @@ public class Config {
             ", escape_velocity=" + escape_velocity +
             ", max_desired_velocity=" + max_desired_velocity +
             ", loading_bar=" + loading_bar +
+            ", multiple_simulations=" + multiple_simulations +
             '}';
     }
 }
