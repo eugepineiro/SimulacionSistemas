@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from plotter import plot_evacuated_particles_by_time, plot_avg_times_by_evacuated_particles, plot_avg_flow_rate_by_target_width
+from plotter import plot_evacuated_particles_by_time, plot_avg_times_by_evacuated_particles, plot_avg_flow_rate_by_target_width, plot_flow_rate_by_time
 
 with open("../src/main/resources/postprocessing/SdS_TP5_2021Q2G01_multiple_simulations_results.json") as f:
     multiple_simulations_results = json.load(f)
@@ -15,7 +15,6 @@ evacuated_particles_by_simulation = []
 dt = multiple_simulations_results[0]['dt']
 max_t = max(list(map( lambda sim: sim['escapeTimes'][-1], multiple_simulations_results)))
  
-
 times = list(np.arange(0, max_t+dt, step=dt))
 
 evacuated_particles_by_simulation = list(map( 
@@ -52,6 +51,8 @@ target_widths = []
 number_of_particles = []
 flow_rates_by_pairs = []
 
+
+
 # [
 #     // n1, d1
 #         [// fs1
@@ -60,6 +61,9 @@ flow_rates_by_pairs = []
 #         ...]
 #     // n2, d2
 # ]
+
+flow_rates = get_flow_rate(multiple_width_and_particles_results[0][0])
+plot_flow_rate_by_time(flow_rates, times)
 
 for pair_simulations in multiple_width_and_particles_results:
 

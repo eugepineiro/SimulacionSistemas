@@ -49,6 +49,29 @@ def plot_avg_times_by_evacuated_particles(evacuated_particles, avg_times):
 
     fig.show()
 
+
+def plot_flow_rate_by_time(flow_rates, times):
+
+    fig = go.Figure()
+     
+    fig.add_trace(go.Scatter(
+        x=times,
+        y=flow_rates,
+        mode='lines+markers'
+    ))    
+
+    fig.update_layout(
+        title="Caudal en función del tiempo",
+        xaxis_title="Tiempo (ms)",
+        yaxis_title="Caudal (1/m/s)",
+        legend_title=f"<b>Referencias</b> <br>",
+        font=dict( 
+            size=28, 
+        )
+    )
+
+    fig.show() 
+
 def plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, number_of_particles, target_widths): 
 
     flow_rates_np = np.array(flow_rates_by_pairs)
