@@ -61,8 +61,6 @@ flow_rates_by_pairs = []
 #     // n2, d2
 # ]
 
-[]
-
 for pair_simulations in multiple_width_and_particles_results:
 
     d = pair_simulations[0]['targetWidth']
