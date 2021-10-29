@@ -11,7 +11,7 @@ def plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times_by
             x=times_by_simulation[simulation_index],
             y=evacuated_particles_by_simulation[simulation_index],
             mode='markers', 
-            name=f'Simulación = {simulation_index}'
+            name=f'Simulación {simulation_index}'
         ))    
 
     fig.update_layout(
@@ -89,21 +89,25 @@ def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simula
     fig.show()
 
 
-def plot_flow_rate_by_time(flow_rates, times):
+def plot_flow_rate_by_time_with_multiple_simulations(sims, target_width, number_of_particles):
 
+    
     fig = go.Figure()
+
+    for simulation_index, (escape_times, flow_rates) in enumerate(sims):
      
-    fig.add_trace(go.Scatter(
-        x=times,
-        y=flow_rates,
-        mode='lines+markers'
-    ))    
+        fig.add_trace(go.Scatter(
+            x=escape_times,
+            y=flow_rates,
+            mode='lines+markers', 
+            name=f'Simulación {simulation_index}'
+        ))    
 
     fig.update_layout(
         title="Caudal en función del tiempo",
         xaxis_title="Tiempo (ms)",
         yaxis_title="Caudal (1/m/s)",
-        legend_title=f"<b>Referencias</b> <br>",
+        legend_title=f"<b>Referencias</b> <br>Ancho de Salida: {target_width} <br>Número de partículas: {number_of_particles}",
         font=dict( 
             size=28, 
         )
