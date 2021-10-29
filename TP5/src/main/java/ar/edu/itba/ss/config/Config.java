@@ -23,6 +23,7 @@ public class Config {
     private Double  max_desired_velocity;
     private Boolean loading_bar;
     private MultipleSimulations multiple_simulations;
+    private MultipleWidthAndParticles multiple_width_and_particles;
 
     public Long getSeed() {
         return seed;
@@ -159,6 +160,15 @@ public class Config {
     public void setMultiple_simulations(MultipleSimulations multiple_simulations) {
         this.multiple_simulations = multiple_simulations;
     }
+
+    public MultipleWidthAndParticles getMultiple_width_and_particles() {
+        return multiple_width_and_particles;
+    }
+
+    public void setMultiple_width_and_particles(MultipleWidthAndParticles multiple_width_and_particles) {
+        this.multiple_width_and_particles = multiple_width_and_particles;
+    }
+
     @Override
     public String toString() {
         return "Config{" +
@@ -179,6 +189,7 @@ public class Config {
             ", max_desired_velocity=" + max_desired_velocity +
             ", loading_bar=" + loading_bar +
             ", multiple_simulations=" + multiple_simulations +
+            ", multiple_width_and_particles=" + multiple_width_and_particles +
             '}';
     }
 }
