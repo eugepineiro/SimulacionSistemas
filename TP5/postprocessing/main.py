@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from plotter import plot_evacuated_particles_by_time, plot_avg_times_by_evacuated_particles, plot_avg_flow_rate_by_target_width, plot_flow_rate_by_time
+from plotter import plot_evacuated_particles_by_time, plot_avg_times_by_evacuated_particles, plot_avg_times_by_evacuated_particles_inverted, plot_avg_flow_rate_by_target_width, plot_flow_rate_by_time
 
 with open("../src/main/resources/postprocessing/SdS_TP5_2021Q2G01_multiple_simulations_results.json") as f:
     multiple_simulations_results = json.load(f)
@@ -17,11 +17,16 @@ max_t = max(list(map( lambda sim: sim['escapeTimes'][-1], multiple_simulations_r
  
 times = list(np.arange(0, max_t+dt, step=dt))
 
+times_by_simulation = list(map(
+    lambda sim: sim['escapeTimes'],
+    multiple_simulations_results
+))
+
 evacuated_particles_by_simulation = list(map( 
     lambda sim: list(map(
         lambda t: len(
             list(filter(lambda et: et <= t, sim['escapeTimes']))
-        ), times
+        ), sim['escapeTimes']
     )), multiple_simulations_results
 ))
 
@@ -31,14 +36,13 @@ evacuated_particles_by_simulation = list(map(
 # print(times)
 # print(evacuated_particles_by_simulation)
 
-plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times)
+plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times_by_simulation)
 
 # Exercise b
 
-evacuated_particles_by_simulation_np = np.array(evacuated_particles_by_simulation)
-mean = np.mean(evacuated_particles_by_simulation_np, axis=1)
-std = np.std(evacuated_particles_by_simulation_np, axis=1)
-plot_avg_times_by_evacuated_particles(mean, times)
+plot_avg_times_by_evacuated_particles(evacuated_particles_by_simulation, times_by_simulation)
+
+plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simulation, times_by_simulation)
 
 # Exercise c
 
@@ -50,8 +54,7 @@ def get_flow_rate(simulation):
 target_widths = []
 number_of_particles = []
 flow_rates_by_pairs = []
-
-
+ 
 
 # [
 #     // n1, d1
@@ -63,6 +66,7 @@ flow_rates_by_pairs = []
 # ]
 
 flow_rates = get_flow_rate(multiple_width_and_particles_results[0][0])
+
 plot_flow_rate_by_time(flow_rates, times)
 
 for pair_simulations in multiple_width_and_particles_results:

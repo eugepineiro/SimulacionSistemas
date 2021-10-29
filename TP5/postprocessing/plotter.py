@@ -2,15 +2,15 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 
-def plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times): 
+def plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times_by_simulation): 
 
     fig = go.Figure()
 
     for simulation_index in range(0, len(evacuated_particles_by_simulation)):
         fig.add_trace(go.Scatter(
-            x=times,
+            x=times_by_simulation[simulation_index],
             y=evacuated_particles_by_simulation[simulation_index],
-            mode='lines+markers', 
+            mode='markers', 
             name=f'Simulación = {simulation_index}'
         ))    
 
@@ -26,21 +26,60 @@ def plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times):
 
     fig.show()
 
-def plot_avg_times_by_evacuated_particles(evacuated_particles, avg_times): 
+def plot_avg_times_by_evacuated_particles(evacuated_particles_by_simulation, times_by_simulation): 
+
+    times_by_simulation_np = np.array(times_by_simulation)
+    mean = np.mean(times_by_simulation_np, axis=0)
+    std = np.std(times_by_simulation_np, axis=0)
 
     fig = go.Figure()
-
      
     fig.add_trace(go.Scatter(
-        x=evacuated_particles,
-        y=avg_times,
-        mode='lines+markers'
+        x=evacuated_particles_by_simulation[0],
+        y=mean,
+        error_y=dict(
+            type='data',
+            symmetric=True,
+            array=std
+        ),
+        mode='markers'
     ))    
 
     fig.update_layout(
         title="Comportamiento promedio del sistema ",
         xaxis_title="Número de Partículas Salientes",
         yaxis_title="Tiempo Promedio (ms)",
+        legend_title=f"<b>Referencias</b> <br>",
+        font=dict( 
+            size=28, 
+        )
+    )
+
+    fig.show()
+
+def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simulation, times_by_simulation): 
+
+    times_by_simulation_np = np.array(times_by_simulation)
+    mean = np.mean(times_by_simulation_np, axis=0)
+    std = np.std(times_by_simulation_np, axis=0)
+
+    fig = go.Figure()
+     
+    fig.add_trace(go.Scatter(
+        x=mean,
+        y=evacuated_particles_by_simulation[0],
+        error_x=dict(
+            type='data',
+            symmetric=True,
+            array=std
+        ),
+        mode='markers'
+    ))    
+
+    fig.update_layout(
+        title="Curva de Descarga",
+        xaxis_title="Tiempo Promedio (ms)",
+        yaxis_title="Número de Partículas Salientes",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=28, 
