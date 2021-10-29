@@ -10,11 +10,11 @@ import java.util.function.BiPredicate;
 
 public class ContractileParticlesGenerator {
 
-    public static List<ContractileParticle> generateRandomParticles(Random r, long N, double roomHeight, double roomWidth, Double minRadius, double maxRadius) {
-        return generateRandomParticles(Collections.emptyList(), r, N, roomHeight, roomWidth, minRadius, maxRadius);
+    public static List<ContractileParticle> generateRandomParticles(Random r, long N, double minX, double maxX, double minY, double maxY, Double minRadius, double maxRadius) {
+        return generateRandomParticles(Collections.emptyList(), r, N, minX, maxX, minY, maxY, minRadius, maxRadius);
     }
 
-    public static List<ContractileParticle> generateRandomParticles(List<ContractileParticle> particles, Random r, long N, double roomHeight, double roomWidth, Double minRadius, double maxRadius){
+    public static List<ContractileParticle> generateRandomParticles(List<ContractileParticle> particles, Random r, long N, double minX, double maxX, double minY, double maxY, Double minRadius, double maxRadius){
         List<ContractileParticle> generated = new ArrayList<>(particles);
 
         double x, y, angle, newSpeed;
@@ -23,8 +23,8 @@ public class ContractileParticlesGenerator {
         for (long i = 0; i < N; i++) {
             Particle newParticle;
             do {
-                x = r.nextDouble() * (roomWidth  - 2*radius) + radius; // upper bound excluded
-                y = r.nextDouble() * (roomHeight - 2*radius) + radius; // upper bound excluded
+                x = r.nextDouble() * ((maxX - minX)  - 2*radius) + minX + radius; // upper bound excluded
+                y = r.nextDouble() * ((maxY - minY) - 2*radius) + minY + radius; // upper bound excluded
                 newParticle = new Particle(i+1, x, y, radius);
             } while (!allTestTrue(generated, newParticle, new ParticleCollision().negate()));
 
