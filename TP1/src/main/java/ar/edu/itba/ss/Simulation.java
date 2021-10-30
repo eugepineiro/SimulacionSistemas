@@ -84,7 +84,7 @@ public class Simulation {
             Gson gson = new Gson();
             String json = gson.toJson(to_ret);
 //            System.out.println(json);
-            BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/result.json"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("TP1/src/main/resources/result.json"));
             writer.write(json);
             writer.close();
 
@@ -97,7 +97,7 @@ public class Simulation {
 
         List<Particle>[][] matrix;
 
-        System.setOut(new PrintStream(new FileOutputStream("src/main/resources/compare.json", true)));
+        System.setOut(new PrintStream(new FileOutputStream("TP1/src/main/resources/compare.json", true)));
         System.out.println("[");
 
         boolean started = false;

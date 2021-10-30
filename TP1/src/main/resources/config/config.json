@@ -1,4 +1,5 @@
 {
+  "seed": 200,
   "m_grid_dimension": 10,
   "r_interaction_radius": 1,
   "l_grid_side": 20,
@@ -11,7 +12,7 @@
     "max_M": 20,
     "iterations_to_average": 100
   },
-  "periodic_return": false,
+  "periodic_return": true,
   "particles": [
     {"x":19.5,"y":0.5,"radius":0.36454758414975763},
     {"x":18.5, "y":0.5,"radius":0.3665238982265391}
