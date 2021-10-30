@@ -2,14 +2,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 
-def plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times_by_simulation): 
+def plot_evacuated_particles_by_time(evacuated_particles, times_by_simulation): 
 
     fig = go.Figure()
 
-    for simulation_index in range(0, len(evacuated_particles_by_simulation)):
+    for simulation_index in range(0, len(times_by_simulation)):
         fig.add_trace(go.Scatter(
             x=times_by_simulation[simulation_index],
-            y=evacuated_particles_by_simulation[simulation_index],
+            y=evacuated_particles,
             mode='markers', 
             name=f'Simulación {simulation_index}'
         ))    
@@ -26,7 +26,7 @@ def plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times_by
 
     fig.show()
 
-def plot_avg_times_by_evacuated_particles(evacuated_particles_by_simulation, times_by_simulation): 
+def plot_avg_times_by_evacuated_particles(evacuated_particles, times_by_simulation): 
 
     times_by_simulation_np = np.array(times_by_simulation)
     mean = np.mean(times_by_simulation_np, axis=0)
@@ -35,7 +35,7 @@ def plot_avg_times_by_evacuated_particles(evacuated_particles_by_simulation, tim
     fig = go.Figure()
      
     fig.add_trace(go.Scatter(
-        x=evacuated_particles_by_simulation[0],
+        x=evacuated_particles,
         y=mean,
         error_y=dict(
             type='data',
@@ -57,7 +57,7 @@ def plot_avg_times_by_evacuated_particles(evacuated_particles_by_simulation, tim
 
     fig.show()
 
-def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simulation, times_by_simulation): 
+def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles, times_by_simulation): 
 
     times_by_simulation_np = np.array(times_by_simulation)
     mean = np.mean(times_by_simulation_np, axis=0)
@@ -67,7 +67,7 @@ def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simula
      
     fig.add_trace(go.Scatter(
         x=mean,
-        y=evacuated_particles_by_simulation[0],
+        y=evacuated_particles,
         error_x=dict(
             type='data',
             symmetric=True,
@@ -89,25 +89,24 @@ def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simula
     fig.show()
 
 
-def plot_flow_rate_by_time_with_multiple_simulations(sims, target_width, number_of_particles):
-
+def plot_flow_rate_by_time_with_multiple_simulations(flow_rates_by_pairs, number_of_particles, target_widths):
     
     fig = go.Figure()
 
-    for simulation_index, (escape_times, flow_rates) in enumerate(sims):
-     
+    for i, (escape_times, flow_rates) in enumerate(flow_rates_by_pairs):
+
         fig.add_trace(go.Scatter(
             x=escape_times,
             y=flow_rates,
             mode='lines+markers', 
-            name=f'Simulación {simulation_index}'
+            name=f'Ancho de Salida: {target_widths[i]}, Número de partículas: {number_of_particles[i]}'
         ))    
 
     fig.update_layout(
         title="Caudal en función del tiempo",
         xaxis_title="Tiempo (ms)",
-        yaxis_title="Caudal (1/m/s)",
-        legend_title=f"<b>Referencias</b> <br>Ancho de Salida: {target_width} <br>Número de partículas: {number_of_particles}",
+        yaxis_title="Caudal (1/ms)",
+        legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=28, 
         )
@@ -115,11 +114,33 @@ def plot_flow_rate_by_time_with_multiple_simulations(sims, target_width, number_
 
     fig.show() 
 
-def plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, number_of_particles, target_widths): 
+def plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, averaging_limits_by_n, number_of_particles, target_widths): 
 
-    flow_rates_np = np.array(flow_rates_by_pairs)
-    mean = np.mean(flow_rates_np, axis=1)
-    std = np.std(flow_rates_np, axis=1)
+    mean = []
+    std = []
+
+    for i, (escape_times, flow_rates) in enumerate(flow_rates_by_pairs):
+
+        k = str(number_of_particles[i])
+        left, right = averaging_limits_by_n[k] if k in averaging_limits_by_n else [-float('inf'), float('inf')]
+        # print(f'Averaging from {left} to {right} at {k} particles')
+        limited_flow_rates = []
+
+        for j in range(len(flow_rates)):
+            et = escape_times[j]
+            fr = flow_rates[j]
+
+            if et >= left and et <= right:
+                limited_flow_rates.append(fr)
+
+        limited_flow_rates_np = np.array(limited_flow_rates)
+        m = np.mean(limited_flow_rates_np, axis=0)
+        s = np.std(limited_flow_rates_np, axis=0)
+        mean.append(m)
+        std.append(s)
+
+    # print(mean)
+    # print(std)
     
     fig = go.Figure()
 
@@ -149,13 +170,13 @@ def plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, number_of_particles,
    #    )
    #), secondary_y=False)
 
-    fig.data[0].update(xaxis='x2')
+    # fig.data[0].update(xaxis='x2')
 
     # https://plotly.com/python/reference/layout/
     fig.update_layout(
         title="Caudal Medio en función del número de particulas y el ancho de salida",
         xaxis_title="Ancho de Salida (m)",
-        yaxis_title="Caudal Medio (1/m/s)",
+        yaxis_title="Caudal Medio (1/ms)",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=25, 

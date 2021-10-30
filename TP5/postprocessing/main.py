@@ -8,59 +8,52 @@ with open("../src/main/resources/postprocessing/SdS_TP5_2021Q2G01_multiple_simul
 with open("../src/main/resources/postprocessing/SdS_TP5_2021Q2G01_multiple_width_and_particles_results.json") as f:
     multiple_width_and_particles_results = json.load(f)
 
-# Exercise a
+WINDOW_SIZE = 5
 
-evacuated_particles_by_simulation = []
+# Exercise a
 
 dt = multiple_simulations_results[0]['dt']
 max_t = max(list(map( lambda sim: sim['escapeTimes'][-1], multiple_simulations_results)))
  
 times = list(np.arange(0, max_t+dt, step=dt))
 
+evacuated_particles = [i+1 for i in range(len(multiple_simulations_results[0]['escapeTimes']))]
+
 times_by_simulation = list(map(
     lambda sim: sim['escapeTimes'],
     multiple_simulations_results
 ))
 
-evacuated_particles_by_simulation = list(map( 
-    lambda sim: list(map(
-        lambda t: len(
-            list(filter(lambda et: et <= t, sim['escapeTimes']))
-        ), sim['escapeTimes']
-    )), multiple_simulations_results
-))
-
-# for simulation in multiple_simulations_results:
-#     print(simulation['escapeTimes'][-1])
-
-# print(times)
-# print(evacuated_particles_by_simulation)
-
-plot_evacuated_particles_by_time(evacuated_particles_by_simulation, times_by_simulation)
+plot_evacuated_particles_by_time(evacuated_particles, times_by_simulation)
 
 # Exercise b
 
-plot_avg_times_by_evacuated_particles(evacuated_particles_by_simulation, times_by_simulation)
+plot_avg_times_by_evacuated_particles(evacuated_particles, times_by_simulation)
 
-plot_avg_times_by_evacuated_particles_inverted(evacuated_particles_by_simulation, times_by_simulation)
+plot_avg_times_by_evacuated_particles_inverted(evacuated_particles, times_by_simulation)
 
 # Exercise c
 
-def get_flow_rates_by_time(simulation):
-    escape_times = simulation['escapeTimes']
-    target_width = simulation['targetWidth']
+def get_flow_rates_by_time(times_by_simulation, window_size):
 
+    times_by_simulation_np = np.array(times_by_simulation)
+    mean = np.mean(times_by_simulation_np, axis=0)
+
+    escape_times = []
     flow_rates = []
-    for i in range(len(escape_times)):
-        escaped_particles = i+1
-        flow_rates.append(escaped_particles / (escape_times[i] * target_width))
+    
+    c = len(mean)
+    for i in range(0, c, window_size):
+        n = window_size - 1 if (c - i) >= window_size else (c - i) - 1 # TODO(mati): revisar el else
+        escape_times.append((mean[i+n] + mean[i]) / 2)
+        flow_rates.append(n/(mean[i+n] - mean[i]))
 
     return escape_times, flow_rates 
 
 target_widths = []
 number_of_particles = []
 flow_rates_by_pairs = []
- 
+stationary_flow_rates_by_pairs = []
 
 # [
 #     // n1, d1
@@ -70,12 +63,6 @@ flow_rates_by_pairs = []
 #         ...]
 #     // n2, d2
 # ]
-
-# escape_times, flow_rates = get_flow_rates_by_time(multiple_width_and_particles_results[0][0])
-
-sims = list(map(lambda sim: get_flow_rates_by_time(sim), multiple_width_and_particles_results[0]))
-
-plot_flow_rate_by_time_with_multiple_simulations(sims, multiple_width_and_particles_results[0][0]['targetWidth'], len(multiple_width_and_particles_results[0][0]['escapeTimes']))
 
 time_to_start_averaging = 20
 time_to_finish_averaging = float('inf')
@@ -88,22 +75,24 @@ for pair_simulations in multiple_width_and_particles_results:
     target_widths.append(d)
     number_of_particles.append(n)
 
-    sims = list(map(lambda sim: get_flow_rates_by_time(sim), pair_simulations))
-    
-    flow_rate_means = []
-    for escape_times, flow_rates in sims:
-        mean = 0
-        c = 0
-        for i in range(0, len(escape_times)):
-            et = escape_times[i]
-            fr = flow_rates[i]
-            if (et > time_to_start_averaging) and (et < time_to_finish_averaging):
-                mean += fr
-                c += 1
-        mean /= c
+    # c
 
-        flow_rate_means.append(mean)
+    evacuated_particles = [i+1 for i in range(n)]
 
-    flow_rates_by_pairs.append(flow_rate_means)
+    times_by_simulation = list(map(
+        lambda sim: sim['escapeTimes'],
+        pair_simulations
+    ))
 
-plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, number_of_particles, target_widths)
+    flow_rates_by_pairs.append(get_flow_rates_by_time(times_by_simulation, WINDOW_SIZE))
+
+plot_flow_rate_by_time_with_multiple_simulations(flow_rates_by_pairs, number_of_particles, target_widths)
+
+averaging_limits_by_n = {
+    '200': [7, 63],
+    '260': [5, 58],
+    '320': [4, 56],
+    '380': [3.5, 55]
+}
+
+plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, averaging_limits_by_n, number_of_particles, target_widths)
