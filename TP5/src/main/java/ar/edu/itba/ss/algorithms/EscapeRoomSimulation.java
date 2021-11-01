@@ -1,9 +1,10 @@
 package ar.edu.itba.ss.algorithms;
 
+import ar.edu.itba.ss.CellIndexMethod;
+import ar.edu.itba.ss.Grid;
+import ar.edu.itba.ss.Particle;
 import ar.edu.itba.ss.Utils;
-import ar.edu.itba.ss.models.ContractileParticle;
-import ar.edu.itba.ss.models.EscapeRoomSimulationResult;
-import ar.edu.itba.ss.models.Frame;
+import ar.edu.itba.ss.models.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public abstract class EscapeRoomSimulation {
     protected       double                      maxDesiredSpeed;
     protected       double                      beta;
     protected       double                      tau;
+    protected       double                      lowerMargin;
     protected       double                      roomWidth;
     protected       double                      roomHeight;
     protected       double                      targetWidth;
@@ -33,7 +35,7 @@ public abstract class EscapeRoomSimulation {
     protected       List<ContractileParticle>   particles;
 
     public boolean stop(List<ContractileParticle> particles) {
-        return particles.stream().allMatch(particle -> (particle.getY() + particle.getRadius()) < 0);
+        return particles.stream().allMatch(particle -> (particle.getY() + particle.getRadius()) < (lowerMargin + outerTargetDistance));
     }
 
     public void printStatusBar(double time) {
@@ -55,6 +57,13 @@ public abstract class EscapeRoomSimulation {
         double time;
         boolean stopped = false;
 
+        final int realRoomHeight = (int) Math.ceil(lowerMargin + outerTargetDistance + roomHeight);
+        final int realRoomWidth = (int) Math.ceil(roomWidth);
+        final int minDimension = Math.min(realRoomWidth, realRoomHeight);
+
+        /** optimizamos usando "L/M > rc + 2 * max_particle_radius (L/50.0)" --> "cellSize (minDimension/M) > 0 + 2 * maxRadius" --> "M < minDimension / (2*maxRadius)" */
+        final int gridDimension = (int) Math.ceil(minDimension / (2*maxRadius)) - 1; // TODO(matias): si a es entero, ceil = a, a-1 < a, valida. si a no es entero, ceil-1 = floor(a) < a, valida.
+
         for (time = 0, count = 0; time <= maxTime && !(stopped = stop(currentParticles)); time += dt, count++) {
             // Status bar
             printStatusBar(time);
@@ -70,13 +79,16 @@ public abstract class EscapeRoomSimulation {
                 );
             }
 
+            List<ContractileParticle>[][] matrix = Grid.build(currentParticles, gridDimension, realRoomWidth, realRoomHeight);
+            Map<ContractileParticle, List<ContractileParticle>> nearParticles = CellIndexMethod.search(matrix, 0, gridDimension, realRoomWidth, realRoomHeight, false);
+
             // Update particles
             for (int i = 0; i < currentParticles.size(); i++) {
                 ContractileParticle particle = currentParticles.get(i);
-                ContractileParticle nextParticle = getNextParticle(particle, currentParticles.stream().filter(other -> other != particle).collect(Collectors.toList()));
+                ContractileParticle nextParticle = getNextParticle(particle, nearParticles.getOrDefault(particle, Collections.emptyList()));
 
                 nextParticles.add(nextParticle);
-                if ((particle.getY() + particle.getRadius()) >= 0 && (nextParticle.getY() + nextParticle.getRadius()) < 0 && !escapeTimes.containsKey(particle.getId())) {
+                if ((particle.getY() + particle.getRadius()) >= (lowerMargin + outerTargetDistance) && (nextParticle.getY() + nextParticle.getRadius()) < (lowerMargin + outerTargetDistance) && !escapeTimes.containsKey(particle.getId())) {
                     escapeTimes.put(particle.getId(), time);
                 }
             }
@@ -107,7 +119,93 @@ public abstract class EscapeRoomSimulation {
             ;
     }
 
+    protected List<WallContact> getWallContacts(ContractileParticle particle) {
+
+        final List<WallContact> possibleWallContacts = Arrays.asList(
+            new WallContact(0            , particle.getY()), // left wall
+            new WallContact(roomWidth       , particle.getY()), // right wall
+            new WallContact(particle.getX() , lowerMargin + outerTargetDistance + roomHeight)  // top wall
+        );
+
+        final List<WallContact> wallContacts = possibleWallContacts.stream()
+            .filter(particle::overlapsWith)
+            .collect(Collectors.toList());
+
+        double targetLeftCornerX  = (roomWidth/2) - (targetWidth/2);
+        double targetRightCornerX = (roomWidth/2) + (targetWidth/2);
+
+        if (particle.getX() < targetLeftCornerX || particle.getX() > targetRightCornerX) { // outside target
+            final WallContact bottomWallContact = new WallContact(particle.getX(), lowerMargin + outerTargetDistance);
+            if (particle.overlapsWith(bottomWallContact)) {
+                wallContacts.add(bottomWallContact);
+            }
+        }
+        else if (particle.getX() < (roomWidth/2)) { // inside target, left
+            final WallContact leftCorner = new WallContact(targetLeftCornerX, lowerMargin + outerTargetDistance);
+            if(particle.overlapsWith(leftCorner))
+                wallContacts.add(leftCorner);
+        }
+        else { // particle.getX() >= (roomWidth/2)  // inside target, right
+            final WallContact rightCorner = new WallContact(targetRightCornerX, lowerMargin + outerTargetDistance);
+            if(particle.overlapsWith(rightCorner))
+                wallContacts.add(rightCorner);
+        }
+
+        return  wallContacts;
+    }
+
+    protected Point2D getTarget(ContractileParticle particle) {
+        double particleX, particleY;
+        particleX = particle.getX();
+        particleY = particle.getY();
+
+        double targetX;
+        double targetY;
+
+        double left;
+        double right;
+
+        if (particleY > (lowerMargin + outerTargetDistance)) {
+            double targetLeftUpperCornerX  = (roomWidth/2) - (targetWidth/2);
+
+            left = targetLeftUpperCornerX + 0.2 * targetWidth;
+            right = targetLeftUpperCornerX + 0.8 * targetWidth;
+
+            targetY = lowerMargin + outerTargetDistance;
+        }
+        else {
+            double targetLeftLowerCornerX  = (roomWidth/2) - (outerTargetWidth/2);
+            double targetRightLowerCornerX = (roomWidth/2) + (outerTargetWidth/2);
+
+            left = targetLeftLowerCornerX;
+            right = targetRightLowerCornerX;
+
+            targetY = lowerMargin;
+        }
+
+        if (particleX < left || particleX > right) {
+            targetX = random.nextDouble() * (right - left) + left;
+        }
+        else {
+            targetX = particleX;
+        }
+
+        return new Point2D(targetX, targetY);
+    }
+
     //////////////// Autogenerated /////////////////
+
+
+    public double getLowerMargin() {
+        return lowerMargin;
+    }
+    public void setLowerMargin(double lowerMargin) {
+        this.lowerMargin = lowerMargin;
+    }
+    public EscapeRoomSimulation withLowerMargin(double lowerMargin) {
+        setLowerMargin(lowerMargin);
+        return this;
+    }
 
     public Random getRandom() {
         return random;

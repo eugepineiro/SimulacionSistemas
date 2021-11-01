@@ -20,6 +20,8 @@ import static ar.edu.itba.ss.Utils.printLoadingBar;
 
 public class Runner {
 
+    private static final double    LOWER_MARGIN                                         = 5;
+
     private static final String    CONFIG_PATH                                          = "TP5/src/main/resources/config/config.json";
     private static final String    JSON_WRITER_PATH                                     = "TP5/src/main/resources/postprocessing";
     private static final String    XYZ_WRITER_PATH                                      = "TP5/src/main/resources/ovito";
@@ -81,6 +83,7 @@ public class Runner {
             .withMaxDesiredSpeed    (config.getMax_desired_velocity())
             .withBeta               (config.getBeta())
             .withTau                (config.getTau())
+            .withLowerMargin        (LOWER_MARGIN)
             .withRoomHeight         (config.getRoom_height())
             .withRoomWidth          (config.getRoom_width())
             .withTargetWidth        (config.getTarget_width())
@@ -110,8 +113,10 @@ public class Runner {
         final List<ContractileParticle> particles = ContractileParticlesGenerator.generateRandomParticles(
             r,
             config.getNumber_of_particles(),
-            config.getRoom_height(),
+            0,
             config.getRoom_width(),
+            LOWER_MARGIN + config.getOuter_target_dist(),
+            LOWER_MARGIN + config.getOuter_target_dist() + config.getRoom_height(),
             config.getMin_radius(),
             config.getMax_radius()
         );
@@ -136,6 +141,7 @@ public class Runner {
 
         // Ovito
         new XYZ_Writer(OVITO_FILENAME)
+            .withLowerMargin        (LOWER_MARGIN)
             .withRoomHeight         (config.getRoom_height())
             .withRoomWidth          (config.getRoom_width())
             .withTargetWidth        (config.getTarget_width())
@@ -170,12 +176,14 @@ public class Runner {
             // Generate particles
 
              particles = ContractileParticlesGenerator.generateRandomParticles(
-                r,
-                config.getNumber_of_particles(),
-                config.getRoom_height(),
-                config.getRoom_width(),
-                config.getMin_radius(),
-                config.getMax_radius()
+                 r,
+                 config.getNumber_of_particles(),
+                 0,
+                 config.getRoom_width(),
+                 LOWER_MARGIN + config.getOuter_target_dist(),
+                 LOWER_MARGIN + config.getOuter_target_dist() + config.getRoom_height(),
+                 config.getMin_radius(),
+                 config.getMax_radius()
             );
 
             final CPMEscapeRoomSimulation simulation = getSimulationFromConfig(r, config)
@@ -233,8 +241,10 @@ public class Runner {
                 particles = ContractileParticlesGenerator.generateRandomParticles(
                     r,
                     widthAndParticles.get(i).getParticles(),
-                    config.getRoom_height(),
+                    0,
                     config.getRoom_width(),
+                    LOWER_MARGIN + config.getOuter_target_dist(),
+                    LOWER_MARGIN + config.getOuter_target_dist() + config.getRoom_height(),
                     config.getMin_radius(),
                     config.getMax_radius()
                 );

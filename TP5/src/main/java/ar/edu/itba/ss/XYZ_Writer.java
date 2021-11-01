@@ -1,5 +1,6 @@
 package ar.edu.itba.ss;
 
+import ar.edu.itba.ss.algorithms.EscapeRoomSimulation;
 import ar.edu.itba.ss.models.ContractileParticle;
 import ar.edu.itba.ss.models.Frame;
 
@@ -43,6 +44,7 @@ public class XYZ_Writer {
     }
 
     private static String PATH = "TP5/src/main/resources/ovito";
+    private double lowerMargin;
     private double roomHeight, roomWidth, targetWidth, outerTargetDistance, outerTargetWidth;
     private final List<List<PCoords>> frames;
     private FileWriter file;
@@ -75,7 +77,7 @@ public class XYZ_Writer {
         final double inc = wallPointsSeparation;;
 
         // Left and right wall
-        for (double y = 0; y <= roomHeight + wallPointsSeparation/4; y+=inc) {
+        for (double y = lowerMargin + outerTargetDistance; y <= lowerMargin + outerTargetDistance + roomHeight + wallPointsSeparation/4; y+=inc) {
             walls.add(new PCoords(PType.WALL, startingId++, 0     , y, 0, 0, wallDepth/2));
             walls.add(new PCoords(PType.WALL, startingId++, roomWidth, y, 0, 0, wallDepth/2));
         }
@@ -84,11 +86,11 @@ public class XYZ_Writer {
         double rightUpperCornerX = (roomWidth/2) + (targetWidth/2);
         for (double x = 0; x <= roomWidth + wallPointsSeparation/4; x+=inc) {
             // Top wall
-            walls.add(new PCoords(PType.WALL, startingId++, x, roomHeight, 0, 0, wallDepth/2));
+            walls.add(new PCoords(PType.WALL, startingId++, x, lowerMargin + outerTargetDistance + roomHeight, 0, 0, wallDepth/2));
 
             // Bottom wall
             if (x < leftUpperCornerX || x > rightUpperCornerX) {
-                walls.add(new PCoords(PType.WALL, startingId++  , x, 0, 0, 0, wallDepth/2));
+                walls.add(new PCoords(PType.WALL, startingId++  , x, lowerMargin + outerTargetDistance, 0, 0, wallDepth/2));
             }
 
             // Target
@@ -100,14 +102,14 @@ public class XYZ_Writer {
         // Hall left and right walls
         double leftBottomCornerX  = (roomWidth/2) - (outerTargetWidth/2);
         double rightBottomCornerX = (roomWidth/2) + (outerTargetWidth/2);
-//        for (double y = -outerTargetDistance; y <= 0; y+=inc) {
+//        for (double y = 0; y <= outerTargetDistance; y+=inc) {
 //            walls.add(new PCoords(PType.HALL_WALL, startingId++, leftBottomCornerX , y, 0, 0, wallDepth/2));
 //            walls.add(new PCoords(PType.HALL_WALL, startingId++, rightBottomCornerX, y, 0, 0, wallDepth/2));
 //        }
 
         // Bottom Target
         for (double x = leftBottomCornerX; x <= rightBottomCornerX + wallPointsSeparation/4; x+=inc) {
-            walls.add(new PCoords(PType.OUTER_TARGET, startingId++, x, -outerTargetDistance, 0, 0, wallDepth/2));
+            walls.add(new PCoords(PType.OUTER_TARGET, startingId++, x, lowerMargin, 0, 0, wallDepth/2));
         }
 
     }
@@ -150,6 +152,17 @@ public class XYZ_Writer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public double getLowerMargin() {
+        return lowerMargin;
+    }
+    public void setLowerMargin(double lowerMargin) {
+        this.lowerMargin = lowerMargin;
+    }
+    public XYZ_Writer withLowerMargin(double lowerMargin) {
+        setLowerMargin(lowerMargin);
+        return this;
     }
 
     public double getRoomWidth() {

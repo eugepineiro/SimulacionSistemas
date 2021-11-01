@@ -19,7 +19,7 @@ public class BruteForceMethod extends SearchMethod {
 
             for(int j = i+1 ; j < particles.size() ; j++) {
                 // si o si hay que hacerlo con la diagonal porque sino add neighbour agrega repetidos a la lista
-                addNeighbours(result, particles.get(i), particles.get(j), interactionRadius, L, periodic);
+                addNeighbours(result, particles.get(i), particles.get(j), interactionRadius, L, L, periodic);
             }
         }
 
