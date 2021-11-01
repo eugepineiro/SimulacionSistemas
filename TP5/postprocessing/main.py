@@ -89,10 +89,10 @@ for pair_simulations in multiple_width_and_particles_results:
 plot_flow_rate_by_time_with_multiple_simulations(flow_rates_by_pairs, number_of_particles, target_widths)
 
 averaging_limits_by_n = {
-    '200': [7, 63],
-    '260': [5, 58],
-    '320': [4, 56],
-    '380': [3.5, 55]
+    '200': [3.5, 63.5],
+    '260': [4.5, 58.5],
+    '320': [4, 56.5],
+    '380': [3, 54]
 }
 
 plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, averaging_limits_by_n, number_of_particles, target_widths)

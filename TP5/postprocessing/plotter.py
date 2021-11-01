@@ -246,7 +246,7 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
     fig.update_layout(
         title=f"Ajusto del error para la regresión lineal sobre el Caudal promedio en función del Ancho del objetivo (Beverloo)",
         xaxis_title="c (1/(m<sup>3/2</sup> * s))",
-        yaxis_title="E(c) (1/(m<sup>3</sup> * s^2))",
+        yaxis_title="E(c) (1/(m<sup>3</sup> * s<sup>2</sup>))",
         legend_title=f"<b>Referencias</b>",
         font=dict( 
             size=28, 
