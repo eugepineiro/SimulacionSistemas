@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from plotter import plot_evacuated_particles_by_time, plot_avg_times_by_evacuated_particles, plot_avg_times_by_evacuated_particles_inverted, plot_avg_flow_rate_by_target_width, plot_flow_rate_by_time_with_multiple_simulations
+from plotter import plot_evacuated_particles_by_time, plot_avg_times_by_evacuated_particles, plot_avg_times_by_evacuated_particles_inverted, plot_avg_flow_rate_by_target_width, plot_flow_rate_by_time_with_multiple_simulations, plot_beverloo_adjustment_using_avg_flow_rate_by_target_width
 
 with open("../src/main/resources/postprocessing/SdS_TP5_2021Q2G01_multiple_simulations_results.json") as f:
     multiple_simulations_results = json.load(f)
@@ -96,3 +96,7 @@ averaging_limits_by_n = {
 }
 
 plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, averaging_limits_by_n, number_of_particles, target_widths)
+
+# Exercise d
+
+plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_pairs, averaging_limits_by_n, number_of_particles, target_widths)
