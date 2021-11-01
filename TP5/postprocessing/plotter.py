@@ -16,7 +16,7 @@ def plot_evacuated_particles_by_time(evacuated_particles, times_by_simulation):
 
     fig.update_layout(
         title="Curva de Descarga",
-        xaxis_title="Tiempo (ms)",
+        xaxis_title="Tiempo (s)",
         yaxis_title="Número de Partículas Salientes",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
@@ -48,7 +48,7 @@ def plot_avg_times_by_evacuated_particles(evacuated_particles, times_by_simulati
     fig.update_layout(
         title="Comportamiento promedio del sistema ",
         xaxis_title="Número de Partículas Salientes",
-        yaxis_title="Tiempo Promedio (ms)",
+        yaxis_title="Tiempo Promedio (s)",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=28, 
@@ -78,7 +78,7 @@ def plot_avg_times_by_evacuated_particles_inverted(evacuated_particles, times_by
 
     fig.update_layout(
         title="Curva de Descarga",
-        xaxis_title="Tiempo Promedio (ms)",
+        xaxis_title="Tiempo Promedio (s)",
         yaxis_title="Número de Partículas Salientes",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
@@ -99,13 +99,13 @@ def plot_flow_rate_by_time_with_multiple_simulations(flow_rates_by_pairs, number
             x=escape_times,
             y=flow_rates,
             mode='lines+markers', 
-            name=f'Ancho de Salida: {target_widths[i]}, Número de partículas: {number_of_particles[i]}'
+            name=f'd: {target_widths[i]}, N: {number_of_particles[i]}'
         ))    
 
     fig.update_layout(
         title="Caudal en función del tiempo",
-        xaxis_title="Tiempo (ms)",
-        yaxis_title="Caudal (1/ms)",
+        xaxis_title="Tiempo (s)",
+        yaxis_title="Q (1/s)",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=28, 
@@ -175,8 +175,8 @@ def plot_avg_flow_rate_by_target_width(flow_rates_by_pairs, averaging_limits_by_
     # https://plotly.com/python/reference/layout/
     fig.update_layout(
         title="Caudal Medio en función del número de particulas y el ancho de salida",
-        xaxis_title="Ancho de Salida (m)",
-        yaxis_title="Caudal Medio (1/ms)",
+        xaxis_title="d (m)",
+        yaxis_title="<Q> (1/s)",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=25, 
@@ -244,9 +244,9 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
     ))
 
     fig.update_layout(
-        title=f"Ajusto del error para la regresión lineal sobre el Caudal promedio en función del Ancho del objetivo (Beverloo)",
-        xaxis_title="c (1/(m<sup>3/2</sup> * s))",
-        yaxis_title="E(c) (1/(m<sup>3</sup> * s<sup>2</sup>))",
+        title=f"Ajusto del error para la regresión lineal sobre el Caudal promedio en función del Ancho de salida (Beverloo)",
+        xaxis_title="c (1/(m<sup>3/2</sup> . s))",
+        yaxis_title="E(c) (1/(m<sup>3</sup> . s<sup>2</sup>))",
         legend_title=f"<b>Referencias</b>",
         font=dict( 
             size=28, 
@@ -273,13 +273,13 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
         x=target_widths, 
         y=B*np.power(tw, 3/2),
         mode='lines+markers',
-        name=f"Ajuste modelo lineal (B = {B:.3f} 1/(m<sup>3/2</sup> * s)) (Q = B*(d)<sup>3/2</sup>)"
+        name=f"Ajuste modelo lineal (B = {B:.3f} 1/(m<sup>3/2</sup> . s)) (Q = B.(d)<sup>3/2</sup>)"
     ))
 
     fig2.update_layout(
         title="Caudal Medio en función del número de particulas y el ancho de salida",
-        xaxis_title="Ancho de Salida (m)",
-        yaxis_title="Caudal Medio (1/ms)",
+        xaxis_title="d (m)",
+        yaxis_title="<Q> (1/s)",
         legend_title=f"<b>Referencias</b> <br>",
         font=dict( 
             size=25, 
