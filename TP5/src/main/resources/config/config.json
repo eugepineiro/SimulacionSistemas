@@ -16,13 +16,13 @@
   "max_desired_velocity": 2,
   "loading_bar": true,
   "multiple_simulations": {
-    "activated": false,
+    "activated": true,
     "seeds": [100, 200, 300, 400, 500]
   },
   "multiple_width_and_particles": {
-    "activated": false,
+    "activated": true,
     "target_width": [1.2, 1.8, 2.4, 3.0],
     "number_of_particles": [200, 260, 320, 380],
-    "seeds": [100, 200, 300]
+    "seeds": [100, 200, 300, 400, 500]
   }
 }

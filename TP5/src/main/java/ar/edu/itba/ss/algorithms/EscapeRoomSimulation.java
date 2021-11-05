@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 public abstract class EscapeRoomSimulation {
 
+    protected final double                      DISAPPEARING_MARGIN     = 1.5;
+
     // Status bar
     protected final int                         STATUS_BAR_SIZE         = 31;
 
@@ -50,8 +52,9 @@ public abstract class EscapeRoomSimulation {
         List<ContractileParticle> nextParticles    = new LinkedList<>();
         List<ContractileParticle> aux;
 
-        final List<Frame<ContractileParticle>> frames = new LinkedList<>();
-        final Map<Long, Double> escapeTimes           = new HashMap<>();
+        final List<Frame<ContractileParticle>> frames                       = new LinkedList<>();
+        final Map<Long, Double> escapeTimes                                 = new HashMap<>();
+        final Map<Long, ContractileParticle> successfullyEscapedParticles   = new HashMap<>();
 
         long count;
         double time;
@@ -70,11 +73,13 @@ public abstract class EscapeRoomSimulation {
 
             // Save particles
             if (count % saveFactor == 0) {
+                List<ContractileParticle> allParticles = currentParticles.stream()
+                    .map(ContractileParticle::clone)
+                    .collect(Collectors.toList());
+                allParticles.addAll(successfullyEscapedParticles.values());
+
                 frames.add(new Frame<ContractileParticle>()
-                    .withParticles(currentParticles.stream()
-                        .map(ContractileParticle::clone)
-                        .collect(Collectors.toList())
-                    )
+                    .withParticles(allParticles)
                     .withTime(time)
                 );
             }
@@ -87,9 +92,13 @@ public abstract class EscapeRoomSimulation {
                 ContractileParticle particle = currentParticles.get(i);
                 ContractileParticle nextParticle = getNextParticle(particle, nearParticles.getOrDefault(particle, Collections.emptyList()));
 
-                nextParticles.add(nextParticle);
                 if ((particle.getY() + particle.getRadius()) >= (lowerMargin + outerTargetDistance) && (nextParticle.getY() + nextParticle.getRadius()) < (lowerMargin + outerTargetDistance) && !escapeTimes.containsKey(particle.getId())) {
                     escapeTimes.put(particle.getId(), time);
+                }
+                if ((particle.getY() + particle.getRadius()) >= (lowerMargin+DISAPPEARING_MARGIN) && (nextParticle.getY() + nextParticle.getRadius()) < (lowerMargin+DISAPPEARING_MARGIN) && !successfullyEscapedParticles.containsKey(particle.getId())) {
+                    successfullyEscapedParticles.put(particle.getId(), nextParticle.clone().withY(lowerMargin).withX(roomWidth/2)); // terminó
+                } else {
+                    nextParticles.add(nextParticle); // no terminó
                 }
             }
 

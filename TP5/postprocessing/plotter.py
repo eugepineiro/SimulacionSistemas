@@ -231,6 +231,7 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
     print(min_f)
     B = min_f[0]
     print(f"B: {B}")
+    print(f"B con 3 decimales: {B:.3f}")
 
     fig.add_trace(go.Scatter(
         x=c, 
@@ -245,8 +246,8 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
 
     fig.update_layout(
         title=f"Ajusto del error para la regresión lineal sobre el Caudal promedio en función del Ancho de salida (Beverloo)",
-        xaxis_title="c (1/(m<sup>3/2</sup> . s))",
-        yaxis_title="E(c) (1/(m<sup>3</sup> . s<sup>2</sup>))",
+        xaxis_title="c (1/(m<sup>3/2</sup>s))",
+        yaxis_title="E(c) (1/(m<sup>3</sup>s<sup>2</sup>))",
         legend_title=f"<b>Referencias</b>",
         font=dict( 
             size=28, 
@@ -266,14 +267,14 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
             symmetric=True,
             array=std
         ),
-        name='Caudal Medio en función del número de partícula y el ancho de salida'
+        name='Caudal medio'
     ))
 
     fig2.add_trace(go.Scatter(
         x=target_widths, 
         y=B*np.power(tw, 3/2),
         mode='lines+markers',
-        name=f"Ajuste modelo lineal (B = {B:.3f} 1/(m<sup>3/2</sup> . s)) (Q = B.(d)<sup>3/2</sup>)"
+        name=f"Ajuste modelo lineal"
     ))
 
     fig2.update_layout(
