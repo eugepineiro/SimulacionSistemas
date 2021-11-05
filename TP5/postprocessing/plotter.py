@@ -246,8 +246,8 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
 
     fig.update_layout(
         title=f"Ajusto del error para la regresión lineal sobre el Caudal promedio en función del Ancho de salida (Beverloo)",
-        xaxis_title="c (1/(m<sup>3/2</sup>s))",
-        yaxis_title="E(c) (1/(m<sup>3</sup>s<sup>2</sup>))",
+        xaxis_title="B (1/(m<sup>3/2</sup>s))",
+        yaxis_title="E(B) (1/(m<sup>3</sup>s<sup>2</sup>))",
         legend_title=f"<b>Referencias</b>",
         font=dict( 
             size=28, 
@@ -270,11 +270,25 @@ def plot_beverloo_adjustment_using_avg_flow_rate_by_target_width(flow_rates_by_p
         name='Caudal medio'
     ))
 
+    tw_full = np.arange(target_widths[0], target_widths[-1], 1e-3)
+    print(tw_full)
+
+    fig2.add_trace(go.Scatter(
+        x=tw_full, 
+        y=B*np.power(tw_full, 3/2),
+        mode='lines',
+        name=f"Ajuste modelo lineal"
+    ))
+
     fig2.add_trace(go.Scatter(
         x=target_widths, 
         y=B*np.power(tw, 3/2),
-        mode='lines+markers',
-        name=f"Ajuste modelo lineal"
+        mode='markers',
+        marker=dict(
+            color='#830707',
+            size=10
+        ),
+        name=f"Ajuste modelo lineal (puntos)"
     ))
 
     fig2.update_layout(
